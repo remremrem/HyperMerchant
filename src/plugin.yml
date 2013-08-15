@@ -1,0 +1,40 @@
+name: HyperMerchant
+main: grokswell.hypermerchant.HyperMerchantPlugin
+version: 0.1
+description: Inventory menu to be used with HyperConomy stores and NPC trait for Citizens2.
+author: Grokswell
+authors: [Grokswell] 
+database: false
+depend: [HyperConomy]
+commands:
+   storemenu:
+      description: Must be standing in store to use. Browse a HyperConomy store's inventory. Buy and Sell with ease.
+      usage: /storemenu
+      permission: hypermerchant.menu
+      permission-message: You do not have permission to use command /storemenu.
+      aliases: [smenu,shopmenu]
+   remotemenu:
+      description: Browse a HyperConomy store's inventory. Buy and sell with ease.
+      usage: /remotemenu [storename]
+      permission: hypermerchant.remote
+      permission-message: You do not have permission to use command /remotemenu.
+      aliases: [rmenu]
+   remotestorelist:
+      description: List store names in a format that can be used with /remotemenu.
+      usage: /remotestorelist
+      permission: hypermerchant.remote
+      permission-message: You do not have permission to use command /remotestorelist.
+      aliases: [rslist]
+    
+permissions:
+   hypermerchant.*:
+      description: Gives access to all HyperMerchant commands
+      children:
+         hypermerchant.menu: true
+         hypermerchant.remote: true
+   hypermerchant.menu:
+      description: Allow use of the /storemenu command.
+      default: true
+   hypermerchant.remote:
+      description: Allow use of the /remotemenu command.
+      default: op

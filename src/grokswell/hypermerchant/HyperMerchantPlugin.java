@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCSelector;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -21,6 +26,7 @@ import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.ShopFactory;
 import regalowl.hyperconomy.YamlFile;
 
+import grokswell.hypermerchant.HyperMerchantTrait;
 import grokswell.hypermerchant.ShopMenu;
 
 public class HyperMerchantPlugin extends JavaPlugin implements Listener {
@@ -55,7 +61,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			} else {
 				name=args[0];
 				if (shoplist.contains(name)) {
-					ShopStock shopstock = new ShopStock(args, sender, player, args[0],this);
+					ShopStock shopstock = new ShopStock(sender, player, args[0],this);
 					//shopstock.pages is ArrayList<ArrayList<String>> shopstock.items_count is int
 					new ShopMenu(name, 54, this, shopstock.pages, player, shopstock.items_count);
 					return true;
@@ -81,7 +87,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 									"of a store to use the command "+ChatColor.RED+"/storemenu.");
 				return true;
 			} else {
-				ShopStock shopstock = new ShopStock(args, sender, player, name, this);
+				ShopStock shopstock = new ShopStock(sender, player, name, this);
 				//shopstock.pages is ArrayList<ArrayList<String>> shopstock.items_count is int
 				new ShopMenu(name, 54, this, shopstock.pages, player, shopstock.items_count);
 				return true;
@@ -93,6 +99,55 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			sender.sendMessage(hyperAPI.listShops());
 			return true;
 		}
+
+		else if (cmd.getName().equalsIgnoreCase("hypermerchant")) {
+			if (args.length < 1) {
+			sender.sendMessage(ChatColor.YELLOW+"You must provide one valid shop name. " +
+								"Use "+ChatColor.RED+"/remotestorelist "+ChatColor.YELLOW+ 
+										"or "+ChatColor.RED+"/rslist "+ChatColor.YELLOW+
+										"for valid store names. Use exact spelling.");
+				return true;	
+			} 
+			else {
+				this.getLogger().info("else");
+				NPCSelector sel = CitizensAPI.getDefaultNPCSelector();
+				this.getLogger().info("next");
+				try {
+					NPC this_npc = sel.getSelected(sender);
+					this.getLogger().info("selected: "+this_npc.getName());
+					if (this_npc.hasTrait(HyperMerchantTrait.class)) {
+						HyperConomy hc = HyperConomy.hc;
+						ShopFactory sf = hc.getShopFactory();
+						ArrayList<String> shoplist = sf.listShops();
+						if (shoplist.contains(args[0])) {
+							this.getLogger().info("has trait");
+							this_npc.getTrait(HyperMerchantTrait.class).trait_key.setString("store_name",args[0]);
+							return true;
+						}
+						
+						else {
+							sender.sendMessage(ChatColor.YELLOW+"You must provide one valid shop name. " +
+									"Use "+ChatColor.RED+"/remotestorelist "+ChatColor.YELLOW+ 
+											"or "+ChatColor.RED+"/rslist "+ChatColor.YELLOW+
+											"for valid store names. Use exact spelling.");
+							return true;
+						}
+					}
+					
+					else {
+						sender.sendMessage(ChatColor.YELLOW+"You must have a hypermerchant npc " +
+								"selected to use the command "+ChatColor.RED+"/hypermerchant.");
+						return true;
+					}
+				}
+				
+				catch (Exception e){
+					sender.sendMessage(ChatColor.YELLOW+"You must have a hypermerchant npc " +
+										"selected to use the command "+ChatColor.RED+"/hypermerchant.");
+					return true;
+				}
+			}
+		} 
 		
 		else {
 			return true;
@@ -121,6 +176,12 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			String newkey = Integer.toString(id) +":"+ Integer.toString(data);
 			items_by_id.put(newkey,name);
 		}
+		if (Bukkit.getPluginManager().getPlugin("Citizens") != null) {
+			CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(HyperMerchantTrait.class).withName("hypermerchant"));
+		} else {
+			this.getLogger().info("Citizens not found. NPC hypermerchants will be disabled.");
+		}
+
 
 	}
 

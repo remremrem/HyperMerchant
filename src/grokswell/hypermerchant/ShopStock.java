@@ -2,7 +2,6 @@ package grokswell.hypermerchant;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import static java.lang.System.out;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,18 +18,15 @@ public class ShopStock {
 	private String shopname;
 	private CommandSender sender;
 	
-	ShopStock(String args[], CommandSender snder, Player player, String sname, HyperMerchantPlugin hmp) {
+	ShopStock(CommandSender snder, Player player, String sname, HyperMerchantPlugin hmp) {
 		HyperConomy hc = HyperConomy.hc;
 		ShopFactory hc_factory = hc.getShopFactory();
 		DataHandler hc_functions = hc.getDataFunctions();
 		LanguageFile hc_lang = hc.getLanguageFile();
-		ArrayList<String> aargs = new ArrayList<String>();
 		
 		shopname = sname;
 		sender = snder;
-		for (int i = 0; i < args.length; i++) {
-			aargs.add(args[i]);
-		}
+
 		try {
 			
     		String nameshop = null;
@@ -58,8 +54,6 @@ public class ShopStock {
 			int item_index=0;
 			int page = 0;
 			items_count  = items_in_stock.size();
-
-			out.println("this shop has "+ items_count +" items:");
 			
 			double maxpages = items_count/number_per_page;
 			maxpages = Math.ceil(maxpages);

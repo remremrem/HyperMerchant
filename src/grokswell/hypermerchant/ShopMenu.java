@@ -97,7 +97,7 @@ public class ShopMenu implements Listener {
 	    .setOption(48, new ItemStack(Material.getMaterial(339), 1), "Shift+Left-Click", "Purchase 8 items")
 	    .setOption(49, new ItemStack(Material.getMaterial(339), 1), "Shift+Right-Click", "Purchase 16 items")
 	    .setOption(50, new ItemStack(Material.getMaterial(339), 1), "To Sell:", "Place items in store inventory")
-	    .setOption(51, new ItemStack(Material.getMaterial(339), 1), "Warning!", "Do not place items in empty slot to sell!");
+	    .setOption(51, new ItemStack(Material.getMaterial(118), 1), " ","");
     	int count = 0;
 		ArrayList<String> page=(ArrayList<String>) pages.get(this.page_number);
 		
@@ -127,8 +127,8 @@ public class ShopMenu implements Listener {
 		}
 		
 		ItemStack stack;
-		stack = new ItemStack(Material.getMaterial(118), 1);
 	    while (count < size-9) {
+			stack = new ItemStack(Material.getMaterial(118), 1);
 	    	this.setOption(count, stack, " ", " ");
 	    	count++;
 	    }

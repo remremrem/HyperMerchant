@@ -1,6 +1,6 @@
 name: HyperMerchant
 main: grokswell.hypermerchant.HyperMerchantPlugin
-version: 0.18
+version: 0.2
 description: Inventory menu to be used with HyperConomy stores and NPC trait for Citizens2.
 author: Grokswell
 authors: [Grokswell] 

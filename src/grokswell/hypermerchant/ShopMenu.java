@@ -50,7 +50,7 @@ public class ShopMenu implements Listener {
 	DataHandler hc_functions = hc.getDataFunctions();
 	Calculation hc_calc = hc.getCalculation();
 	LanguageFile hc_lang = hc.getLanguageFile();
-   
+	
     public ShopMenu(String name, int size, HyperMerchantPlugin plgn, ArrayList<ArrayList<String>> pgs, Player plyr,int itemcount) {
     	this.name = name;
         this.size = size;
@@ -67,9 +67,9 @@ public class ShopMenu implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         inventory_name = this.name+"<>"+player.getName();
         inventory = Bukkit.createInventory(player, size, inventory_name);
-
 		this.loadPage();
 		this.open(this.player);
+		
     }
    
     public ShopMenu setOption(int position, ItemStack icon, String name, String... info) {
@@ -100,6 +100,7 @@ public class ShopMenu implements Listener {
 	    .setOption(51, new ItemStack(Material.getMaterial(339), 1), "Warning!", "Do not place items in empty slot to sell!");
     	int count = 0;
 		ArrayList<String> page=(ArrayList<String>) pages.get(this.page_number);
+		
 		for (String item : page) {
 	        Double cost = 0.0;
 	        double stock = 0;
@@ -124,6 +125,14 @@ public class ShopMenu implements Listener {
 			this.setOption(count, stack, item, "Stock: "+stock+"  Price: "+cost);
 	        count++;
 		}
+		
+		ItemStack stack;
+		stack = new ItemStack(Material.getMaterial(118), 1);
+	    while (count < size-9) {
+	    	this.setOption(count, stack, " ", " ");
+	    	count++;
+	    }
+	    return;
     }
     
     public void nextPage() {
@@ -176,7 +185,7 @@ public class ShopMenu implements Listener {
         this.inventory_view=player.openInventory(this.inventory);
     }
    
-    @EventHandler(priority=EventPriority.MONITOR)
+    @EventHandler(priority=EventPriority.HIGHEST)
     void onInventoryClick(InventoryClickEvent event) {
         if (event.getInventory().getTitle().equals(inventory_name)) {
     		int slot_num = event.getRawSlot();
@@ -185,7 +194,7 @@ public class ShopMenu implements Listener {
             }
             ItemStack item_in_hand = event.getCursor();
             if (slot_num < size-9 && slot_num >= 0 && (item_in_hand.getTypeId() == 0)) {
-        		if (this.optionNames[slot_num] != null) {
+        		if (this.optionNames[slot_num] != null && this.optionNames[slot_num] != " ") {
                     if (event.isLeftClick()){
                     	if (event.isShiftClick()){
                     		shop_trans.Buy(this.optionNames[slot_num], 8);
@@ -223,7 +232,7 @@ public class ShopMenu implements Listener {
             }
         }
     }
-    @EventHandler(priority=EventPriority.MONITOR)
+    @EventHandler(priority=EventPriority.HIGHEST)
     void onInventoryClose(InventoryCloseEvent event) {
     	this.destroy();
     }

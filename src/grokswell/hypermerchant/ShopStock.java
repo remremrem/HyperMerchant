@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 
 import regalowl.hyperconomy.DataHandler;
 import regalowl.hyperconomy.HyperConomy;
-import regalowl.hyperconomy.LanguageFile;
 import regalowl.hyperconomy.ShopFactory;
 
 
@@ -22,21 +21,12 @@ public class ShopStock {
 		HyperConomy hc = HyperConomy.hc;
 		ShopFactory hc_factory = hc.getShopFactory();
 		DataHandler hc_functions = hc.getDataFunctions();
-		LanguageFile hc_lang = hc.getLanguageFile();
 		
 		shopname = sname;
 		sender = snder;
 
 		try {
-			
-    		String nameshop = null;
-    		if (player != null) {
-    			if (!hc_factory.inAnyShop(player)) {
-    				nameshop = null;
-    			} else {
-    				nameshop = hc_factory.getShop(shopname).getName();
-    			}		
-    		}
+    		String nameshop = hc_factory.getShop(shopname).getName();
 			ArrayList<String> names = hc_functions.getNames();
 			ArrayList<String> items_in_stock = new ArrayList<String>();
 			int i = 0;
@@ -54,7 +44,6 @@ public class ShopStock {
 			int item_index=0;
 			int page = 0;
 			items_count  = items_in_stock.size();
-			
 			double maxpages = items_count/number_per_page;
 			maxpages = Math.ceil(maxpages);
 			while (page <= maxpages) {
@@ -71,7 +60,7 @@ public class ShopStock {
 				page++;
 			}
 		} catch (Exception e) {
-			sender.sendMessage(hc_lang.get("BROWSE_SHOP_INVALID"));
+			sender.sendMessage("Error, cannot open store inventory");
 		}
 	}
 }

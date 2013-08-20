@@ -127,8 +127,7 @@ public class HyperMerchantTrait extends Trait {
 	
 	@Override
 	public void onAttach() {
-		//plugin.getServer().getLogger().info("hypermerchant trait has been assigned to "+this.npc.getName());
-		//key.setString("shop_name", shop_name);
+
 	}
 	
 	public void onFarewell(Player player) {

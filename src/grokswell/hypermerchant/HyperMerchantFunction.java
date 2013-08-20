@@ -61,7 +61,10 @@ public class HyperMerchantFunction {
 							return;
 								
 						} else {
-							new ShopMenu(name, 54, HMP, sender, player, null);
+							this_npc.getTrait(HyperMerchantTrait.class).shop_name = name;
+							this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+							sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" has been assigned to shop "+
+												this_npc.getTrait(HyperMerchantTrait.class).shop_name);
 							return;
 						}
 					}

@@ -21,7 +21,6 @@ public class ShopStock {
 		HyperConomy hc = HyperConomy.hc;
 		ShopFactory hc_factory = hc.getShopFactory();
 		DataHandler hc_functions = hc.getDataFunctions();
-		
 		shopname = sname;
 		sender = snder;
 
@@ -37,8 +36,8 @@ public class ShopStock {
 				}
 				i++;
 			}
+			
 			Collections.sort(items_in_stock, String.CASE_INSENSITIVE_ORDER);
-
 			int number_per_page = 45;
 			int count = 0;
 			int item_index=0;
@@ -59,8 +58,9 @@ public class ShopStock {
 				count=0;
 				page++;
 			}
+			
 		} catch (Exception e) {
-			sender.sendMessage("Error, cannot open store inventory");
+			sender.sendMessage("Error, cannot open shop inventory");
 		}
 	}
 }

@@ -3,8 +3,11 @@ package grokswell.hypermerchant;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import net.citizensnpcs.api.npc.NPC;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -42,6 +45,7 @@ public class ShopMenu implements Listener {
     private String[] optionNames;
     private ItemStack[] optionIcons;
 	private ShopTransactions shop_trans;
+	NPC npc;
 	ArrayList<ArrayList<String>> pages;
     
     
@@ -51,24 +55,28 @@ public class ShopMenu implements Listener {
 	Calculation hc_calc = hc.getCalculation();
 	LanguageFile hc_lang = hc.getLanguageFile();
 	
-    public ShopMenu(String name, int size, HyperMerchantPlugin plgn, ArrayList<ArrayList<String>> pgs, Player plyr,int itemcount) {
+    public ShopMenu(String name, int size, HyperMerchantPlugin plgn,CommandSender sender, Player plyr, NPC npc) {
     	this.name = name;
         this.size = size;
         plugin = plgn;
         this.optionNames = new String[size];
         this.page_number=0;
-        this.item_count=itemcount;
         this.optionIcons = new ItemStack[size];
         this.player=plyr;
-        pages = pgs;
-    	shop_trans = new ShopTransactions(player, name, plugin);
-        double maxpages = this.item_count/45;
-        this.last_page = (int) maxpages;
+        this.npc = npc;
+    	shop_trans = new ShopTransactions(player, this.name, plugin);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         inventory_name = this.name+"<>"+player.getName();
         inventory = Bukkit.createInventory(player, size, inventory_name);
+        
+		ShopStock shopstock = new ShopStock(sender, this.player, this.name, plugin);
+        this.item_count=shopstock.items_count;
+        pages = shopstock.pages;
+        double maxpages = this.item_count/45;
+        this.last_page = (int) maxpages;
 		this.loadPage();
 		this.open(this.player);
+		
 		
     }
    
@@ -96,7 +104,7 @@ public class ShopMenu implements Listener {
 	    .setOption(47, new ItemStack(Material.getMaterial(339), 1), "Left-Click", "Purchase 1 item")
 	    .setOption(48, new ItemStack(Material.getMaterial(339), 1), "Shift+Left-Click", "Purchase 8 items")
 	    .setOption(49, new ItemStack(Material.getMaterial(339), 1), "Shift+Right-Click", "Purchase 16 items")
-	    .setOption(50, new ItemStack(Material.getMaterial(339), 1), "To Sell:", "Place items in store inventory")
+	    .setOption(50, new ItemStack(Material.getMaterial(339), 1), "To Sell:", "Place items in shop inventory")
 	    .setOption(51, new ItemStack(Material.getMaterial(118), 1), " ","");
     	int count = 0;
 		ArrayList<String> page=(ArrayList<String>) pages.get(this.page_number);
@@ -234,6 +242,7 @@ public class ShopMenu implements Listener {
     }
     @EventHandler(priority=EventPriority.HIGHEST)
     void onInventoryClose(InventoryCloseEvent event) {
+    	this.npc.getTrait(HyperMerchantTrait.class).onFarewell(player);
     	this.destroy();
     }
     

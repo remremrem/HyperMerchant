@@ -32,11 +32,12 @@ public class Settings {
         ENABLE_SIGNS("enable_signs.default", 1),
         ENABLE_COMMAND("enable_command.default", 1),
         ENABLE_NPC("enable_npc.default", 1),
-        WELCOME("welcome.default", "Welcome to our little shop."),
-        FAREWELL("farewell.default", "We thank you for your continued patronage."),
-        DENIAL("denial.default", "I'm afraid you are not a store member. " +
+        WELCOME("welcome.default", "Welcome to my little shop."),
+        FAREWELL("farewell.default", "I thank you for your continued patronage."),
+        DENIAL("denial.default", "I'm afraid you are not a shop member. " +
         		"I am not authorized to do business with you."),
-        CLOSED("closed.default", "I am sorry, we are closed for business at this time.");
+        CLOSED("closed.default", "I am sorry, I am closed for business at this time."),
+        OFFDUTY("offduty.default", false);
 
         private String path;
         private Object value;

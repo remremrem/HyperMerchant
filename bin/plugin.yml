@@ -1,37 +1,47 @@
 name: HyperMerchant
 main: grokswell.hypermerchant.HyperMerchantPlugin
-version: 0.2
-description: Inventory menu to be used with HyperConomy stores and NPC trait for Citizens2.
+version: 0.3
+description: Inventory menu to be used with HyperConomy shops and NPC trait for Citizens2.
 author: Grokswell
 authors: [Grokswell] 
 database: false
 depend: [HyperConomy]
 softdepend: [Citizens]
 commands:
-   storemenu:
-      description: Must be standing in store to use. Browse a HyperConomy store's inventory. Buy and Sell with ease.
-      usage: /storemenu
+   shopmenu:
+      description: Must be standing in shop to use. Browse a HyperConomy shop's inventory. Buy and Sell with ease.
+      usage: /shopmenu
       permission: hypermerchant.menu
-      permission-message: You do not have permission to use command /storemenu.
-      aliases: [smenu,shopmenu]
+      permission-message: You do not have permission to use command /shopmenu.
+      aliases: [smenu,storemenu]
    remotemenu:
-      description: Browse a HyperConomy store's inventory. Buy and sell with ease.
-      usage: /remotemenu [storename]
+      description: Browse a HyperConomy shop's inventory. Buy and sell with ease.
+      usage: /remotemenu [shopname]
       permission: hypermerchant.remote
       permission-message: You do not have permission to use command /remotemenu.
       aliases: [rmenu]
-   remotestorelist:
-      description: List store names in a format that can be used with /remotemenu.
-      usage: /remotestorelist
+   remoteshoplist:
+      description: List shop names in a format that can be used with /remotemenu.
+      usage: /remoteshoplist
       permission: hypermerchant.remote
-      permission-message: You do not have permission to use command /remotestorelist.
+      permission-message: You do not have permission to use command /remoteshoplist.
       aliases: [rslist]
-   hypermerchant:
-      description: Set a hypermerchant's store. Works on currently selected hypermerchant.
-      usage: /hypermerchant [store name]
+   hmerchant:
+      description: Set the properties of the currently selected hypermerchant npc.
+      usage: "\n§4/hmerchant §csetshop §a[shopname] §e- Set shop of selected hypermerchant.
+  	    Set to shop player is standing in if no [shopname] argument provided.\n\n
+  	    §4/hmerchant §coffduty §e- Toggle npc in and out of offduty mode.\n\n
+        §4/hmerchant §cgreeting §a[welcome message] §e- Set text NPC says upon player interaction.
+  	    Leave [welcome message] argument empty for no text.\n\n
+        §4/hmerchant §cfarewell §a[goodbye message] §e- Set text NPC says upon player closing menu.
+  	    Leave [goodbye message] argument empty for no text.\n\n
+        §4/hmerchant §cdenial §a[deny message] §e- Set text NPC says when player is not permitted to use a shop.
+  	    Leave [deny message] argument empty for no text.\n\n
+  	    §4/hmerchant §cclosed §a[closed message] §e- Set text NPC says to a player when NPC is off duty.
+  	    Leave [closed message] argument empty for no text."
       permission: hypermerchant.manage
-      permission-message: You do not have permission to use command /remotestorelist.
-      aliases: [hmerch,hmerchant]
+      permission-message: You do not have permission to use command /hmerchant.
+      aliases: [hmerch]
     
 permissions:
    hypermerchant.*:
@@ -39,8 +49,10 @@ permissions:
       children:
          hypermerchant.menu: true
          hypermerchant.remote: true
+         hypermerchant.npc: true
+         hypermerchant.manage: true
    hypermerchant.menu:
-      description: Allow use of the /storemenu command.
+      description: Allow use of the /shopmenu command.
       default: true
    hypermerchant.npc:
       description: Allow interaction with hypermerchant npc.
@@ -49,5 +61,5 @@ permissions:
       description: Allow use of the /remotemenu command.
       default: op
    hypermerchant.manage:
-      description: Allow use of the /hypermerchant command.
+      description: Allow use of the /hmerchant command.
       default: op

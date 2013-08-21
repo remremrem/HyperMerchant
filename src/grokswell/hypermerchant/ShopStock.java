@@ -13,6 +13,7 @@ import regalowl.hyperconomy.ShopFactory;
 
 public class ShopStock {
 	ArrayList<ArrayList<String>> pages = new ArrayList<ArrayList<String>>();
+	ArrayList<String> items_in_stock = new ArrayList<String>();
 	int items_count;
 	private String shopname;
 	private CommandSender sender;
@@ -27,7 +28,6 @@ public class ShopStock {
 		try {
     		String nameshop = hc_factory.getShop(shopname).getName();
 			ArrayList<String> names = hc_functions.getNames();
-			ArrayList<String> items_in_stock = new ArrayList<String>();
 			int i = 0;
 			while(i < names.size()) {
 				String cname = names.get(i);

@@ -66,8 +66,10 @@ public class HyperMerchantTrait extends Trait {
 		
 		Player player = event.getClicker();
 		if (!player.hasPermission("hypermerchant.npc")) {
-			SpeechContext message = new SpeechContext(this.npc, this.denialMsg, player);
-			new SimpleSpeechController(this.npc).speak(message);
+			if (!this.denialMsg.isEmpty()) {
+				SpeechContext message = new SpeechContext(this.npc, this.denialMsg, player);
+				new SimpleSpeechController(this.npc).speak(message);
+			}
 			return;
 		}
 		
@@ -78,20 +80,26 @@ public class HyperMerchantTrait extends Trait {
 		HyperPlayer hp = dh.getHyperPlayer(player);
 			
 		if (!hp.hasBuyPermission(sf.getShop(this.shop_name))) {
-			SpeechContext message = new SpeechContext(this.npc, this.denialMsg, player);
-			new SimpleSpeechController(this.npc).speak(message);
+			if (!this.denialMsg.isEmpty()) {
+				SpeechContext message = new SpeechContext(this.npc, this.denialMsg, player);
+				new SimpleSpeechController(this.npc).speak(message);
+			}
 			return;
 			
 		} else if (this.offduty) {
-			SpeechContext message = new SpeechContext(this.npc, this.closedMsg, player);
-			new SimpleSpeechController(this.npc).speak(message);
+			if (!this.closedMsg.isEmpty()) {
+				SpeechContext message = new SpeechContext(this.npc, this.closedMsg, player);
+				new SimpleSpeechController(this.npc).speak(message);
+			}
 			return;
 			
 		} else {
 			ArrayList<String> shoplist = sf.listShops();
 			if (shoplist.contains(this.shop_name)) {
-				SpeechContext message = new SpeechContext(this.npc, this.welcomeMsg, player);
-				new SimpleSpeechController(this.npc).speak(message);
+				if  (!this.welcomeMsg.isEmpty()) {
+					SpeechContext message = new SpeechContext(this.npc, this.welcomeMsg, player);
+					new SimpleSpeechController(this.npc).speak(message);
+				}
 				//shopstock.pages is ArrayList<ArrayList<String>> shopstock.items_count is int
 				new ShopMenu(this.shop_name, 54, plugin, player, player, this.npc);
 				sf=null;
@@ -99,8 +107,10 @@ public class HyperMerchantTrait extends Trait {
 				return;
 				
 			} else {
-				SpeechContext message = new SpeechContext(this.npc, this.closedMsg, player);
-				new SimpleSpeechController(this.npc).speak(message);
+				if  (!this.closedMsg.isEmpty()) {
+					SpeechContext message = new SpeechContext(this.npc, this.closedMsg, player);
+					new SimpleSpeechController(this.npc).speak(message);
+				}
 				plugin.getLogger().info("npc #"+this.npc.getId()+" is assigned to a shop named "+
 						shop_name+". This shop does not exist.");
 				return;
@@ -131,8 +141,10 @@ public class HyperMerchantTrait extends Trait {
 	}
 	
 	public void onFarewell(Player player) {
-		SpeechContext message = new SpeechContext(this.npc, this.farewellMsg, player);
-		new SimpleSpeechController(this.npc).speak(message);
+		if (!this.farewellMsg.isEmpty()) {
+			SpeechContext message = new SpeechContext(this.npc, this.farewellMsg, player);
+			new SimpleSpeechController(this.npc).speak(message);
+		}
 	}
 
 }

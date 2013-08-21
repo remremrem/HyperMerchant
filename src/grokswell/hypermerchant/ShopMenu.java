@@ -6,6 +6,7 @@ import java.util.Arrays;
 import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,6 +24,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import regalowl.hyperconomy.Calculation;
 import regalowl.hyperconomy.DataHandler;
 import regalowl.hyperconomy.EnchantmentClass;
+import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.HyperObject;
 import regalowl.hyperconomy.LanguageFile;
@@ -47,6 +49,7 @@ public class ShopMenu implements Listener {
 	private ShopTransactions shop_trans;
 	NPC npc;
 	ArrayList<ArrayList<String>> pages;
+	HyperAPI hyperAPI = new HyperAPI();
     
     
 	HyperConomy hc = HyperConomy.hc;
@@ -213,13 +216,21 @@ public class ShopMenu implements Listener {
                     }
                     else if (event.isRightClick() && event.isShiftClick()) {
                     	shop_trans.Buy(this.optionNames[slot_num], 16);
+                    	//return;
                     }        
         		}
             }
         	else if (slot_num < size && slot_num >= 0 && (item_in_hand.getTypeId() > 0)){
-        		player.getInventory().addItem(item_in_hand);
-        		this.inventory_view.setCursor(new ItemStack(Material.getMaterial(0)));
-        		shop_trans.Sell(item_in_hand);
+        		if (shop_trans.Sell(item_in_hand)) {
+        			this.inventory_view.setCursor(new ItemStack(Material.getMaterial(0)));
+        			//return;
+        		} else {
+        			player.sendMessage(ChatColor.YELLOW+"This shop does not deal in "+
+							Material.getMaterial(item_in_hand.getTypeId()).name());
+        			player.getInventory().addItem(item_in_hand);
+        			this.inventory_view.setCursor(new ItemStack(Material.getMaterial(0)));
+        			//return;
+        		}
         	}
             else if (slot_num == 46){
 	            this.previousPage();
@@ -242,7 +253,9 @@ public class ShopMenu implements Listener {
     }
     @EventHandler(priority=EventPriority.HIGHEST)
     void onInventoryClose(InventoryCloseEvent event) {
-    	this.npc.getTrait(HyperMerchantTrait.class).onFarewell(player);
+    	if (this.npc != null) {
+    		this.npc.getTrait(HyperMerchantTrait.class).onFarewell(player);
+    	}
     	this.destroy();
     }
     

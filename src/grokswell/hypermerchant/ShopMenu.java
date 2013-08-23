@@ -106,7 +106,7 @@ public class ShopMenu implements Listener {
 	    .setOption(53, new ItemStack(Material.getMaterial(10), 1), "Last page", "Go to the last page.")
 	    .setOption(47, new ItemStack(Material.getMaterial(339), 1), "Left-Click", "Purchase 1 item")
 	    .setOption(48, new ItemStack(Material.getMaterial(339), 1), "Shift+Left-Click", "Purchase 8 items")
-	    .setOption(49, new ItemStack(Material.getMaterial(339), 1), "Shift+Right-Click", "Purchase 16 items")
+	    .setOption(49, new ItemStack(Material.getMaterial(339), 1), "Shift+Right-Click", "Purchase 1 Stack")
 	    .setOption(50, new ItemStack(Material.getMaterial(339), 1), "To Sell:", "Place items in shop inventory")
 	    .setOption(51, new ItemStack(Material.getMaterial(118), 1), " ","");
     	int count = 0;
@@ -215,7 +215,7 @@ public class ShopMenu implements Listener {
                     	}
                     }
                     else if (event.isRightClick() && event.isShiftClick()) {
-                    	shop_trans.Buy(this.optionNames[slot_num], 16);
+                    	shop_trans.Buy(this.optionNames[slot_num], this.optionIcons[slot_num].getMaxStackSize());
                     	//return;
                     }        
         		}
@@ -224,9 +224,15 @@ public class ShopMenu implements Listener {
         		if (shop_trans.Sell(item_in_hand)) {
         			this.inventory_view.setCursor(new ItemStack(Material.getMaterial(0)));
         			//return;
+        		} else if (item_in_hand.getDurability() < item_in_hand.getType().getMaxDurability()){
+        			player.sendMessage(ChatColor.YELLOW+"This shop will not purchase a damaged "+
+							Material.getMaterial(item_in_hand.getTypeId()).name().toLowerCase()+".");
+        			player.getInventory().addItem(item_in_hand);
+        			this.inventory_view.setCursor(new ItemStack(Material.getMaterial(0)));
+        			//return;
         		} else {
         			player.sendMessage(ChatColor.YELLOW+"This shop does not deal in "+
-							Material.getMaterial(item_in_hand.getTypeId()).name());
+							Material.getMaterial(item_in_hand.getTypeId()).name().toLowerCase()+".");
         			player.getInventory().addItem(item_in_hand);
         			this.inventory_view.setCursor(new ItemStack(Material.getMaterial(0)));
         			//return;

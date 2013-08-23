@@ -137,7 +137,6 @@ public class HyperMerchantTrait extends Trait {
 	
 	@Override
 	public void onAttach() {
-
 	}
 	
 	public void onFarewell(Player player) {

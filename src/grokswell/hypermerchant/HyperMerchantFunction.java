@@ -1,5 +1,6 @@
 package grokswell.hypermerchant;
 
+
 import java.util.ArrayList;
 
 import net.citizensnpcs.api.CitizensAPI;
@@ -40,7 +41,9 @@ public class HyperMerchantFunction {
 						if (shoplist.contains(args[1])) {
 							//this_npc.getTrait(HyperMerchantTrait.class).trait_key.setString("shop_name",args[0]);
 							this_npc.getTrait(HyperMerchantTrait.class).shop_name = args[1];
-							this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+							if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+								this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+							}
 							sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" has been assigned to shop "+
 												this_npc.getTrait(HyperMerchantTrait.class).shop_name);
 							return;
@@ -76,11 +79,15 @@ public class HyperMerchantFunction {
 						    buffer.append(' ').append(args[i]);
 						}
 						this_npc.getTrait(HyperMerchantTrait.class).welcomeMsg = buffer.toString();
-						this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+						if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+							this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+						}
 						sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" greeting message has been updated.");
 					} else {
 						this_npc.getTrait(HyperMerchantTrait.class).welcomeMsg = "";
-						this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+						if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+							this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+						}
 						sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer say a greeting to customers.");
 					}
 					
@@ -91,11 +98,15 @@ public class HyperMerchantFunction {
 						    buffer.append(' ').append(args[i]);
 						}
 						this_npc.getTrait(HyperMerchantTrait.class).farewellMsg = buffer.toString();
-						this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+						if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+							this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+						}
 						sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" farewell message has been updated.");
 					} else {
 						this_npc.getTrait(HyperMerchantTrait.class).farewellMsg = "";
-						this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+						if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+							this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+						}
 						sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer say a farewell to customers.");
 					}
 					
@@ -106,11 +117,15 @@ public class HyperMerchantFunction {
 						    buffer.append(' ').append(args[i]);
 						}
 						this_npc.getTrait(HyperMerchantTrait.class).denialMsg = buffer.toString();
-						this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+						if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+							this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+						}
 						sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" denial message has been updated.");
 					} else {
 						this_npc.getTrait(HyperMerchantTrait.class).denialMsg = "";
-						this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+						if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+							this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+						}
 						sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer inform customers that they are being denied service.");
 					}
 					
@@ -121,17 +136,23 @@ public class HyperMerchantFunction {
 						    buffer.append(' ').append(args[i]);
 						}
 						this_npc.getTrait(HyperMerchantTrait.class).closedMsg = buffer.toString();
-						this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+						if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+							this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+						}
 						sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" closed message has been updated.");
 					} else {
 						this_npc.getTrait(HyperMerchantTrait.class).closedMsg = "";
-						this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+						if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+							this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+						}
 						sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer inform customers that when off duty.");
 					}
 					
 				} else if (args[0].equals("offduty")) {
 					this_npc.getTrait(HyperMerchantTrait.class).offduty = !this_npc.getTrait(HyperMerchantTrait.class).offduty;
-					this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+					if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+						this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+					}
 					if (this_npc.getTrait(HyperMerchantTrait.class).offduty) {
 						sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" is now off duty.");
 					} else {
@@ -143,6 +164,7 @@ public class HyperMerchantFunction {
 							ChatColor.RED+"setshop , offduty , greeting , farewell , denial , closed.");
 					return;
 				}
+				return;
 
 			} else {
 				sender.sendMessage(ChatColor.YELLOW+"You must have a hypermerchant npc " +
@@ -151,10 +173,10 @@ public class HyperMerchantFunction {
 			}
 			
 		} catch (Exception e){
+			HMP.getLogger().info("/hypermerchant call threw exception "+e);
 			sender.sendMessage(ChatColor.YELLOW+"You must have a hypermerchant npc " +
 								"selected to use the command "+ChatColor.RED+"/hmerchant.");
 			return;
-		}
-		return;		
+		}	
 	}
 }

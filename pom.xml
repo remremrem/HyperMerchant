@@ -12,6 +12,14 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		<id>bukkit-repo</id>
 		<url>http://repo.bukkit.org/content/groups/public</url>
 		</repository>
+		<repository>
+            <id>citizens-repo</id>
+            <url>http://repo.citizensnpcs.co/</url>
+        </repository>
+        <repository>
+            <id>hyperconomy-repo</id>
+            <url>https://buildhive.cloudbees.com/view/All/job/RegalOwl/</url>
+        </repository>
 	</repositories>
 	<scm>
 	<developerConnection>scm:git:git@github.com:remremrem/HyperMerchant.git</developerConnection>
@@ -22,7 +30,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.6.2-R0.1-SNAPSHOT</version>
+			<version>1.6.2-R0.2-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -31,36 +39,26 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 			<version>0.972-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+            <groupId>net.citizensnpcs</groupId>
+            <artifactId>citizens</artifactId>
+            <version>2.0.9-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
 		</dependencies>
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.0</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<filters>
-								<filter>
-									<artifact>*:*</artifact>
-									<excludes>
-										<exclude>META-INF/*.SF</exclude>
-										<exclude>META-INF/*.DSA</exclude>
-										<exclude>META-INF/*.RSA</exclude>
-									</excludes>
-								</filter>
-							</filters>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

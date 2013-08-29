@@ -63,3 +63,6 @@ permissions:
    hypermerchant.manage:
       description: Allow use of the /hmerchant command.
       default: op
+   creative.hypermerchant:
+      description: Allow player to purchase and sell while in creative mode.
+      default: false

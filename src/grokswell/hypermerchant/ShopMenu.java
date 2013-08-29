@@ -6,6 +6,7 @@ import java.util.Arrays;
 import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -16,6 +17,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
@@ -70,7 +73,7 @@ public class ShopMenu implements Listener {
     	shop_trans = new ShopTransactions(player, this.name, plugin);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         inventory_name = this.name+"<>"+player.getName();
-        inventory = Bukkit.createInventory(player, size, inventory_name);
+        this.inventory = Bukkit.createInventory(player, size, inventory_name);
         
 		ShopStock shopstock = new ShopStock(sender, this.player, this.name, plugin);
         this.item_count=shopstock.items_count;
@@ -195,9 +198,29 @@ public class ShopMenu implements Listener {
         }
         this.inventory_view=player.openInventory(this.inventory);
     }
-   
+    
     @EventHandler(priority=EventPriority.HIGHEST)
     void onInventoryClick(InventoryClickEvent event) {
+    	if (player.getGameMode().compareTo(GameMode.CREATIVE) != 0) {
+    		onInventoryClickOrCreative(event);
+    	} 
+    	else if (player.hasPermission("creative.hypermerchant")){
+    		onInventoryClickOrCreative(event);
+    	} else {
+    		event.setCancelled(true);
+    	}
+    }
+    
+    //@EventHandler(priority=EventPriority.HIGHEST)
+    //void onInventoryCreative(InventoryClickEvent event) {
+    //	if (player.getGameMode().compareTo(GameMode.CREATIVE) == 0) {
+    //		onInventoryClickOrCreative(event);
+    //	} else {
+    //		event.setCancelled(true);
+    //	}
+    //}
+    
+    void onInventoryClickOrCreative(InventoryClickEvent event) {
         if (event.getInventory().getTitle().equals(inventory_name)) {
     		int slot_num = event.getRawSlot();
             if (slot_num < size) {
@@ -257,12 +280,27 @@ public class ShopMenu implements Listener {
             }
         }
     }
+    
     @EventHandler(priority=EventPriority.HIGHEST)
     void onInventoryClose(InventoryCloseEvent event) {
     	if (this.npc != null) {
     		this.npc.getTrait(HyperMerchantTrait.class).onFarewell(player);
     	}
     	this.destroy();
+    }
+    
+    @EventHandler(priority=EventPriority.HIGHEST)
+    void onInventoryMoveItem(InventoryMoveItemEvent event) {
+    	if (event.getSource().equals(this.inventory)) {
+    		event.setCancelled(true);
+    	}
+    }
+    
+    @EventHandler(priority=EventPriority.HIGHEST)
+    void onInventoryDrag(InventoryDragEvent event) {
+    	if (event.getInventory().equals(this.inventory)) {
+    		event.setCancelled(true);
+    	}
     }
     
     public void destroy() {

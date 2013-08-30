@@ -64,18 +64,18 @@ public class ShopMenu implements Listener {
     public ShopMenu(String name, int size, HyperMerchantPlugin plgn,CommandSender sender, Player plyr, NPC npc) {
     	this.name = name;
         this.size = size;
-        plugin = plgn;
+        this.plugin = plgn;
         this.optionNames = new String[size];
         this.page_number=0;
         this.optionIcons = new ItemStack[size];
         this.player=plyr;
         this.npc = npc;
-    	shop_trans = new ShopTransactions(player, this.name, plugin);
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
-        inventory_name = this.name+"<>"+player.getName();
-        this.inventory = Bukkit.createInventory(player, size, inventory_name);
+    	this.shop_trans = new ShopTransactions(player, this.name, this.plugin);
+    	this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
+        this.inventory_name = this.name+"<>"+player.getName();
+        this.inventory = Bukkit.createInventory(player, size, this.inventory_name);
         
-		ShopStock shopstock = new ShopStock(sender, this.player, this.name, plugin);
+		ShopStock shopstock = new ShopStock(sender, this.player, this.name, this.plugin);
         this.item_count=shopstock.items_count;
         pages = shopstock.pages;
         double maxpages = this.item_count/45;
@@ -221,7 +221,7 @@ public class ShopMenu implements Listener {
     //}
     
     void onInventoryClickOrCreative(InventoryClickEvent event) {
-        if (event.getInventory().getTitle().equals(inventory_name)) {
+        if (event.getInventory().getTitle().equals(this.inventory_name)) {
     		int slot_num = event.getRawSlot();
             if (slot_num < size) {
             	event.setCancelled(true);
@@ -231,20 +231,20 @@ public class ShopMenu implements Listener {
         		if (this.optionNames[slot_num] != null && this.optionNames[slot_num] != " ") {
                     if (event.isLeftClick()){
                     	if (event.isShiftClick()){
-                    		shop_trans.Buy(this.optionNames[slot_num], 8);
+                    		this.shop_trans.Buy(this.optionNames[slot_num], 8);
                     	}
                     	else {
-                    		shop_trans.Buy(this.optionNames[slot_num], 1);
+                    		this.shop_trans.Buy(this.optionNames[slot_num], 1);
                     	}
                     }
                     else if (event.isRightClick() && event.isShiftClick()) {
-                    	shop_trans.Buy(this.optionNames[slot_num], this.optionIcons[slot_num].getMaxStackSize());
+                    	this.shop_trans.Buy(this.optionNames[slot_num], this.optionIcons[slot_num].getMaxStackSize());
                     	//return;
                     }        
         		}
             }
         	else if (slot_num < size && slot_num >= 0 && (item_in_hand.getTypeId() > 0)){
-        		if (shop_trans.Sell(item_in_hand)) {
+        		if (this.shop_trans.Sell(item_in_hand)) {
         			this.inventory_view.setCursor(new ItemStack(Material.getMaterial(0)));
         			//return;
         		} else if (item_in_hand.getDurability() < item_in_hand.getType().getMaxDurability()){
@@ -305,11 +305,13 @@ public class ShopMenu implements Listener {
     
     public void destroy() {
         HandlerList.unregisterAll(this);
-        plugin = null;
+        this.plugin = null;
         this.optionNames = null;
         this.optionIcons = null;
         this.inventory = null;
         this.inventory_view = null;
+        this.shop_trans = null;
+        this.inventory_name = null;
     }
    
     private ItemStack setItemNameAndLore(ItemStack item, String name, String[] lore) {

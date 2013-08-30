@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
-import net.citizensnpcs.api.util.MemoryDataKey;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.speech.SimpleSpeechController;
 
@@ -23,6 +23,7 @@ import grokswell.hypermerchant.Settings.Setting;
 public class HyperMerchantTrait extends Trait {
 	HyperAPI hyperAPI = new HyperAPI();
 	String shop_name = hyperAPI.getGlobalShopAccount();
+	ArrayList<String> customers = new ArrayList<String>();
 	final HyperMerchantPlugin plugin;
 
     
@@ -31,6 +32,8 @@ public class HyperMerchantTrait extends Trait {
 	String denialMsg = Setting.DENIAL.asString();
 	String closedMsg = Setting.CLOSED.asString();
 	boolean offduty = Setting.OFFDUTY.asBoolean();
+	
+	ShopMenu SM;
 	
 	public DataKey trait_key;
 
@@ -58,13 +61,31 @@ public class HyperMerchantTrait extends Trait {
 			this.offduty = key.getBoolean("offduty.default");
 
 	}
-
+	
+    class RemoveCustomer extends BukkitRunnable {
+    	String playername;
+        public RemoveCustomer(String plynam) {
+        	playername = plynam;
+        }
+        public void run() {
+            // What you want to schedule goes here
+            customers.remove(playername);
+        }
+    }
+    
 	@EventHandler
 	public void onRightClick(net.citizensnpcs.api.event.NPCRightClickEvent event) {
-		
 		if(this.npc!=event.getNPC()) return;
 		
 		Player player = event.getClicker();
+		if (this.customers.contains(player.getName())){
+			event.setCancelled(true);
+			return;
+		}
+
+		this.customers.add(player.getName());
+		new RemoveCustomer(player.getName()).runTaskLater(this.plugin, 60);
+		this.SM = null;
 		if (!player.hasPermission("hypermerchant.npc")) {
 			if (!this.denialMsg.isEmpty()) {
 				SpeechContext message = new SpeechContext(this.npc, this.denialMsg, player);
@@ -101,7 +122,7 @@ public class HyperMerchantTrait extends Trait {
 					new SimpleSpeechController(this.npc).speak(message);
 				}
 				//shopstock.pages is ArrayList<ArrayList<String>> shopstock.items_count is int
-				new ShopMenu(this.shop_name, 54, plugin, player, player, this.npc);
+				this.SM = new ShopMenu(this.shop_name, 54, plugin, player, player, this.npc);
 				sf=null;
 				hc=null;
 				return;
@@ -118,11 +139,11 @@ public class HyperMerchantTrait extends Trait {
 		}
 	}
 	
-	@EventHandler
-	public void onLeftClick(net.citizensnpcs.api.event.NPCLeftClickEvent event) {
-		DataKey dk = new MemoryDataKey();
-		this.plugin.getLogger().info("dk: "+dk.toString());
-	}
+	//@EventHandler
+	//public void onLeftClick(net.citizensnpcs.api.event.NPCLeftClickEvent event) {
+	//	DataKey dk = new MemoryDataKey();
+	//	this.plugin.getLogger().info("dk: "+dk.toString());
+	//}
 
 	@Override
 	public void save(DataKey key) {

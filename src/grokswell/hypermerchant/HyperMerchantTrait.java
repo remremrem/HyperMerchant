@@ -1,8 +1,11 @@
 package grokswell.hypermerchant;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -24,6 +27,7 @@ public class HyperMerchantTrait extends Trait {
 	HyperAPI hyperAPI = new HyperAPI();
 	String shop_name = hyperAPI.getGlobalShopAccount();
 	ArrayList<String> customers = new ArrayList<String>();
+	HashMap<String,ShopMenu> customer_menus = new HashMap<String,ShopMenu>();
 	final HyperMerchantPlugin plugin;
 
     
@@ -32,8 +36,6 @@ public class HyperMerchantTrait extends Trait {
 	String denialMsg = Setting.DENIAL.asString();
 	String closedMsg = Setting.CLOSED.asString();
 	boolean offduty = Setting.OFFDUTY.asBoolean();
-	
-	ShopMenu SM;
 	
 	public DataKey trait_key;
 
@@ -78,14 +80,25 @@ public class HyperMerchantTrait extends Trait {
 		if(this.npc!=event.getNPC()) return;
 		
 		Player player = event.getClicker();
+		
 		if (this.customers.contains(player.getName())){
 			event.setCancelled(true);
 			return;
 		}
-
 		this.customers.add(player.getName());
 		new RemoveCustomer(player.getName()).runTaskLater(this.plugin, 60);
-		this.SM = null;
+		
+		if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 
+		   (!player.hasPermission("creative.hypermerchant"))) {
+			
+			event.setCancelled(true);
+			player.sendMessage(ChatColor.YELLOW+"You may not interact with merchants while in creative mode.");
+			return;
+    	} 
+		
+		
+		//this.customer_menus.put(player.getName(), null);
+		
 		if (!player.hasPermission("hypermerchant.npc")) {
 			if (!this.denialMsg.isEmpty()) {
 				SpeechContext message = new SpeechContext(this.npc, this.denialMsg, player);
@@ -122,7 +135,7 @@ public class HyperMerchantTrait extends Trait {
 					new SimpleSpeechController(this.npc).speak(message);
 				}
 				//shopstock.pages is ArrayList<ArrayList<String>> shopstock.items_count is int
-				this.SM = new ShopMenu(this.shop_name, 54, plugin, player, player, this.npc);
+				this.customer_menus.put(player.getName(), new ShopMenu(this.shop_name, 54, plugin, player, player, this.npc));
 				sf=null;
 				hc=null;
 				return;

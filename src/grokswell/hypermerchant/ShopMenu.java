@@ -283,10 +283,14 @@ public class ShopMenu implements Listener {
     
     @EventHandler(priority=EventPriority.HIGHEST)
     void onInventoryClose(InventoryCloseEvent event) {
-    	if (this.npc != null) {
-    		this.npc.getTrait(HyperMerchantTrait.class).onFarewell(player);
+    	if (event.getPlayer().equals(player)) {
+	    	if (this.npc != null) {
+	    		this.npc.getTrait(HyperMerchantTrait.class).customer_menus.put(player.getName(), null);
+	    		this.npc.getTrait(HyperMerchantTrait.class).customer_menus.remove(player.getName());
+	    		this.npc.getTrait(HyperMerchantTrait.class).onFarewell(player);
+	    	}
+	    	this.destroy();
     	}
-    	this.destroy();
     }
     
     @EventHandler(priority=EventPriority.HIGHEST)

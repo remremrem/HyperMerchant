@@ -112,7 +112,7 @@ public class ShopMenu implements Listener {
 	    .setOption(48, new ItemStack(Material.getMaterial(339), 1), "Shift+Left-Click", "Purchase 8 items")
 	    .setOption(49, new ItemStack(Material.getMaterial(339), 1), "Shift+Right-Click", "Purchase 1 Stack")
 	    .setOption(50, new ItemStack(Material.getMaterial(339), 1), "To Sell:", "Place items in shop inventory")
-	    .setOption(51, new ItemStack(Material.getMaterial(118), 1), " ","");
+	    .setOption(51, new ItemStack(Material.getMaterial(118), 1), "Enchantments:","Have target item in hand");
     	int count = 0;
 		ArrayList<String> page=(ArrayList<String>) pages.get(this.page_number);
 		

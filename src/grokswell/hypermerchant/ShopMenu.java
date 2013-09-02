@@ -76,7 +76,8 @@ public class ShopMenu implements Listener {
         this.inventory = Bukkit.createInventory(player, size, this.inventory_name);
         
 		ShopStock shopstock = new ShopStock(sender, this.player, this.name, this.plugin);
-        this.item_count=shopstock.items_count;
+        shopstock.SortStock(2);
+		this.item_count=shopstock.items_count;
         pages = shopstock.pages;
         double maxpages = this.item_count/45;
         this.last_page = (int) maxpages;

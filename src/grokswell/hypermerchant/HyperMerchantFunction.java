@@ -2,6 +2,9 @@ package grokswell.hypermerchant;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -26,21 +29,48 @@ public class HyperMerchantFunction {
 		//String shopname = sname;
 		this.sender = snder;
 		Player player = (Player) snder;
-		NPCSelector sel = CitizensAPI.getDefaultNPCSelector();
-		
-		try {
-			NPC this_npc = sel.getSelected(player);
-			if (this_npc.hasTrait(HyperMerchantTrait.class)) {
+		NPCSelector sel = CitizensAPI.getDefaultNPCSelector(); 
+		List<String> argslist = Arrays.asList(args);
 				
+		try {
+			NPC this_npc;
+			StringBuilder buffer = new StringBuilder();
+			String shopname;
+			
+			if (argslist.contains("--id")) {
+				int id_index = argslist.indexOf("--id") + 1;
+				this_npc = CitizensAPI.getNPCRegistry().getById(Integer.parseInt(args[id_index]));
+				
+				if (id_index > 2) {
+					shopname = args[1];
+					for(int i = 1; i < id_index-1; i++) {
+					    buffer.append(' ').append(args[i]);
+					} 
+				} else {
+					shopname = args[id_index+1];
+					for(int i = id_index+1; i < args.length; i++) {
+					    buffer.append(' ').append(args[i]);
+					}
+				}
+				
+			} else {
+				this_npc = sel.getSelected(player);
+				shopname = args[1];
+				for(int i = 1; i < args.length; i++) {
+				    buffer.append(' ').append(args[i]);
+				}
+			}
+			
+			if (this_npc.hasTrait(HyperMerchantTrait.class)) {
 				if (args[0].equals("setshop")) {
 					if (args.length>1) {
 						HyperConomy hc = HyperConomy.hc;
 						ShopFactory sf = hc.getShopFactory();
 						ArrayList<String> shoplist = sf.listShops();
 						
-						if (shoplist.contains(args[1])) {
+						if (shoplist.contains(shopname)) {
 							//this_npc.getTrait(HyperMerchantTrait.class).trait_key.setString("shop_name",args[0]);
-							this_npc.getTrait(HyperMerchantTrait.class).shop_name = args[1];
+							this_npc.getTrait(HyperMerchantTrait.class).shop_name = shopname;
 							if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
 								this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
 							}
@@ -74,10 +104,6 @@ public class HyperMerchantFunction {
 					
 				} else if (args[0].equals("greeting")) {
 					if (args.length>1) {
-						StringBuilder buffer = new StringBuilder();
-						for(int i = 1; i < args.length; i++) {
-						    buffer.append(' ').append(args[i]);
-						}
 						this_npc.getTrait(HyperMerchantTrait.class).welcomeMsg = buffer.toString();
 						if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
 							this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
@@ -93,10 +119,6 @@ public class HyperMerchantFunction {
 					
 				} else if (args[0].equals("farewell")) {
 					if (args.length>1) {
-						StringBuilder buffer = new StringBuilder();
-						for(int i = 1; i < args.length; i++) {
-						    buffer.append(' ').append(args[i]);
-						}
 						this_npc.getTrait(HyperMerchantTrait.class).farewellMsg = buffer.toString();
 						if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
 							this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
@@ -112,10 +134,6 @@ public class HyperMerchantFunction {
 					
 				} else if (args[0].equals("denial")) {
 					if (args.length>1) {
-						StringBuilder buffer = new StringBuilder();
-						for(int i = 1; i < args.length; i++) {
-						    buffer.append(' ').append(args[i]);
-						}
 						this_npc.getTrait(HyperMerchantTrait.class).denialMsg = buffer.toString();
 						if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
 							this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
@@ -131,10 +149,6 @@ public class HyperMerchantFunction {
 					
 				} else if (args[0].equals("closed")) {
 					if (args.length>1) {
-						StringBuilder buffer = new StringBuilder();
-						for(int i = 1; i < args.length; i++) {
-						    buffer.append(' ').append(args[i]);
-						}
 						this_npc.getTrait(HyperMerchantTrait.class).closedMsg = buffer.toString();
 						if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
 							this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);

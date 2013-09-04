@@ -1,6 +1,6 @@
 name: HyperMerchant
 main: grokswell.hypermerchant.HyperMerchantPlugin
-version: 1.10
+version: 1.15
 description: Inventory menu to be used with HyperConomy shops and NPC trait for Citizens2.
 author: Grokswell
 authors: [Grokswell] 
@@ -28,16 +28,16 @@ commands:
       aliases: [rslist]
    hmerchant:
       description: Set the properties of the currently selected hypermerchant npc.
-      usage: "\n§4/hmerchant §csetshop §a[shopname] §e- Set shop of selected hypermerchant.
+      usage: "\n§4/hmerchant §csetshop §a[shopname] §6[--id idnum] §e- Set shop of selected hypermerchant.
   	    Set to shop player is standing in if no [shopname] argument provided.\n\n
-  	    §4/hmerchant §coffduty §e- Toggle npc in and out of offduty mode.\n\n
-        §4/hmerchant §cgreeting §a[welcome message] §e- Set text NPC says upon player interaction.
+  	    §4/hmerchant §coffduty §6[--id idnum] §e- Toggle npc in and out of offduty mode.\n\n
+        §4/hmerchant §cgreeting §a[welcome message] §6[--id idnum] §e- Set text NPC says upon player interaction.
   	    Leave [welcome message] argument empty for no text.\n\n
-        §4/hmerchant §cfarewell §a[goodbye message] §e- Set text NPC says upon player closing menu.
+        §4/hmerchant §cfarewell §a[goodbye message] §6[--id idnum] §e- Set text NPC says upon player closing menu.
   	    Leave [goodbye message] argument empty for no text.\n\n
-        §4/hmerchant §cdenial §a[deny message] §e- Set text NPC says when player is not permitted to use a shop.
+        §4/hmerchant §cdenial §a[deny message] §6[--id idnum] §e- Set text NPC says when player is not permitted to use a shop.
   	    Leave [deny message] argument empty for no text.\n\n
-  	    §4/hmerchant §cclosed §a[closed message] §e- Set text NPC says to a player when NPC is off duty.
+  	    §4/hmerchant §cclosed §a[closed message] §6[--id idnum] §e- Set text NPC says to a player when NPC is off duty.
   	    Leave [closed message] argument empty for no text."
       permission: hypermerchant.manage
       permission-message: You do not have permission to use command /hmerchant.

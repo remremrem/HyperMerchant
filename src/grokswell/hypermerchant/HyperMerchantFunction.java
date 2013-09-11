@@ -28,41 +28,80 @@ public class HyperMerchantFunction {
 		//DataHandler hc_functions = hc.getDataFunctions();
 		//String shopname = sname;
 		this.sender = snder;
-		Player player = (Player) snder;
+		Player player = null;
 		NPCSelector sel = CitizensAPI.getDefaultNPCSelector(); 
 		List<String> argslist = Arrays.asList(args);
-				
+		
+		if (!(sender instanceof Player)) {
+			if ((!argslist.contains("--id")) && (!args[0].equals("list"))) {
+				sender.sendMessage(ChatColor.YELLOW+"You must have an NPC selected or use the --id flag to execute this commnad");
+				return;
+			}
+		} else {
+			player = (Player) snder;
+		}
+		
 		try {
 			NPC this_npc;
 			StringBuilder buffer = new StringBuilder();
-			String shopname;
+			String shopname = null;
 			
-			if (argslist.contains("--id")) {
+			
+			
+			if (args[0].equals("list")) {
+				for (NPC npc: CitizensAPI.getNPCRegistry()) {
+					if (npc.hasTrait(HyperMerchantTrait.class)) {
+						if (npc.getTrait(HyperMerchantTrait.class).offduty) {
+							sender.sendMessage(ChatColor.YELLOW+npc.getName()+" is OFFDUTY");
+						} else {
+							sender.sendMessage(ChatColor.YELLOW+npc.getName()+" is ONDUTY");
+						}
+						sender.sendMessage(ChatColor.YELLOW+"ID: " + String.valueOf(npc.getId()) + " , SHOP: "+ npc.getTrait(HyperMerchantTrait.class).shop_name +"\n");
+					}
+				}
+				return;
+				
+			} else if (argslist.contains("--id")) {
 				int id_index = argslist.indexOf("--id") + 1;
 				this_npc = CitizensAPI.getNPCRegistry().getById(Integer.parseInt(args[id_index]));
 				
 				if (id_index > 2) {
-					shopname = args[1];
+					if (args[0].equals("setshop")) {
+						shopname = args[1];
+					}
 					for(int i = 1; i < id_index-1; i++) {
 					    buffer.append(' ').append(args[i]);
 					} 
 				} else {
-					shopname = args[id_index+1];
+					if (args[0].equals("setshop")) {
+						shopname = args[id_index+1];
+					}
 					for(int i = id_index+1; i < args.length; i++) {
 					    buffer.append(' ').append(args[i]);
 					}
 				}
 				
-			} else {
+			}  else {
+			
 				this_npc = sel.getSelected(player);
-				shopname = args[1];
+				if (args[0].equals("setshop")) {
+					shopname = args[1];
+				}
 				for(int i = 1; i < args.length; i++) {
 				    buffer.append(' ').append(args[i]);
 				}
 			}
 			
 			if (this_npc.hasTrait(HyperMerchantTrait.class)) {
-				if (args[0].equals("setshop")) {
+				if (args[0].equals("info")) {
+						if (this_npc.getTrait(HyperMerchantTrait.class).offduty) {
+							sender.sendMessage("\n"+ChatColor.YELLOW+this_npc.getName()+" is OFFDUTY");
+						} else {
+							sender.sendMessage("\n"+ChatColor.YELLOW+this_npc.getName()+" is ONDUTY");
+						}
+						sender.sendMessage(ChatColor.YELLOW+"ID: " + String.valueOf(this_npc.getId()) + " , SHOP: "+ this_npc.getTrait(HyperMerchantTrait.class).shop_name +"\n");
+				
+				} else if (args[0].equals("setshop")) {
 					if (args.length>1) {
 						HyperConomy hc = HyperConomy.hc;
 						ShopFactory sf = hc.getShopFactory();
@@ -173,7 +212,7 @@ public class HyperMerchantFunction {
 						sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" is now on duty.");
 					}
 
-				} else {
+				}else {
 					sender.sendMessage(ChatColor.YELLOW+"Valid "+ChatColor.DARK_RED+"/hmerchant"+ChatColor.YELLOW+" subcommands are:\n" +
 							ChatColor.RED+"setshop , offduty , greeting , farewell , denial , closed.");
 					return;

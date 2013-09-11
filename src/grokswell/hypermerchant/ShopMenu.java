@@ -104,15 +104,15 @@ public class ShopMenu implements Listener {
     	this.optionIcons = new ItemStack[size];
     	this.optionNames = null;
     	this.optionNames = new String[size];
-    	this.setOption(46, new ItemStack(Material.getMaterial(9), 1), "Back 1", "Go back to the previous page.")
-	    .setOption(45, new ItemStack(Material.getMaterial(10), 1), "First Page", "Go to the first page.")
-	    .setOption(52, new ItemStack(Material.getMaterial(9), 1), "Forward 1", "Go to the next page.")
-	    .setOption(53, new ItemStack(Material.getMaterial(10), 1), "Last page", "Go to the last page.")
-	    .setOption(47, new ItemStack(Material.getMaterial(339), 1), "Left-Click", "Purchase 1 item")
-	    .setOption(48, new ItemStack(Material.getMaterial(339), 1), "Shift+Left-Click", "Purchase 8 items")
-	    .setOption(49, new ItemStack(Material.getMaterial(339), 1), "Shift+Right-Click", "Purchase 1 Stack")
-	    .setOption(50, new ItemStack(Material.getMaterial(339), 1), "To Sell:", "Place items in shop inventory")
-	    .setOption(51, new ItemStack(Material.getMaterial(118), 1), "Enchantments:","Have target item in hand");
+    	this.setOption(46, new ItemStack(Material.STATIONARY_WATER, 1), "Back 1", "Go back to the previous page.")
+	    .setOption(45, new ItemStack(Material.STATIONARY_LAVA, 1), "First Page", "Go to the first page.")
+	    .setOption(52, new ItemStack(Material.STATIONARY_WATER, 1), "Forward 1", "Go to the next page.")
+	    .setOption(53, new ItemStack(Material.STATIONARY_LAVA, 1), "Last page", "Go to the last page.")
+	    .setOption(47, new ItemStack(Material.PAPER, 1), "Left-Click", "Purchase 1 item")
+	    .setOption(48, new ItemStack(Material.PAPER, 1), "Shift+Left-Click", "Purchase 8 items")
+	    .setOption(49, new ItemStack(Material.PAPER, 1), "Shift+Right-Click", "Purchase 1 Stack")
+	    .setOption(50, new ItemStack(Material.PAPER, 1), "To Sell:", "Place items in shop inventory")
+	    .setOption(51, new ItemStack(Material.PAPER, 1), "Enchantments:","Have target item in hand");
     	int count = 0;
 		ArrayList<String> page=(ArrayList<String>) pages.get(this.page_number);
 		
@@ -132,7 +132,7 @@ public class ShopMenu implements Listener {
 			}
 			ItemStack stack;
 			if (item.equals("xp")) {
-				stack = new ItemStack(Material.getMaterial(1), 1);
+				stack = new ItemStack(Material.STONE, 1);
 			}
 			else {
 				stack = new ItemStack(Material.getMaterial(ho.getId()), 1, (short) ho.getData());
@@ -143,7 +143,7 @@ public class ShopMenu implements Listener {
 		
 		ItemStack stack;
 	    while (count < size-9) {
-			stack = new ItemStack(Material.getMaterial(118), 1);
+			stack = new ItemStack(Material.CAULDRON, 1);
 	    	this.setOption(count, stack, " ", " ");
 	    	count++;
 	    }

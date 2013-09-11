@@ -10,6 +10,7 @@ import net.citizensnpcs.api.CitizensAPI;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -47,6 +48,13 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			}
 			
 			Player player = (Player) sender;
+			
+			if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 
+				(!player.hasPermission("creative.hypermerchant"))) {
+					player.sendMessage(ChatColor.YELLOW+"You may not interact with shops while in creative mode.");
+					return true;
+			} 
+			
 			HyperConomy hc = HyperConomy.hc;
 			ShopFactory sf = hc.getShopFactory();
 			ArrayList<String> shoplist = sf.listShops();
@@ -81,6 +89,13 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			}
 			
 			Player player = (Player) sender;
+			
+			if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 
+					(!player.hasPermission("creative.hypermerchant"))) {
+						player.sendMessage(ChatColor.YELLOW+"You may not interact with shops while in creative mode.");
+						return true;
+				} 
+			
 			String name=hyperAPI.getPlayerShop(player);
 			if (name.isEmpty()) {
 				sender.sendMessage(ChatColor.YELLOW+"You must be standing inside " +
@@ -102,13 +117,6 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		
 		//HYPERMERCHANT
 		else if (cmd.getName().equalsIgnoreCase("hmerchant")) {
-			if (!(sender instanceof Player)) {
-				sender.sendMessage("Only players can use the command "+ChatColor.RED+"/hmerchant");
-				return true;
-			}
-			
-			//Player player = (Player) sender;
-			
 			if (args.length < 1) {
 				//player.performCommand("help hypermerchant");
 				return false;	

@@ -1,6 +1,6 @@
 name: HyperMerchant
 main: grokswell.hypermerchant.HyperMerchantPlugin
-version: 1.15
+version: 1.2
 description: Inventory menu to be used with HyperConomy shops and NPC trait for Citizens2.
 author: Grokswell
 authors: [Grokswell] 
@@ -38,7 +38,9 @@ commands:
         §4/hmerchant §cdenial §a[deny message] §6[--id idnum] §e- Set text NPC says when player is not permitted to use a shop.
   	    Leave [deny message] argument empty for no text.\n\n
   	    §4/hmerchant §cclosed §a[closed message] §6[--id idnum] §e- Set text NPC says to a player when NPC is off duty.
-  	    Leave [closed message] argument empty for no text."
+  	    Leave [closed message] argument empty for no text.\n\n
+  	    §4/hmerchant §clist §e- List information of all existing hypermerchant NPCs.\n\n
+  	    §4/hmerchant §cinfo §6[--id idnum] §e- Show information of a single hypermerchant."
       permission: hypermerchant.manage
       permission-message: You do not have permission to use command /hmerchant.
       aliases: [hmerch]

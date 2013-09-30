@@ -2,6 +2,8 @@ package grokswell.hypermerchant;
 
 //import static java.lang.System.out;
 
+import static java.lang.System.out;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,9 +35,11 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	HyperObjectAPI objectAPI = new HyperObjectAPI();
 	HyperAPI hyperAPI = new HyperAPI();
 	FileConfiguration itemsyaml;
+	FileConfiguration enchantsyaml;
 	YamlFile yaml1;
 	//use "items_by_id" for reverse lookup of hyperconomy item names <id:data, name>
-	HashMap<String,String> items_by_id = new HashMap<String, String>(); 
+	HashMap<String,String> items_by_id = new HashMap<String, String>();
+	HashMap<String,String> enchants_by_name = new HashMap<String, String>(); 
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args) {
@@ -147,13 +151,22 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		itemsyaml = yaml1.getItems();
 		Iterator<String> it = itemsyaml.getKeys(false).iterator();
 		while (it.hasNext()) {
-			String name = it.next().toString();
-			int id = itemsyaml.getInt(name + ".information.id");
-			int data = itemsyaml.getInt(name + ".information.data");
+			String iname = it.next().toString();
+			int id = itemsyaml.getInt(iname + ".information.id");
+			int data = itemsyaml.getInt(iname + ".information.data");
 			String newkey = Integer.toString(id) +":"+ Integer.toString(data);
-			items_by_id.put(newkey,name);
+			items_by_id.put(newkey,iname);
 		}
-		
+
+		enchantsyaml=yaml1.getEnchants();
+		it = enchantsyaml.getKeys(false).iterator();
+		while (it.hasNext()) {
+			String iname = it.next().toString();
+			if (enchantsyaml.getString(iname + ".information.name") != "null") {
+			    enchants_by_name.put(iname, enchantsyaml.getString(iname + ".information.name"));
+			}
+		}
+
 		if (Bukkit.getPluginManager().getPlugin("Citizens") != null) {
 			CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(HyperMerchantTrait.class).withName("hypermerchant"));
 		

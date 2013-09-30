@@ -3,6 +3,7 @@ package grokswell.hypermerchant;
 import java.util.ArrayList;
 
 import org.bukkit.GameMode;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -39,7 +40,24 @@ public class ShopTransactions {
 		shopname=sname;
 
 	}
-	
+	//SELL ENCHANT
+	public boolean Sell(String enchant) {
+		HyperPlayer hp = hc_functions.getHyperPlayer(player);
+			if (player.getGameMode() == GameMode.CREATIVE && hc.s().gB("block-selling-in-creative-mode")) {
+				player.sendMessage(hc_lang.get("CANT_SELL_CREATIVE"));
+				return false;
+			}
+		if ((hc_factory.getShop(shopname).has(enchant))) {
+			HyperObject ho = hc_functions.getHyperObject(enchant, hp.getEconomy());
+			if (!hc.isLocked()) {
+				TransactionResponse response = hyperObAPI.sell(player, ho, 1);
+				response.sendMessages();
+				return true;
+			}
+		}
+		return false;
+	}
+	//SELL ITEM
 	public boolean Sell(ItemStack item_stack) {
 		HyperPlayer hp = hc_functions.getHyperPlayer(player);
 			if (player.getGameMode() == GameMode.CREATIVE && hc.s().gB("block-selling-in-creative-mode")) {

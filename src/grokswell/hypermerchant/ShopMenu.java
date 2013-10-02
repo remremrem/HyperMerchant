@@ -139,26 +139,25 @@ public class ShopMenu implements Listener {
 	        double cost = 0.0;
 	        double costtax =0.0;
 	        double value = 0.0;
-	        double valuetax = 0.0;
 	        double stock = 0.0;
 	        
 			HyperObject ho = hc_functions.getHyperObject(item, this.economy_name);
 	        if (hc_functions.itemTest(item)) {
-				//value =hoa.getTrueSaleValue(ho.getId(),ho.getDurability(),1,this.player);
-				value = ho.getValue();
-				valuetax = ho.getSalesTaxEstimate(cost);
-				value = hc_calc.twoDecimals(value + valuetax);
+				value = ho.getValue(1);
+				value = hc_calc.twoDecimals(value - ho.getSalesTaxEstimate(value));
 	        	cost = ho.getCost(1);
 				costtax = ho.getPurchaseTax(cost);
 				cost = hc_calc.twoDecimals(cost + costtax);
 				stock = hc_functions.getHyperObject(item, this.economy_name).getStock();
 			} else if (hc_functions.enchantTest(item)) {
-				cost = ho.getCost(EnchantmentClass.DIAMOND);
+				cost = ho.getCost(1);
 				cost = cost + ho.getPurchaseTax(cost);
 				stock = hc_functions.getHyperObject(item, this.economy_name).getStock();
 				value = hoa.getTrueSaleValue(ho, hc_functions.getHyperPlayer(player.getName()), 
 						EnchantmentClass.DIAMOND, 1);
+				value = value-ho.getSalesTaxEstimate(value);
 			}
+	        
 			ItemStack stack;
 			if (item.equals("xp")) {
 				stack = new ItemStack(Material.STONE, 1);
@@ -166,6 +165,7 @@ public class ShopMenu implements Listener {
 			else {
 				stack = new ItemStack(Material.getMaterial(ho.getId()), 1, (short) ho.getData());
 			}
+			
 			this.setOption(count, stack, item, ChatColor.WHITE+"Price: "+ChatColor.DARK_PURPLE+String.valueOf(cost),
 					ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.valueOf(value), 
 					ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) stock) );

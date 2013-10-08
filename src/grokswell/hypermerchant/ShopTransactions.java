@@ -68,6 +68,7 @@ public class ShopTransactions {
 		int item_amount = item_stack.getAmount();
 		String item_id = Integer.toString(item_stack.getTypeId());
 		String item_data = Integer.toString(item_stack.getData().getData());
+		//if item is a tool, in toollist..
 		if (plugin.items_by_id.containsKey(item_id+":"+item_data)) {
 			item_name=plugin.items_by_id.get(item_id+":"+item_data);
 		}
@@ -86,6 +87,10 @@ public class ShopTransactions {
 	public void Buy(String item, int qty) {
 		HyperPlayer hp = hc_functions.getHyperPlayer(player);
 		HyperObject ho = hc_functions.getHyperObject(item, hp.getEconomy());
+		if (!hp.hasBuyPermission(hc_factory.getShop(shopname))) {
+			player.sendMessage("You cannot buy from this shop.");
+			return;
+		}
 		if (!hc.isLocked()) {
 			TransactionResponse response = hyperObAPI.buy(player, ho, qty);
 			response.sendMessages();

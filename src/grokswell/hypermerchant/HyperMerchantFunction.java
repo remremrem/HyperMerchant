@@ -14,9 +14,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import regalowl.hyperconomy.EconomyManager;
 import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.HyperConomy;
-import regalowl.hyperconomy.ShopFactory;
 
 public class HyperMerchantFunction {
 	CommandSender sender;
@@ -104,8 +104,8 @@ public class HyperMerchantFunction {
 				} else if (args[0].equals("setshop")) {
 					if (args.length>1) {
 						HyperConomy hc = HyperConomy.hc;
-						ShopFactory sf = hc.getShopFactory();
-						ArrayList<String> shoplist = sf.listShops();
+						EconomyManager ecoMan = hc.getEconomyManager();
+						ArrayList<String> shoplist = ecoMan.listShops();
 						
 						if (shoplist.contains(shopname)) {
 							//this_npc.getTrait(HyperMerchantTrait.class).trait_key.setString("shop_name",args[0]);

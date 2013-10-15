@@ -7,14 +7,14 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import regalowl.hyperconomy.DataHandler;
+import regalowl.hyperconomy.EconomyManager;
 import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.HyperConomy;
+import regalowl.hyperconomy.HyperEconomy;
 import regalowl.hyperconomy.HyperObject;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperPlayer;
 import regalowl.hyperconomy.LanguageFile;
-import regalowl.hyperconomy.ShopFactory;
 import regalowl.hyperconomy.TransactionResponse;
 
 public class ShopTransactions {
@@ -23,43 +23,41 @@ public class ShopTransactions {
 	String shopname;
 	private Player player;
 	private HyperConomy hc;
-	private DataHandler hc_functions;
 	private LanguageFile hc_lang;
-	private ShopFactory hc_factory;
+	private EconomyManager ecoMan;
     private HyperMerchantPlugin plugin;
+    HyperPlayer hp;
+    HyperEconomy hEcon;
 	HyperObjectAPI hyperObAPI = new HyperObjectAPI();
 	HyperAPI hyperAPI = new HyperAPI();
 	
 	public ShopTransactions(Player plyr, String sname, HyperMerchantPlugin plgn) {
-		hc = HyperConomy.hc;
-		hc_functions = hc.getDataFunctions();
-		hc_lang = hc.getLanguageFile();
-		hc_factory = hc.getShopFactory();
 		player=plyr;
 		plugin=plgn;
 		shopname=sname;
+		hc = HyperConomy.hc;
+		ecoMan = hc.getEconomyManager();
+		hp = ecoMan.getHyperPlayer(player);
+	    hEcon = hp.getHyperEconomy();
+		hc_lang = hc.getLanguageFile();
 
 	}
 	//SELL ENCHANT
 	public boolean Sell(String enchant) {
-		HyperPlayer hp = hc_functions.getHyperPlayer(player);
 			if (player.getGameMode() == GameMode.CREATIVE && hc.s().gB("block-selling-in-creative-mode")) {
 				player.sendMessage(hc_lang.get("CANT_SELL_CREATIVE"));
 				return false;
 			}
-		if ((hc_factory.getShop(shopname).has(enchant))) {
-			HyperObject ho = hc_functions.getHyperObject(enchant, hp.getEconomy());
-			if (!hc.isLocked()) {
-				TransactionResponse response = hyperObAPI.sell(player, ho, 1);
-				response.sendMessages();
-				return true;
-			}
+		if ((ecoMan.getShop(shopname).has(enchant))) {
+			HyperObject ho = hEcon.getHyperObject(enchant);
+			TransactionResponse response = hyperObAPI.sell(player, ho, 1);
+			response.sendMessages();
+			return true;
 		}
 		return false;
 	}
 	//SELL ITEM
 	public boolean Sell(ItemStack item_stack) {
-		HyperPlayer hp = hc_functions.getHyperPlayer(player);
 			if (player.getGameMode() == GameMode.CREATIVE && hc.s().gB("block-selling-in-creative-mode")) {
 				player.sendMessage(hc_lang.get("CANT_SELL_CREATIVE"));
 				return false;
@@ -72,29 +70,25 @@ public class ShopTransactions {
 		if (plugin.items_by_id.containsKey(item_id+":"+item_data)) {
 			item_name=plugin.items_by_id.get(item_id+":"+item_data);
 		}
-		if ((!item_name.equals("air")) && (hc_factory.getShop(shopname).has(item_name))) {
+		if ((!item_name.equals("air")) && (ecoMan.getShop(shopname).has(item_name))) {
 			player.getInventory().addItem(item_stack);
-			HyperObject ho = hc_functions.getHyperObject(item_name, hp.getEconomy());
-			if (!hc.isLocked()) {
-				TransactionResponse response = hyperObAPI.sell(player, ho, item_amount);
-				response.sendMessages();
-				return true;
-			}
+			HyperObject ho = hEcon.getHyperObject(item_name);
+			TransactionResponse response = hyperObAPI.sell(player, ho, item_amount);
+			response.sendMessages();
+			return true;
+			
 		}
 		return false;
 	}
 	
 	public void Buy(String item, int qty) {
-		HyperPlayer hp = hc_functions.getHyperPlayer(player);
-		HyperObject ho = hc_functions.getHyperObject(item, hp.getEconomy());
-		if (!hp.hasBuyPermission(hc_factory.getShop(shopname))) {
+		HyperObject ho = hEcon.getHyperObject(item);
+		if (!hp.hasBuyPermission(ecoMan.getShop(shopname))) {
 			player.sendMessage("You cannot buy from this shop.");
 			return;
 		}
-		if (!hc.isLocked()) {
-			TransactionResponse response = hyperObAPI.buy(player, ho, qty);
-			response.sendMessages();
-		}
+		TransactionResponse response = hyperObAPI.buy(player, ho, qty);
+		response.sendMessages();
 	}
 
 }

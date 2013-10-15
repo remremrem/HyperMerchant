@@ -30,15 +30,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import regalowl.hyperconomy.Calculation;
-import regalowl.hyperconomy.DataHandler;
+import regalowl.hyperconomy.EconomyManager;
 import regalowl.hyperconomy.EnchantmentClass;
 import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.HyperConomy;
+import regalowl.hyperconomy.HyperEconomy;
 import regalowl.hyperconomy.HyperObject;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperPlayer;
 import regalowl.hyperconomy.LanguageFile;
-import regalowl.hyperconomy.ShopFactory;
 
 import grokswell.hypermerchant.ShopTransactions;
  
@@ -62,12 +62,12 @@ public class ShopMenu implements Listener {
 	ArrayList<ArrayList<String>> pages;
 	HyperAPI hyperAPI = new HyperAPI();
 	HyperObjectAPI hoa = new HyperObjectAPI();
-	HyperPlayer hp;
     
     
 	HyperConomy hc = HyperConomy.hc;
-	ShopFactory hc_factory = hc.getShopFactory();
-	DataHandler hc_functions = hc.getDataFunctions();
+	EconomyManager ecoMan = hc.getEconomyManager();
+	HyperPlayer hp;
+    HyperEconomy hEcon;
 	Calculation hc_calc = hc.getCalculation();
 	LanguageFile hc_lang = hc.getLanguageFile();
 	
@@ -85,6 +85,9 @@ public class ShopMenu implements Listener {
         this.inventory_name = this.name+"<>"+player.getName();
         this.inventory = Bukkit.createInventory(player, size, this.inventory_name);
         this.economy_name = hyperAPI.getShopEconomy(this.name);
+
+    	hp = ecoMan.getHyperPlayer(player);
+        hEcon = hp.getHyperEconomy();
         
 		ShopStock shopstock = new ShopStock(sender, this.player, this.name, this.plugin);
         shopstock.SortStock(2);
@@ -94,7 +97,7 @@ public class ShopMenu implements Listener {
         this.last_page = (int) maxpages;
 		this.loadPage();
 		this.open(this.player);
-		
+
 		
     }
     
@@ -140,21 +143,19 @@ public class ShopMenu implements Listener {
 	        double costtax =0.0;
 	        double value = 0.0;
 	        double stock = 0.0;
-	        
-			HyperObject ho = hc_functions.getHyperObject(item, this.economy_name);
-	        if (hc_functions.itemTest(item)) {
+			HyperObject ho = hEcon.getHyperObject(item);
+	        if (hEcon.itemTest(item)) {
 				value = ho.getValue(1);
 				value = hc_calc.twoDecimals(value - ho.getSalesTaxEstimate(value));
 	        	cost = ho.getCost(1);
 				costtax = ho.getPurchaseTax(cost);
 				cost = hc_calc.twoDecimals(cost + costtax);
-				stock = hc_functions.getHyperObject(item, this.economy_name).getStock();
-			} else if (hc_functions.enchantTest(item)) {
+				stock = hEcon.getHyperObject(item).getStock();
+			} else if (hEcon.enchantTest(item)) {
 				cost = ho.getCost(1);
 				cost = cost + ho.getPurchaseTax(cost);
-				stock = hc_functions.getHyperObject(item, this.economy_name).getStock();
-				value = hoa.getTrueSaleValue(ho, hc_functions.getHyperPlayer(player.getName()), 
-						EnchantmentClass.DIAMOND, 1);
+				stock = hEcon.getHyperObject(item).getStock();
+				value = hoa.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1);
 				value = value-ho.getSalesTaxEstimate(value);
 			}
 	        
@@ -267,8 +268,7 @@ public class ShopMenu implements Listener {
         		}
             }
         	else if (slot_num < size && slot_num >= 0 && (item_in_hand.getTypeId() > 0)){
-        		hp = hc_functions.getHyperPlayer(player);
-        		if (!(hp.hasSellPermission(hc_factory.getShop(this.name)))) {
+        		if (!(hp.hasSellPermission(ecoMan.getShop(this.name)))) {
         			player.sendMessage("You cannot sell to this shop.");
         		} 
         		else {

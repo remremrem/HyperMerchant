@@ -7,10 +7,11 @@ import java.util.HashMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import regalowl.hyperconomy.DataHandler;
+import regalowl.hyperconomy.EconomyManager;
 import regalowl.hyperconomy.HyperConomy;
+import regalowl.hyperconomy.HyperEconomy;
 import regalowl.hyperconomy.HyperObjectAPI;
-import regalowl.hyperconomy.ShopFactory;
+import regalowl.hyperconomy.HyperPlayer;
 
 
 public class ShopStock {
@@ -24,25 +25,27 @@ public class ShopStock {
 	private String shopname;
 	private CommandSender sender;
 	public HyperConomy hc;
-	public ShopFactory hc_factory;
-	public DataHandler hc_functions;
+	public EconomyManager ecoMan;
+	HyperPlayer hp;
+    HyperEconomy hEcon;
 	private HyperObjectAPI hoa;
 	
 	ShopStock(CommandSender snder, Player player, String sname, HyperMerchantPlugin hmp) {
 		hc = HyperConomy.hc;
-		hc_factory = hc.getShopFactory();
-		hc_functions = hc.getDataFunctions();
+		ecoMan = hc.getEconomyManager();
+		hp = ecoMan.getHyperPlayer(player);
+		hEcon = hp.getHyperEconomy();
 		hoa = new HyperObjectAPI();
 		shopname = sname;
 		sender = snder;
 
 		try {
-    		String nameshop = hc_factory.getShop(shopname).getName();
-			ArrayList<String> names = hc_functions.getNames();
+    		String nameshop = ecoMan.getShop(shopname).getName();
+			ArrayList<String> names = hEcon.getNames();
 			int i = 0;
 			while(i < names.size()) {
 				String cname = names.get(i);
-				if (nameshop == null || hc_factory.getShop(nameshop).has(cname)) {
+				if (nameshop == null || ecoMan.getShop(nameshop).has(cname)) {
 					items_in_stock.add(cname);
 					item_nums_sorted.add(String.valueOf(hoa.getType(cname, "default").name() + hoa.getId(cname, "default")) + cname);
 					//item_materials_sorted.add(hoa.getType(cname, "default").name() + hoa.getMaterial(cname, "default") + cname);
@@ -73,7 +76,7 @@ public class ShopStock {
 			while (count < number_per_page) {
 				if (item_index < items_count) {
 					if (sort_by == 0){
-						String item_name = this.hc_functions.fixName(this.items_in_stock.get(item_index));
+						String item_name = this.hEcon.fixName(this.items_in_stock.get(item_index));
 						pages.get(page).add(item_name);
 					}
 					//else if (sort_by == 1){
@@ -81,7 +84,7 @@ public class ShopStock {
 					//	pages.get(page).add(item_name);
 					//}
 					else if (sort_by == 2){
-						String item_name = this.hc_functions.fixName(this.items_by_num.get(this.item_nums_sorted.get(item_index)));
+						String item_name = this.hEcon.fixName(this.items_by_num.get(this.item_nums_sorted.get(item_index)));
 						pages.get(page).add(item_name);
 					}
 				}

@@ -15,11 +15,10 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.speech.SimpleSpeechController;
 
-import regalowl.hyperconomy.DataHandler;
+import regalowl.hyperconomy.EconomyManager;
 import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.HyperPlayer;
-import regalowl.hyperconomy.ShopFactory;
 
 import grokswell.hypermerchant.Settings.Setting;
 
@@ -109,11 +108,10 @@ public class HyperMerchantTrait extends Trait {
 		
 		HyperConomy hc;
 		hc = HyperConomy.hc;
-		DataHandler dh = hc.getDataFunctions();
-		ShopFactory sf = hc.getShopFactory();
-		HyperPlayer hp = dh.getHyperPlayer(player);
+		EconomyManager ecoMan = hc.getEconomyManager();
+		HyperPlayer hp = ecoMan.getHyperPlayer(player);
 			
-		if (!hp.hasBuyPermission(sf.getShop(this.shop_name))) {
+		if (!hp.hasBuyPermission(ecoMan.getShop(this.shop_name))) {
 			if (!this.denialMsg.isEmpty()) {
 				SpeechContext message = new SpeechContext(this.npc, this.denialMsg, player);
 				new SimpleSpeechController(this.npc).speak(message);
@@ -128,7 +126,7 @@ public class HyperMerchantTrait extends Trait {
 			return;
 			
 		} else {
-			ArrayList<String> shoplist = sf.listShops();
+			ArrayList<String> shoplist = ecoMan.listShops();
 			if (shoplist.contains(this.shop_name)) {
 				if  (!this.welcomeMsg.isEmpty()) {
 					SpeechContext message = new SpeechContext(this.npc, this.welcomeMsg, player);
@@ -136,7 +134,7 @@ public class HyperMerchantTrait extends Trait {
 				}
 				//shopstock.pages is ArrayList<ArrayList<String>> shopstock.items_count is int
 				this.customer_menus.put(player.getName(), new ShopMenu(this.shop_name, 54, plugin, player, player, this.npc));
-				sf=null;
+				ecoMan=null;
 				hc=null;
 				return;
 				

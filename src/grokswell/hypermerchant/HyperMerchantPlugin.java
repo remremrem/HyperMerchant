@@ -2,8 +2,6 @@ package grokswell.hypermerchant;
 
 //import static java.lang.System.out;
 
-import static java.lang.System.out;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,12 +18,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
+import regalowl.hyperconomy.EconomyManager;
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.HyperEconAPI;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperAPI;
-import regalowl.hyperconomy.ShopFactory;
-import regalowl.hyperconomy.YamlFile;
+import regalowl.hyperconomy.databukkit.YamlHandler;
 
 import grokswell.hypermerchant.HyperMerchantTrait;
 import grokswell.hypermerchant.ShopMenu;
@@ -36,7 +34,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	HyperAPI hyperAPI = new HyperAPI();
 	FileConfiguration itemsyaml;
 	FileConfiguration enchantsyaml;
-	YamlFile yaml1;
+	EconomyManager ecoMan;
 	//use "items_by_id" for reverse lookup of hyperconomy item names <id:data, name>
 	HashMap<String,String> items_by_id = new HashMap<String, String>();
 	HashMap<String,String> enchants_by_name = new HashMap<String, String>(); 
@@ -60,8 +58,8 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			} 
 			
 			HyperConomy hc = HyperConomy.hc;
-			ShopFactory sf = hc.getShopFactory();
-			ArrayList<String> shoplist = sf.listShops();
+			EconomyManager ecoMan = hc.getEconomyManager();
+			ArrayList<String> shoplist = ecoMan.listShops();
 			
 			if (args.length != 1) {
 				sender.sendMessage(ChatColor.YELLOW+"You must specify one shop name. Example: "+
@@ -122,7 +120,6 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		//HYPERMERCHANT
 		else if (cmd.getName().equalsIgnoreCase("hmerchant")) {
 			if (args.length < 1) {
-				//player.performCommand("help hypermerchant");
 				return false;	
 				
 			} else {
@@ -146,9 +143,9 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);
-		HyperConomy hc2 = HyperConomy.hc;
-		yaml1 = hc2.getYaml();
-		itemsyaml = yaml1.getItems();
+		
+		YamlHandler yamlH = HyperConomy.hc.getYamlHandler();
+		itemsyaml = yamlH.gFC("items");
 		Iterator<String> it = itemsyaml.getKeys(false).iterator();
 		while (it.hasNext()) {
 			String iname = it.next().toString();
@@ -158,7 +155,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			items_by_id.put(newkey,iname);
 		}
 
-		enchantsyaml=yaml1.getEnchants();
+		enchantsyaml = yamlH.gFC("enchants");
 		it = enchantsyaml.getKeys(false).iterator();
 		while (it.hasNext()) {
 			String iname = it.next().toString();

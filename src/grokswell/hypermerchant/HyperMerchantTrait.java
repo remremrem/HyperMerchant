@@ -25,7 +25,7 @@ import grokswell.hypermerchant.Settings.Setting;
 public class HyperMerchantTrait extends Trait {
 	HyperAPI hyperAPI = new HyperAPI();
 	String shop_name = hyperAPI.getGlobalShopAccount();
-	ArrayList<String> customers = new ArrayList<String>();
+	ArrayList<String> customer_cooldowns = new ArrayList<String>();
 	HashMap<String,ShopMenu> customer_menus = new HashMap<String,ShopMenu>();
 	final HyperMerchantPlugin plugin;
 
@@ -63,14 +63,14 @@ public class HyperMerchantTrait extends Trait {
 
 	}
 	
-    class RemoveCustomer extends BukkitRunnable {
+    class RemoveCustomerCooldown extends BukkitRunnable {
     	String playername;
-        public RemoveCustomer(String plynam) {
+        public RemoveCustomerCooldown(String plynam) {
         	playername = plynam;
         }
         public void run() {
             // What you want to schedule goes here
-            customers.remove(playername);
+            customer_cooldowns.remove(playername);
         }
     }
     
@@ -80,12 +80,12 @@ public class HyperMerchantTrait extends Trait {
 		
 		Player player = event.getClicker();
 		
-		if (this.customers.contains(player.getName())){
+		if (this.customer_cooldowns.contains(player.getName())){
 			event.setCancelled(true);
 			return;
 		}
-		this.customers.add(player.getName());
-		new RemoveCustomer(player.getName()).runTaskLater(this.plugin, 60);
+		this.customer_cooldowns.add(player.getName());
+		new RemoveCustomerCooldown(player.getName()).runTaskLater(this.plugin, 60);
 		
 		if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 
 		   (!player.hasPermission("creative.hypermerchant"))) {
@@ -150,11 +150,6 @@ public class HyperMerchantTrait extends Trait {
 		}
 	}
 	
-	//@EventHandler
-	//public void onLeftClick(net.citizensnpcs.api.event.NPCLeftClickEvent event) {
-	//	DataKey dk = new MemoryDataKey();
-	//	this.plugin.getLogger().info("dk: "+dk.toString());
-	//}
 
 	@Override
 	public void save(DataKey key) {

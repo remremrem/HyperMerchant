@@ -5,7 +5,6 @@ import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 import net.citizensnpcs.api.npc.NPC;
 
@@ -29,13 +28,13 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import regalowl.hyperconomy.Calculation;
 import regalowl.hyperconomy.EconomyManager;
 import regalowl.hyperconomy.EnchantmentClass;
 import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.HyperEconomy;
-import regalowl.hyperconomy.HyperObject;
+import regalowl.hyperconomy.HyperEnchant;
+import regalowl.hyperconomy.HyperItem;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperPlayer;
 import regalowl.hyperconomy.LanguageFile;
@@ -51,25 +50,24 @@ public class ShopMenu implements Listener {
     int last_page; //the last_page number in the menu
     private HyperMerchantPlugin plugin;
     private Player player;
-    private String economy_name;
     private String inventory_name;
     private Inventory inventory;
     private InventoryView inventory_view;
     private String[] optionNames;
     private ItemStack[] optionIcons;
 	private ShopTransactions shop_trans;
+	ShopStock shopstock;
 	NPC npc;
 	ArrayList<ArrayList<String>> pages;
 	HyperAPI hyperAPI = new HyperAPI();
 	HyperObjectAPI hoa = new HyperObjectAPI();
     
-    
 	HyperConomy hc = HyperConomy.hc;
 	EconomyManager ecoMan = hc.getEconomyManager();
 	HyperPlayer hp;
     HyperEconomy hEcon;
-	Calculation hc_calc = hc.getCalculation();
 	LanguageFile hc_lang = hc.getLanguageFile();
+	
 	
     public ShopMenu(String name, int size, HyperMerchantPlugin plgn,CommandSender sender, Player plyr, NPC npc) {
     	this.name = name;
@@ -80,26 +78,24 @@ public class ShopMenu implements Listener {
         this.optionIcons = new ItemStack[size];
         this.player=plyr;
         this.npc = npc;
-    	this.shop_trans = new ShopTransactions(player, this.name, this.plugin);
+    	this.shop_trans = new ShopTransactions(player, this.name, this.plugin, this);
     	this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
         this.inventory_name = this.name+"<>"+player.getName();
         this.inventory = Bukkit.createInventory(player, size, this.inventory_name);
-        this.economy_name = hyperAPI.getShopEconomy(this.name);
 
     	hp = ecoMan.getHyperPlayer(player);
         hEcon = hp.getHyperEconomy();
         
-		ShopStock shopstock = new ShopStock(sender, this.player, this.name, this.plugin);
+		shopstock = new ShopStock(sender, this.player, this.name, this.plugin);
         shopstock.SortStock(2);
 		this.item_count=shopstock.items_count;
         pages = shopstock.pages;
         double maxpages = this.item_count/45;
         this.last_page = (int) maxpages;
 		this.loadPage();
-		this.open(this.player);
-
-		
+		this.openMenu(this.player);
     }
+    
     
     private ItemStack setItemNameAndLore(ItemStack item, String name, String[] lore) {
         ItemMeta im = item.getItemMeta();
@@ -109,18 +105,21 @@ public class ShopMenu implements Listener {
         return item;
     }
     
+    
+    //Set 1 menu option. Gets called for every menu item.
     public ShopMenu setOption(int position, ItemStack icon, String name, String... info) {
     	this.optionNames[position] = name;
 		try {
 			this.optionIcons[position] = setItemNameAndLore(icon, name, info);
 		}
 		catch (Exception e){
-			this.optionIcons[position] = setItemNameAndLore(new ItemStack(Material.getMaterial(1), 1), name, info);
+			this.optionIcons[position] = setItemNameAndLore(new ItemStack(Material.STONE, 1), name, info);
 			
 		}
         return this;
     }
-    //
+    
+    
     public void loadPage() {
     	this.optionIcons = null;
     	this.optionIcons = new ItemStack[size];
@@ -139,36 +138,40 @@ public class ShopMenu implements Listener {
 		ArrayList<String> page=(ArrayList<String>) pages.get(this.page_number);
 		
 		for (String item : page) {
-	        double cost = 0.0;
-	        double costtax =0.0;
+	        // Loop through all items on this page
+			double cost = 0.0;
 	        double value = 0.0;
 	        double stock = 0.0;
-			HyperObject ho = hEcon.getHyperObject(item);
+
+	        ItemStack stack;
 	        if (hEcon.itemTest(item)) {
-				value = ho.getValue(1);
-				value = hc_calc.twoDecimals(value - ho.getSalesTaxEstimate(value));
-	        	cost = ho.getCost(1);
-				costtax = ho.getPurchaseTax(cost);
-				cost = hc_calc.twoDecimals(cost + costtax);
+				HyperItem ho = hEcon.getHyperItem(item);
 				stock = hEcon.getHyperObject(item).getStock();
-			} else if (hEcon.enchantTest(item)) {
-				cost = ho.getCost(1);
-				cost = cost + ho.getPurchaseTax(cost);
-				stock = hEcon.getHyperObject(item).getStock();
+				stack = new ItemStack(ho.getMaterialEnum(), 1);
+				stack.setDurability((short)ho.getDurability());
 				value = hoa.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1);
-				value = value-ho.getSalesTaxEstimate(value);
+				//out.println("getTrueSaleValue: "+ hoa.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1));
+				cost = hoa.getTruePurchasePrice(ho, EnchantmentClass.DIAMOND, 1);
+			} else if (hEcon.enchantTest(item)) {
+				HyperEnchant he = hEcon.getHyperEnchant(item);
+				cost = hoa.getTruePurchasePrice(he, EnchantmentClass.DIAMOND, 1);
+				
+				stock = hEcon.getHyperObject(item).getStock();
+				value = hoa.getTrueSaleValue(he, hp, EnchantmentClass.DIAMOND, 1);
+				value = value-he.getSalesTaxEstimate(value);
+				stack = new ItemStack(Material.STONE, 1, (short) 0);
+			} else {
+				stack = new ItemStack(Material.AIR, 1, (short) 0);
 			}
 	        
-			ItemStack stack;
-			if (item.equals("xp")) {
-				stack = new ItemStack(Material.STONE, 1);
-			}
-			else {
-				stack = new ItemStack(Material.getMaterial(ho.getId()), 1, (short) ho.getData());
-			}
 			
-			this.setOption(count, stack, item, ChatColor.WHITE+"Price: "+ChatColor.DARK_PURPLE+String.valueOf(cost),
-					ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.valueOf(value), 
+			//if (item.equals("xp")) {
+			//	stack = new ItemStack(Material.STONE, 1);
+			//}
+
+			
+			this.setOption(count, stack, item, ChatColor.WHITE+"Price: "+ChatColor.DARK_PURPLE+String.format("%.2f", cost),
+					ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", value), 
 					ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) stock) );
 	        count++;
 		}
@@ -182,6 +185,7 @@ public class ShopMenu implements Listener {
 	    return;
     }
     
+    
     public void nextPage() {
     	if (this.page_number < this.last_page) {
     		this.page_number++;
@@ -190,6 +194,7 @@ public class ShopMenu implements Listener {
         	this.menuRefresh();
     	}
     }
+    
     
     public void previousPage() {
     	if (this.page_number > 0) {
@@ -200,12 +205,14 @@ public class ShopMenu implements Listener {
     	}
     }
     
+    
     public void lastPage() {
 		this.page_number = this.last_page;
 		this.inventory.clear();
 		this.loadPage();
     	this.menuRefresh();
     }    
+    
     
     public void firstPage() {
 		this.page_number = 0;
@@ -223,7 +230,8 @@ public class ShopMenu implements Listener {
         }
     }
     
-    public void open(Player player) {
+    
+    public void openMenu(Player player) {
         for (int i = 0; i < this.optionIcons.length; i++) {
             if (this.optionIcons[i] != null) {
             	this.inventory.setItem(i, this.optionIcons[i]);
@@ -231,6 +239,7 @@ public class ShopMenu implements Listener {
         }
         this.inventory_view=player.openInventory(this.inventory);
     }
+    
     
     @EventHandler(priority=EventPriority.HIGHEST)
     void onInventoryClick(InventoryClickEvent event) {
@@ -244,6 +253,7 @@ public class ShopMenu implements Listener {
     	}
     }
     
+    
     void onInventoryClickOrCreative(InventoryClickEvent event) {
         if (event.getInventory().getTitle().equals(this.inventory_name)) {
     		int slot_num = event.getRawSlot();
@@ -251,7 +261,7 @@ public class ShopMenu implements Listener {
             	event.setCancelled(true);
             }
             ItemStack item_in_hand = event.getCursor();
-            if (slot_num < size-9 && slot_num >= 0 && (item_in_hand.getTypeId() == 0)) {
+            if (slot_num < size-9 && slot_num >= 0 && (item_in_hand.getType() == Material.AIR)) {
         		if (this.optionNames[slot_num] != null && this.optionNames[slot_num] != " ") {
                     if (event.isLeftClick()){
                     	if (event.isShiftClick()){
@@ -267,7 +277,7 @@ public class ShopMenu implements Listener {
                     }        
         		}
             }
-        	else if (slot_num < size && slot_num >= 0 && (item_in_hand.getTypeId() > 0)){
+        	else if (slot_num < size && slot_num >= 0 && (item_in_hand.getType() != Material.AIR)){
         		if (!(hp.hasSellPermission(ecoMan.getShop(this.name)))) {
         			player.sendMessage("You cannot sell to this shop.");
         		} 
@@ -280,7 +290,7 @@ public class ShopMenu implements Listener {
 	        		// SELLING ENCHANTS
 	        		if (!enchants.isEmpty()) {
 	                	String display_name = this.optionIcons[slot_num].getItemMeta().getDisplayName().replace("§6", "");
-	                	if (plugin.enchants_by_name.containsKey(display_name)) {
+	                	if (shopstock.items_in_stock.contains(display_name)) {
 	                		ItemStack item_holding = player.getItemInHand().clone();
 	                		player.setItemInHand(player.getItemOnCursor().clone());
 	                		if (this.shop_trans.Sell(display_name)) {
@@ -299,20 +309,19 @@ public class ShopMenu implements Listener {
 	                
 	                // SELLING ITEMS
 	                else if (this.shop_trans.Sell(item_in_hand)) {
-	        			this.inventory_view.setCursor(new ItemStack(Material.getMaterial(0)));
-	        			//return;
+	        			this.inventory_view.setCursor(new ItemStack(Material.AIR));
+	        			
 	        		} else if (item_in_hand.getDurability() < item_in_hand.getType().getMaxDurability()){
 	        			player.sendMessage(ChatColor.YELLOW+"This shop will not purchase a damaged "+
-								Material.getMaterial(item_in_hand.getTypeId()).name().toLowerCase()+".");
+								item_in_hand.getType().name().toLowerCase()+".");
 	        			player.getInventory().addItem(item_in_hand);
-	        			this.inventory_view.setCursor(new ItemStack(Material.getMaterial(0)));
-	        			//return;
+	        			this.inventory_view.setCursor(new ItemStack(Material.AIR));
+	        			
 	        		} else {
 	        			player.sendMessage(ChatColor.YELLOW+"This shop does not deal in "+
-								Material.getMaterial(item_in_hand.getTypeId()).name().toLowerCase()+".");
+								item_in_hand.getType().name().toLowerCase()+".");
 	        			player.getInventory().addItem(item_in_hand);
-	        			this.inventory_view.setCursor(new ItemStack(Material.getMaterial(0)));
-	        			//return;
+	        			this.inventory_view.setCursor(new ItemStack(Material.AIR));
 	        		}
         		}
         	}
@@ -336,6 +345,7 @@ public class ShopMenu implements Listener {
         }
     }
     
+    
     @EventHandler(priority=EventPriority.HIGHEST)
     void onInventoryClose(InventoryCloseEvent event) {
     	if (event.getPlayer().equals(player)) {
@@ -348,6 +358,7 @@ public class ShopMenu implements Listener {
     	}
     }
     
+    
     @EventHandler(priority=EventPriority.HIGHEST)
     void onInventoryMoveItem(InventoryMoveItemEvent event) {
     	if (event.getSource().equals(this.inventory)) {
@@ -355,12 +366,14 @@ public class ShopMenu implements Listener {
     	}
     }
     
+    
     @EventHandler(priority=EventPriority.HIGHEST)
     void onInventoryDrag(InventoryDragEvent event) {
     	if (event.getInventory().equals(this.inventory)) {
     		event.setCancelled(true);
     	}
     }
+    
     
     public void destroy() {
         HandlerList.unregisterAll(this);

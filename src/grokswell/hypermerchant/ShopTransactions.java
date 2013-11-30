@@ -1,5 +1,7 @@
 package grokswell.hypermerchant;
 
+import static java.lang.System.out;
+
 import java.util.ArrayList;
 
 import org.bukkit.GameMode;
@@ -26,15 +28,17 @@ public class ShopTransactions {
 	private LanguageFile hc_lang;
 	private EconomyManager ecoMan;
     private HyperMerchantPlugin plugin;
+    private ShopMenu shopmenu;
     HyperPlayer hp;
     HyperEconomy hEcon;
 	HyperObjectAPI hyperObAPI = new HyperObjectAPI();
 	HyperAPI hyperAPI = new HyperAPI();
 	
-	public ShopTransactions(Player plyr, String sname, HyperMerchantPlugin plgn) {
+	public ShopTransactions(Player plyr, String sname, HyperMerchantPlugin plgn, ShopMenu sm) {
 		player=plyr;
 		plugin=plgn;
 		shopname=sname;
+		shopmenu = sm;
 		hc = HyperConomy.hc;
 		ecoMan = hc.getEconomyManager();
 		hp = ecoMan.getHyperPlayer(player);
@@ -44,7 +48,7 @@ public class ShopTransactions {
 	}
 	//SELL ENCHANT
 	public boolean Sell(String enchant) {
-			if (player.getGameMode() == GameMode.CREATIVE && hc.s().gB("block-selling-in-creative-mode")) {
+			if (player.getGameMode() == GameMode.CREATIVE) {
 				player.sendMessage(hc_lang.get("CANT_SELL_CREATIVE"));
 				return false;
 			}
@@ -58,21 +62,17 @@ public class ShopTransactions {
 	}
 	//SELL ITEM
 	public boolean Sell(ItemStack item_stack) {
-			if (player.getGameMode() == GameMode.CREATIVE && hc.s().gB("block-selling-in-creative-mode")) {
+			if (player.getGameMode() == GameMode.CREATIVE) {
 				player.sendMessage(hc_lang.get("CANT_SELL_CREATIVE"));
 				return false;
 			}
-		String item_name="air";
 		int item_amount = item_stack.getAmount();
-		String item_id = Integer.toString(item_stack.getTypeId());
-		String item_data = Integer.toString(item_stack.getData().getData());
-		//if item is a tool, in toollist..
-		if (plugin.items_by_id.containsKey(item_id+":"+item_data)) {
-			item_name=plugin.items_by_id.get(item_id+":"+item_data);
-		}
-		if ((!item_name.equals("air")) && (ecoMan.getShop(shopname).has(item_name))) {
+		HyperObject ho = hEcon.getHyperObject(item_stack, ecoMan.getShop(shopname));
+		String item_name = ho.getName().toLowerCase();
+		
+		if (shopmenu.shopstock.items_in_stock.contains(item_name) && (ecoMan.getShop(shopname).has(item_name))) {
 			player.getInventory().addItem(item_stack);
-			HyperObject ho = hEcon.getHyperObject(item_name);
+			ho = hEcon.getHyperObject(item_name);
 			TransactionResponse response = hyperObAPI.sell(player, ho, item_amount);
 			response.sendMessages();
 			return true;

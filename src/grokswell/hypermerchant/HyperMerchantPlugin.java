@@ -2,6 +2,8 @@ package grokswell.hypermerchant;
 
 //import static java.lang.System.out;
 
+import static java.lang.System.out;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,7 +15,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -21,9 +22,9 @@ import org.bukkit.event.Listener;
 import regalowl.hyperconomy.EconomyManager;
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.HyperEconAPI;
+import regalowl.hyperconomy.HyperEconomy;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperAPI;
-import regalowl.hyperconomy.databukkit.YamlHandler;
 
 import grokswell.hypermerchant.HyperMerchantTrait;
 import grokswell.hypermerchant.ShopMenu;
@@ -32,12 +33,10 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	HyperEconAPI economyAPI = new HyperEconAPI();
 	HyperObjectAPI objectAPI = new HyperObjectAPI();
 	HyperAPI hyperAPI = new HyperAPI();
-	FileConfiguration itemsyaml;
-	FileConfiguration enchantsyaml;
-	EconomyManager ecoMan;
+	HyperEconomy hyperEcon;
 	//use "items_by_id" for reverse lookup of hyperconomy item names <id:data, name>
-	HashMap<String,String> items_by_id = new HashMap<String, String>();
-	HashMap<String,String> enchants_by_name = new HashMap<String, String>(); 
+	//HashMap<String,String> items_by_id = new HashMap<String, String>();
+	//HashMap<String,String> enchants_by_name = new HashMap<String, String>(); 
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args) {
@@ -123,7 +122,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 				return false;	
 				
 			} else {
-				new HyperMerchantFunction(sender, args, this);
+				new HyperMerchantCommand(sender, args, this);
 				return true;
 			}
 			
@@ -143,26 +142,40 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);
+		// Load default economy's hyperobjects
+//		HyperConomy h = (HyperConomy)Bukkit.getPluginManager().getPlugin("HyperConomy");
+//		out.println(h);
+//		EconomyManager em = h.getEconomyManager();
+//		out.println(em);
+//		out.println(em.getEconomyList());
+//		HyperEconomy he = em.getDefaultEconomy();
+//		out.println(he);
+//		String hn = he.getEconomy();
+//		out.println(hn);
+//		
+//		hyperEcon = h.getEconomyManager().getEconomy(hn);
+//
+//		Iterator<HyperObject> it = hyperEcon.getHyperObjects().iterator();
+//		while (it.hasNext()) {
+//			String obName = it.next().toString();
+//			String type = it.next().getType().name();
+//			if (type == "item") {
+//				HyperItem item = (HyperItem)it.next();
+//				int id = item.getData();
+//				int data = item.getDurability();
+//				String obType = item.getMaterial();
+//				String newkey = Integer.toString(id) +":"+ Integer.toString(data);
+//				items_by_id.put(newkey,obName);
+//			} else if (type == "enchantment") {
+//				HyperEnchant enchant = (HyperEnchant)it.next();
+//				int id = enchant.getEnchantment().getId();
+//				int data = enchant.getEnchantmentLevel();
+//				String obType = enchant.getEnchantmentName();
+//				String newkey = Integer.toString(id) +":"+ Integer.toString(data);
+//				enchants_by_name.put(newkey,obName);
+//			}
+//		}
 		
-		YamlHandler yamlH = HyperConomy.hc.getYamlHandler();
-		itemsyaml = yamlH.gFC("items");
-		Iterator<String> it = itemsyaml.getKeys(false).iterator();
-		while (it.hasNext()) {
-			String iname = it.next().toString();
-			int id = itemsyaml.getInt(iname + ".information.id");
-			int data = itemsyaml.getInt(iname + ".information.data");
-			String newkey = Integer.toString(id) +":"+ Integer.toString(data);
-			items_by_id.put(newkey,iname);
-		}
-
-		enchantsyaml = yamlH.gFC("enchants");
-		it = enchantsyaml.getKeys(false).iterator();
-		while (it.hasNext()) {
-			String iname = it.next().toString();
-			if (enchantsyaml.getString(iname + ".information.name") != "null") {
-			    enchants_by_name.put(iname, enchantsyaml.getString(iname + ".information.name"));
-			}
-		}
 
 		if (Bukkit.getPluginManager().getPlugin("Citizens") != null) {
 			CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(HyperMerchantTrait.class).withName("hypermerchant"));

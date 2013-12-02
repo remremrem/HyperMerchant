@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import regalowl.hyperconomy.EconomyManager;
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.HyperEconomy;
+import regalowl.hyperconomy.HyperObject;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperPlayer;
 
@@ -23,6 +24,7 @@ public class ShopStock {
 	ArrayList<String> item_materials_sorted = new ArrayList<String>();
 	HashMap<String,String> items_by_type = new HashMap<String,String>();
 	HashMap<String,String> items_by_material = new HashMap<String,String>();
+	ArrayList<String> object_names;
 	int items_count;
 	private String shopname;
 	private CommandSender sender;
@@ -35,22 +37,29 @@ public class ShopStock {
 	ShopStock(CommandSender snder, Player player, String sname, HyperMerchantPlugin hmp) {
 		hc = HyperConomy.hc;
 		ecoMan = hc.getEconomyManager();
-		hp = ecoMan.getHyperPlayer(player);
-		hEcon = hp.getHyperEconomy();
 		hoa = new HyperObjectAPI();
+		hp = hoa.getHyperPlayer(player.getName());
+		hEcon = hp.getHyperEconomy();
+		
 		shopname = sname;
 		sender = snder;
+		object_names = new ArrayList<String>();
 
 		try {
     		String nameshop = ecoMan.getShop(shopname).getName();
 			ArrayList<String> names = hEcon.getNames();
-			Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
-			//out.println("shopname: "+ nameshop);
+			ArrayList<HyperObject> available_objects = ecoMan.getShop(shopname).getAvailableObjects();
+			for (HyperObject ho:available_objects) {
+				object_names.add(ho.getName().toLowerCase());
+			}
+			//Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
+			Collections.sort(object_names, String.CASE_INSENSITIVE_ORDER);
+			out.println("object_names: "+ object_names);
 			//out.println("heCon names: "+ names);
 			int i = 0;
 			
-			while(i < names.size()) {
-				String cname = names.get(i);
+			while(i < object_names.size()) {
+				String cname = object_names.get(i);
 				items_in_stock.add(cname);
 				String t=hoa.getType(cname, "default").name();
 				if (t.toLowerCase().equals("item")) {

@@ -5,7 +5,6 @@ import static java.lang.System.out;
 import java.util.ArrayList;
 
 import org.bukkit.GameMode;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

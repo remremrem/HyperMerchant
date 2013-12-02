@@ -32,7 +32,6 @@ import regalowl.hyperconomy.EconomyManager;
 import regalowl.hyperconomy.EnchantmentClass;
 import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.HyperConomy;
-import regalowl.hyperconomy.HyperEconomy;
 import regalowl.hyperconomy.HyperEnchant;
 import regalowl.hyperconomy.HyperItem;
 import regalowl.hyperconomy.HyperObjectAPI;
@@ -56,6 +55,7 @@ public class ShopMenu implements Listener {
     private String[] optionNames;
     private ItemStack[] optionIcons;
 	private ShopTransactions shop_trans;
+	String economy_name;
 	ShopStock shopstock;
 	NPC npc;
 	ArrayList<ArrayList<String>> pages;
@@ -65,8 +65,6 @@ public class ShopMenu implements Listener {
 	HyperConomy hc = HyperConomy.hc;
 	EconomyManager ecoMan = hc.getEconomyManager();
 	HyperPlayer hp;
-    HyperEconomy hEcon;
-	LanguageFile hc_lang = hc.getLanguageFile();
 	
 	
     public ShopMenu(String name, int size, HyperMerchantPlugin plgn,CommandSender sender, Player plyr, NPC npc) {
@@ -83,8 +81,9 @@ public class ShopMenu implements Listener {
         this.inventory_name = this.name+"<>"+player.getName();
         this.inventory = Bukkit.createInventory(player, size, this.inventory_name);
 
-    	hp = ecoMan.getHyperPlayer(player);
-        hEcon = hp.getHyperEconomy();
+    	hp = hoa.getHyperPlayer(player.getName());
+    	
+        economy_name = hyperAPI.getShopEconomy(this.name);
         
 		shopstock = new ShopStock(sender, this.player, this.name, this.plugin);
         shopstock.SortStock(2);
@@ -125,6 +124,8 @@ public class ShopMenu implements Listener {
     	this.optionIcons = new ItemStack[size];
     	this.optionNames = null;
     	this.optionNames = new String[size];
+    	
+    	// Populate interface button inventory slots
     	this.setOption(46, new ItemStack(Material.STATIONARY_WATER, 1), "Back 1", "Go back to the previous page.")
 	    .setOption(45, new ItemStack(Material.STATIONARY_LAVA, 1), "First Page", "Go to the first page.")
 	    .setOption(52, new ItemStack(Material.STATIONARY_WATER, 1), "Forward 1", "Go to the next page.")
@@ -137,26 +138,34 @@ public class ShopMenu implements Listener {
     	int count = 0;
 		ArrayList<String> page=(ArrayList<String>) pages.get(this.page_number);
 		
+		//Populate the shop stock slots for current page
 		for (String item : page) {
 	        // Loop through all items on this page
 			double cost = 0.0;
 	        double value = 0.0;
 	        double stock = 0.0;
+	        
+	        out.println("object_type: "+ hoa.getType(item, economy_name).name());
 
 	        ItemStack stack;
-	        if (hEcon.itemTest(item)) {
-				HyperItem ho = hEcon.getHyperItem(item);
-				stock = hEcon.getHyperObject(item).getStock();
+	        if (hoa.getType(item, economy_name).name().equals("ITEM")) {
+				//HyperItem ho = hEcon.getHyperItem(item);
+				//stock = hEcon.getHyperObject(item).getStock();
+				HyperItem ho = hoa.getHyperItem(item,economy_name);
+				stock = ho.getStock();
+				
 				stack = new ItemStack(ho.getMaterialEnum(), 1);
 				stack.setDurability((short)ho.getDurability());
 				value = hoa.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1);
 				//out.println("getTrueSaleValue: "+ hoa.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1));
 				cost = hoa.getTruePurchasePrice(ho, EnchantmentClass.DIAMOND, 1);
-			} else if (hEcon.enchantTest(item)) {
-				HyperEnchant he = hEcon.getHyperEnchant(item);
-				cost = hoa.getTruePurchasePrice(he, EnchantmentClass.DIAMOND, 1);
+			} else if (hoa.getType(item, economy_name).name().equals("ENCHANTMENT")) {
+				//HyperEnchant he = hEcon.getHyperEnchant(item);
+				//stock = hEcon.getHyperObject(item).getStock();
+				HyperEnchant he = hoa.getHyperEnchant(item,economy_name);
+				stock = he.getStock();
 				
-				stock = hEcon.getHyperObject(item).getStock();
+				cost = hoa.getTruePurchasePrice(he, EnchantmentClass.DIAMOND, 1);
 				value = hoa.getTrueSaleValue(he, hp, EnchantmentClass.DIAMOND, 1);
 				value = value-he.getSalesTaxEstimate(value);
 				stack = new ItemStack(Material.STONE, 1, (short) 0);

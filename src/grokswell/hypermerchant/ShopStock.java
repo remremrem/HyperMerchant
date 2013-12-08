@@ -9,12 +9,8 @@ import java.util.HashMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import regalowl.hyperconomy.EconomyManager;
-import regalowl.hyperconomy.HyperConomy;
-import regalowl.hyperconomy.HyperEconomy;
 import regalowl.hyperconomy.HyperObject;
 import regalowl.hyperconomy.HyperObjectAPI;
-import regalowl.hyperconomy.HyperPlayer;
 
 
 public class ShopStock {
@@ -28,43 +24,34 @@ public class ShopStock {
 	int items_count;
 	private String shopname;
 	private CommandSender sender;
-	public HyperConomy hc;
-	public EconomyManager ecoMan;
-	HyperPlayer hp;
-    HyperEconomy hEcon;
-	private HyperObjectAPI hoa;
+
+	private HyperObjectAPI hoAPI;
 	
 	ShopStock(CommandSender snder, Player player, String sname, HyperMerchantPlugin hmp) {
-		hc = HyperConomy.hc;
-		ecoMan = hc.getEconomyManager();
-		hoa = new HyperObjectAPI();
-		hp = hoa.getHyperPlayer(player.getName());
-		hEcon = hp.getHyperEconomy();
+		hoAPI = new HyperObjectAPI();
 		
 		shopname = sname;
 		sender = snder;
 		object_names = new ArrayList<String>();
 
 		try {
-    		String nameshop = ecoMan.getShop(shopname).getName();
-			ArrayList<String> names = hEcon.getNames();
-			ArrayList<HyperObject> available_objects = ecoMan.getShop(shopname).getAvailableObjects();
+    		ArrayList<HyperObject> available_objects = hoAPI.getAvailableObjects(shopname);
 			for (HyperObject ho:available_objects) {
 				object_names.add(ho.getName().toLowerCase());
 			}
 			//Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
 			Collections.sort(object_names, String.CASE_INSENSITIVE_ORDER);
-			out.println("object_names: "+ object_names);
+			//out.println("object_names: "+ object_names);
 			//out.println("heCon names: "+ names);
 			int i = 0;
 			
 			while(i < object_names.size()) {
 				String cname = object_names.get(i);
 				items_in_stock.add(cname);
-				String t=hoa.getType(cname, "default").name();
+				String t=hoAPI.getType(cname, "default").name();
 				if (t.toLowerCase().equals("item")) {
-					item_types_sorted.add(String.valueOf(hoa.getMaterial(cname, "default").toLowerCase()+cname));
-					items_by_type.put(hoa.getMaterial(cname, "default").toLowerCase()+cname,cname);
+					item_types_sorted.add(String.valueOf(hoAPI.getMaterial(cname, "default").toLowerCase()+cname));
+					items_by_type.put(hoAPI.getMaterial(cname, "default").toLowerCase()+cname,cname);
 					
 				} else {
 					item_types_sorted.add(String.valueOf("enchantment"+cname));
@@ -102,7 +89,7 @@ public class ShopStock {
 						pages.get(page).add(item_name);
 					}
 					else if (sort_by == 2){
-						String item_name = this.hEcon.fixName(this.items_by_type.get(this.item_types_sorted.get(item_index)));
+						String item_name = this.items_by_type.get(this.item_types_sorted.get(item_index));
 						pages.get(page).add(item_name);
 					}
 				}

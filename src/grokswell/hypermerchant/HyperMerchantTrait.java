@@ -15,17 +15,18 @@ import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.speech.SimpleSpeechController;
 
-import regalowl.hyperconomy.EconomyManager;
 import regalowl.hyperconomy.HyperAPI;
-import regalowl.hyperconomy.HyperConomy;
+import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperPlayer;
 
 import grokswell.hypermerchant.Settings.Setting;
 
 public class HyperMerchantTrait extends Trait {
 	HyperAPI hyperAPI = new HyperAPI();
+	HyperObjectAPI hoAPI = new HyperObjectAPI();
 	String shop_name = hyperAPI.getGlobalShopAccount();
 	ArrayList<String> customer_cooldowns = new ArrayList<String>();
+	static ArrayList<String> shoplist;
 	HashMap<String,ShopMenu> customer_menus = new HashMap<String,ShopMenu>();
 	final HyperMerchantPlugin plugin;
 
@@ -106,12 +107,12 @@ public class HyperMerchantTrait extends Trait {
 			return;
 		}
 		
-		HyperConomy hc;
-		hc = HyperConomy.hc;
-		EconomyManager ecoMan = hc.getEconomyManager();
-		HyperPlayer hp = ecoMan.getHyperPlayer(player);
+		//HyperConomy hc;
+		//hc = HyperConomy.hc;
+		//EconomyManager ecoMan = hc.getEconomyManager();
+		HyperPlayer hp = hoAPI.getHyperPlayer(player.getName());
 			
-		if (!hp.hasBuyPermission(ecoMan.getShop(this.shop_name))) {
+		if (!hp.hasBuyPermission(hyperAPI.getShop(this.shop_name))) {
 			if (!this.denialMsg.isEmpty()) {
 				SpeechContext message = new SpeechContext(this.npc, this.denialMsg, player);
 				new SimpleSpeechController(this.npc).speak(message);
@@ -126,7 +127,7 @@ public class HyperMerchantTrait extends Trait {
 			return;
 			
 		} else {
-			ArrayList<String> shoplist = ecoMan.listShops();
+			shoplist = hyperAPI.getPlayerShopList();
 			if (shoplist.contains(this.shop_name)) {
 				if  (!this.welcomeMsg.isEmpty()) {
 					SpeechContext message = new SpeechContext(this.npc, this.welcomeMsg, player);
@@ -134,8 +135,8 @@ public class HyperMerchantTrait extends Trait {
 				}
 				//shopstock.pages is ArrayList<ArrayList<String>> shopstock.items_count is int
 				this.customer_menus.put(player.getName(), new ShopMenu(this.shop_name, 54, plugin, player, player, this.npc));
-				ecoMan=null;
-				hc=null;
+				//ecoMan=null;
+				//hc=null;
 				return;
 				
 			} else {

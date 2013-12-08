@@ -2,11 +2,7 @@ package grokswell.hypermerchant;
 
 //import static java.lang.System.out;
 
-import static java.lang.System.out;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import net.citizensnpcs.api.CitizensAPI;
 
@@ -22,7 +18,6 @@ import org.bukkit.event.Listener;
 import regalowl.hyperconomy.EconomyManager;
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.HyperEconAPI;
-import regalowl.hyperconomy.HyperEconomy;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperAPI;
 
@@ -31,7 +26,7 @@ import grokswell.hypermerchant.ShopMenu;
 
 public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	HyperEconAPI economyAPI = new HyperEconAPI();
-	HyperObjectAPI objectAPI = new HyperObjectAPI();
+	HyperObjectAPI hoAPI = new HyperObjectAPI();
 	HyperAPI hyperAPI = new HyperAPI();
 	
 	@Override

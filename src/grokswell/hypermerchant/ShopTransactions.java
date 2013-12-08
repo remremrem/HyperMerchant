@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 import java.util.ArrayList;
 
@@ -8,10 +8,8 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import regalowl.hyperconomy.EconomyManager;
 import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.HyperConomy;
-import regalowl.hyperconomy.HyperEconomy;
 import regalowl.hyperconomy.HyperObject;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperPlayer;
@@ -25,23 +23,23 @@ public class ShopTransactions {
 	private Player player;
 	private HyperConomy hc;
 	private LanguageFile hc_lang;
-	private EconomyManager ecoMan;
-    private HyperMerchantPlugin plugin;
+	//private EconomyManager ecoMan;
+    //private HyperMerchantPlugin plugin;
     private ShopMenu shopmenu;
     HyperPlayer hp;
-    HyperEconomy hEcon;
-	HyperObjectAPI hyperObAPI = new HyperObjectAPI();
+    //HyperEconomy hEcon;
+	HyperObjectAPI hoAPI = new HyperObjectAPI();
 	HyperAPI hyperAPI = new HyperAPI();
 	
 	public ShopTransactions(Player plyr, String sname, HyperMerchantPlugin plgn, ShopMenu sm) {
 		player=plyr;
-		plugin=plgn;
+		//plugin=plgn;
 		shopname=sname;
 		shopmenu = sm;
 		hc = HyperConomy.hc;
-		ecoMan = hc.getEconomyManager();
-		hp = ecoMan.getHyperPlayer(player);
-	    hEcon = hp.getHyperEconomy();
+		//ecoMan = hc.getEconomyManager();
+		hp = hoAPI.getHyperPlayer(player.getName());
+	    //hEcon = hp.getHyperEconomy();
 		hc_lang = hc.getLanguageFile();
 
 	}
@@ -51,9 +49,9 @@ public class ShopTransactions {
 				player.sendMessage(hc_lang.get("CANT_SELL_CREATIVE"));
 				return false;
 			}
-		if ((ecoMan.getShop(shopname).has(enchant))) {
-			HyperObject ho = hEcon.getHyperObject(enchant);
-			TransactionResponse response = hyperObAPI.sell(player, ho, 1);
+		if ((hyperAPI.getShop(shopname).has(enchant))) {
+			HyperObject ho = hoAPI.getHyperObject(enchant,hyperAPI.getShopEconomy(shopname));
+			TransactionResponse response = hoAPI.sell(player, ho, 1);
 			response.sendMessages();
 			return true;
 		}
@@ -66,13 +64,13 @@ public class ShopTransactions {
 				return false;
 			}
 		int item_amount = item_stack.getAmount();
-		HyperObject ho = hEcon.getHyperObject(item_stack, ecoMan.getShop(shopname));
+		HyperObject ho = hoAPI.getHyperObject(item_stack, hyperAPI.getShopEconomy(shopname), hyperAPI.getShop(shopname));
 		String item_name = ho.getName().toLowerCase();
 		
-		if (shopmenu.shopstock.items_in_stock.contains(item_name) && (ecoMan.getShop(shopname).has(item_name))) {
+		if (shopmenu.shopstock.items_in_stock.contains(item_name) && (hyperAPI.getShop(shopname).has(item_name))) {
 			player.getInventory().addItem(item_stack);
-			ho = hEcon.getHyperObject(item_name);
-			TransactionResponse response = hyperObAPI.sell(player, ho, item_amount);
+			ho = hoAPI.getHyperObject(item_name, hyperAPI.getShopEconomy(shopname));
+			TransactionResponse response = hoAPI.sell(player, ho, item_amount);
 			response.sendMessages();
 			return true;
 			
@@ -81,12 +79,12 @@ public class ShopTransactions {
 	}
 	
 	public void Buy(String item, int qty) {
-		HyperObject ho = hEcon.getHyperObject(item);
-		if (!hp.hasBuyPermission(ecoMan.getShop(shopname))) {
+		HyperObject ho = hoAPI.getHyperObject(item, hyperAPI.getShopEconomy(shopname));
+		if (!hp.hasBuyPermission(hyperAPI.getShop(shopname))) {
 			player.sendMessage("You cannot buy from this shop.");
 			return;
 		}
-		TransactionResponse response = hyperObAPI.buy(player, ho, qty);
+		TransactionResponse response = hoAPI.buy(player, ho, qty);
 		response.sendMessages();
 	}
 

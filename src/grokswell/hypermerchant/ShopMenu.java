@@ -28,21 +28,18 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import regalowl.hyperconomy.EconomyManager;
 import regalowl.hyperconomy.EnchantmentClass;
 import regalowl.hyperconomy.HyperAPI;
-import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.HyperEnchant;
 import regalowl.hyperconomy.HyperItem;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperPlayer;
-import regalowl.hyperconomy.LanguageFile;
 
 import grokswell.hypermerchant.ShopTransactions;
  
 public class ShopMenu implements Listener {
  
-    private String name; //name of the shop
+    private String shopname; //name of the shop
     private int size;
     int page_number; //the current page the player is viewing
     int item_count; //number of items in this shop
@@ -60,15 +57,13 @@ public class ShopMenu implements Listener {
 	NPC npc;
 	ArrayList<ArrayList<String>> pages;
 	HyperAPI hyperAPI = new HyperAPI();
-	HyperObjectAPI hoa = new HyperObjectAPI();
-    
-	HyperConomy hc = HyperConomy.hc;
-	EconomyManager ecoMan = hc.getEconomyManager();
+	HyperObjectAPI hoAPI = new HyperObjectAPI();
+
 	HyperPlayer hp;
 	
 	
     public ShopMenu(String name, int size, HyperMerchantPlugin plgn,CommandSender sender, Player plyr, NPC npc) {
-    	this.name = name;
+    	this.shopname = name;
         this.size = size;
         this.plugin = plgn;
         this.optionNames = new String[size];
@@ -76,16 +71,16 @@ public class ShopMenu implements Listener {
         this.optionIcons = new ItemStack[size];
         this.player=plyr;
         this.npc = npc;
-    	this.shop_trans = new ShopTransactions(player, this.name, this.plugin, this);
+    	this.shop_trans = new ShopTransactions(player, this.shopname, this.plugin, this);
     	this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
-        this.inventory_name = this.name+"<>"+player.getName();
+        this.inventory_name = this.shopname+"<>"+player.getName();
         this.inventory = Bukkit.createInventory(player, size, this.inventory_name);
 
-    	hp = hoa.getHyperPlayer(player.getName());
+    	hp = hoAPI.getHyperPlayer(player.getName());
     	
-        economy_name = hyperAPI.getShopEconomy(this.name);
+        economy_name = hyperAPI.getShopEconomy(this.shopname);
         
-		shopstock = new ShopStock(sender, this.player, this.name, this.plugin);
+		shopstock = new ShopStock(sender, this.player, this.shopname, this.plugin);
         shopstock.SortStock(2);
 		this.item_count=shopstock.items_count;
         pages = shopstock.pages;
@@ -145,30 +140,29 @@ public class ShopMenu implements Listener {
 	        double value = 0.0;
 	        double stock = 0.0;
 	        
-	        out.println("object_type: "+ hoa.getType(item, economy_name).name());
-
+	        out.println("object_type: "+ hoAPI.getType(item, economy_name).name());
+	        out.println("item name: "+ item);
 	        ItemStack stack;
-	        if (hoa.getType(item, economy_name).name().equals("ITEM")) {
-				//HyperItem ho = hEcon.getHyperItem(item);
-				//stock = hEcon.getHyperObject(item).getStock();
-				HyperItem ho = hoa.getHyperItem(item,economy_name);
+	        if (hoAPI.getType(item, economy_name).name().equals("ITEM")) {
+				//HyperItem ho = hoa.getHyperItem(item,economy_name);
+				HyperItem ho = (HyperItem) hoAPI.getHyperObject(item, economy_name, hyperAPI.getShop(shopname));
 				stock = ho.getStock();
 				
 				stack = new ItemStack(ho.getMaterialEnum(), 1);
 				stack.setDurability((short)ho.getDurability());
-				value = hoa.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1);
+				value = hoAPI.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1);
 				//out.println("getTrueSaleValue: "+ hoa.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1));
-				cost = hoa.getTruePurchasePrice(ho, EnchantmentClass.DIAMOND, 1);
-			} else if (hoa.getType(item, economy_name).name().equals("ENCHANTMENT")) {
-				//HyperEnchant he = hEcon.getHyperEnchant(item);
-				//stock = hEcon.getHyperObject(item).getStock();
-				HyperEnchant he = hoa.getHyperEnchant(item,economy_name);
+				cost = hoAPI.getTruePurchasePrice(ho, EnchantmentClass.DIAMOND, 1);
+				
+			} else if (hoAPI.getType(item, economy_name).name().equals("ENCHANTMENT")) {
+				HyperEnchant he = (HyperEnchant) hoAPI.getHyperObject(item, economy_name, hyperAPI.getShop(shopname));
 				stock = he.getStock();
 				
-				cost = hoa.getTruePurchasePrice(he, EnchantmentClass.DIAMOND, 1);
-				value = hoa.getTrueSaleValue(he, hp, EnchantmentClass.DIAMOND, 1);
+				cost = hoAPI.getTruePurchasePrice(he, EnchantmentClass.DIAMOND, 1);
+				value = hoAPI.getTrueSaleValue(he, hp, EnchantmentClass.DIAMOND, 1);
 				value = value-he.getSalesTaxEstimate(value);
 				stack = new ItemStack(Material.STONE, 1, (short) 0);
+				
 			} else {
 				stack = new ItemStack(Material.AIR, 1, (short) 0);
 			}
@@ -287,13 +281,13 @@ public class ShopMenu implements Listener {
         		}
             }
         	else if (slot_num < size && slot_num >= 0 && (item_in_hand.getType() != Material.AIR)){
-        		if (!(hp.hasSellPermission(ecoMan.getShop(this.name)))) {
+        		if (!(hp.hasSellPermission(hyperAPI.getShop(this.shopname)))) {
         			player.sendMessage("You cannot sell to this shop.");
         		} 
         		else {
-	        		HashMap<Integer, Integer> enchants = new HashMap<Integer, Integer>();
+	        		HashMap<String, Integer> enchants = new HashMap<String, Integer>();
 	        		for (Enchantment ench : item_in_hand.getEnchantments().keySet()) {
-	        			enchants.put(ench.getId(),item_in_hand.getEnchantments().get(ench));
+	        			enchants.put(ench.getName(),item_in_hand.getEnchantments().get(ench));
 	        		}
 	        		
 	        		// SELLING ENCHANTS

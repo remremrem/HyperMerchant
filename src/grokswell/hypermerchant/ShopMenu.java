@@ -144,7 +144,6 @@ public class ShopMenu implements Listener {
 	        out.println("item name: "+ item);
 	        ItemStack stack;
 	        if (hoAPI.getType(item, economy_name).name().equals("ITEM")) {
-				//HyperItem ho = hoa.getHyperItem(item,economy_name);
 				HyperItem ho = (HyperItem) hoAPI.getHyperObject(item, economy_name, hyperAPI.getShop(shopname));
 				stock = ho.getStock();
 				

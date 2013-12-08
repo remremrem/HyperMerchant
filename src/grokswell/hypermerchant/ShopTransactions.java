@@ -69,7 +69,7 @@ public class ShopTransactions {
 		
 		if (shopmenu.shopstock.items_in_stock.contains(item_name) && (hyperAPI.getShop(shopname).has(item_name))) {
 			player.getInventory().addItem(item_stack);
-			ho = hoAPI.getHyperObject(item_name, hyperAPI.getShopEconomy(shopname));
+			ho = hoAPI.getHyperObject(item_name, hyperAPI.getShopEconomy(shopname), hyperAPI.getShop(shopname));
 			TransactionResponse response = hoAPI.sell(player, ho, item_amount);
 			response.sendMessages();
 			return true;
@@ -79,7 +79,7 @@ public class ShopTransactions {
 	}
 	
 	public void Buy(String item, int qty) {
-		HyperObject ho = hoAPI.getHyperObject(item, hyperAPI.getShopEconomy(shopname));
+		HyperObject ho = hoAPI.getHyperObject(item, hyperAPI.getShopEconomy(shopname), hyperAPI.getShop(shopname));
 		if (!hp.hasBuyPermission(hyperAPI.getShop(shopname))) {
 			player.sendMessage("You cannot buy from this shop.");
 			return;

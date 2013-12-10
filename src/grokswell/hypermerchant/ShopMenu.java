@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -140,8 +140,8 @@ public class ShopMenu implements Listener {
 	        double value = 0.0;
 	        double stock = 0.0;
 	        
-	        out.println("object_type: "+ hoAPI.getType(item, economy_name).name());
-	        out.println("item name: "+ item);
+	        //out.println("object_type: "+ hoAPI.getType(item, economy_name).name());
+	        //out.println("item name: "+ item);
 	        ItemStack stack;
 	        if (hoAPI.getType(item, economy_name).name().equals("ITEM")) {
 				HyperItem ho = (HyperItem) hoAPI.getHyperObject(item, economy_name, hyperAPI.getShop(shopname));

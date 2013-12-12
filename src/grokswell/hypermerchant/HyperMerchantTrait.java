@@ -128,6 +128,7 @@ public class HyperMerchantTrait extends Trait {
 			
 		} else {
 			shoplist = hyperAPI.getPlayerShopList();
+			shoplist.addAll(hyperAPI.getServerShopList());
 			if (shoplist.contains(this.shop_name)) {
 				if  (!this.welcomeMsg.isEmpty()) {
 					SpeechContext message = new SpeechContext(this.npc, this.welcomeMsg, player);

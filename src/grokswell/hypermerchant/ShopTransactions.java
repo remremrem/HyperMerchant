@@ -51,7 +51,7 @@ public class ShopTransactions {
 			}
 		if ((hyperAPI.getShop(shopname).has(enchant))) {
 			HyperObject ho = hoAPI.getHyperObject(enchant,hyperAPI.getShopEconomy(shopname));
-			TransactionResponse response = hoAPI.sell(player, ho, 1);
+			TransactionResponse response = hoAPI.sell(player, ho, 1, hyperAPI.getShop(shopname));
 			response.sendMessages();
 			return true;
 		}
@@ -70,7 +70,7 @@ public class ShopTransactions {
 		if (shopmenu.shopstock.items_in_stock.contains(item_name) && (hyperAPI.getShop(shopname).has(item_name))) {
 			player.getInventory().addItem(item_stack);
 			ho = hoAPI.getHyperObject(item_name, hyperAPI.getShopEconomy(shopname), hyperAPI.getShop(shopname));
-			TransactionResponse response = hoAPI.sell(player, ho, item_amount);
+			TransactionResponse response = hoAPI.sell(player, ho, item_amount, hyperAPI.getShop(shopname));
 			response.sendMessages();
 			return true;
 			
@@ -84,7 +84,7 @@ public class ShopTransactions {
 			player.sendMessage("You cannot buy from this shop.");
 			return;
 		}
-		TransactionResponse response = hoAPI.buy(player, ho, qty);
+		TransactionResponse response = hoAPI.buy(player, ho, qty, hyperAPI.getShop(shopname));
 		response.sendMessages();
 	}
 

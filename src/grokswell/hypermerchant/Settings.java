@@ -29,7 +29,6 @@ public class Settings {
     }
 
     public enum Setting {
-        ENABLE_SIGNS("enable_signs.default", 1),
         ENABLE_COMMAND("enable_command.default", 1),
         ENABLE_NPC("enable_npc.default", 1),
         WELCOME("welcome.default", "Welcome to my little shop."),

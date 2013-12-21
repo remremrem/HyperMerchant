@@ -1,67 +1,99 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.grokswell.hypermerchant</groupId>
 	<artifactId>hypermerchant</artifactId>
-	<version>1.0</version>
+	<version>1.3b</version>
 	<name>HyperMerchant</name>
-	<description>HyperMerchant is an Inventory based GUI and Citizen NPC trait for use with HyperConomy
-	</description>
+	<description>HyperMerchant is an Inventory based GUI and Citizen NPC trait for use with HyperConomy</description>
 	<repositories>
 		<repository>
-		<id>bukkit-repo</id>
-		<url>http://repo.bukkit.org/content/groups/public</url>
+			<id>bukkit-repo</id>
+			<url>http://repo.bukkit.org/content/groups/public</url>
 		</repository>
 		<repository>
-            <id>citizens-repo</id>
-            <url>http://repo.citizensnpcs.co/</url>
-        </repository>
-        <repository>
-            <id>hyperconomy-repo</id>
-            <url>https://buildhive.cloudbees.com/view/All/job/RegalOwl/</url>
-        </repository>
+			<id>regalowl-repo</id>
+			<url>http://www.regalowl.net:8080/archiva/repository/snapshots/</url>
+		</repository> 
+		<repository>
+			<id>citizens-repo</id>
+			<url>http://repo.citizensnpcs.co/</url>
+		</repository>
 	</repositories>
 	<scm>
-	<developerConnection>scm:git:git@github.com:remremrem/HyperMerchant.git</developerConnection>
-	<connection>scm:git:git://github.com/remremrem/HyperMerchant.git</connection>
-	<url>https://github.com/remremrem/HyperMerchant/tree/master/</url>
+		<developerConnection>scm:git:git@github.com:remremrem/HyperMerchant.git</developerConnection>
+		<connection>scm:git:git://github.com/remremrem/HyperMerchant.git</connection>
+		<url>https://github.com/remremrem/HyperMerchant/tree/master/</url>
 	</scm>
 	<dependencies>
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.6.2-R0.2-SNAPSHOT</version>
+			<version>1.7.2-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.milkbowl.vault</groupId>
+			<artifactId>Vault</artifactId>
+			<version>1.2.27</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>regalowl.databukkit</groupId>
+			<artifactId>databukkit</artifactId>
+			<version>0.0.35-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>regalowl.hyperconomy</groupId>
 			<artifactId>hyperconomy</artifactId>
-			<version>0.972-SNAPSHOT</version>
+			<version>0.974.2-SNAPSHOT</version>
+		</dependency>                
+		<dependency>
+			<groupId>net.citizensnpcs</groupId>
+			<artifactId>citizens</artifactId>
+			<version>2.0.9-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-            <groupId>net.citizensnpcs</groupId>
-            <artifactId>citizens</artifactId>
-            <version>2.0.9-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-		</dependencies>
+	</dependencies>
 	<build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+							<relocations>
+								<relocation>
+									<pattern>regalowl.databukkit</pattern>
+									<shadedPattern>regalowl.hyperconomy.databukkit</shadedPattern>
+								</relocation>
+							</relocations>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 	<url>http://dev.bukkit.org/server-mods/hypermerchant/</url>
 </project>
+

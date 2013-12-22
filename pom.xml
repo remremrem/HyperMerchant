@@ -13,11 +13,11 @@
 		</repository>
 		<repository>
 			<id>regalowl-repo</id>
-			<url>http://www.regalowl.net:8080/archiva/repository/snapshots/</url>
+			<url>http://www.regalowl.net:8080/archiva/repository/snapshots</url>
 		</repository> 
 		<repository>
 			<id>citizens-repo</id>
-			<url>http://repo.citizensnpcs.co/</url>
+			<url>http://repo.citizensnpcs.co</url>
 		</repository>
 	</repositories>
 	<scm>
@@ -42,11 +42,13 @@
 			<groupId>regalowl.databukkit</groupId>
 			<artifactId>databukkit</artifactId>
 			<version>0.0.35-SNAPSHOT</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>regalowl.hyperconomy</groupId>
 			<artifactId>hyperconomy</artifactId>
 			<version>0.974.2-SNAPSHOT</version>
+			<scope>provided</scope>
 		</dependency>                
 		<dependency>
 			<groupId>net.citizensnpcs</groupId>

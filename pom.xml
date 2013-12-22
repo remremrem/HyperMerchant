@@ -13,7 +13,7 @@
 		</repository>
 		<repository>
 			<id>regalowl-repo</id>
-			<url>https://buildhive.cloudbees.com/view/All/job/RegalOwl/job/HyperConomy/regalowl.hyperconomy$hyperconomy/</url>
+			<url>https://buildhive.cloudbees.com/view/All/job/RegalOwl/job/HyperConomy/regalowl.hyperconomy$hyperconomy/lastSuccessfulBuild/artifact/regalowl.hyperconomy/</url>
 		</repository> 
 		<repository>
 			<id>citizens-repo</id>

@@ -13,7 +13,7 @@
 		</repository>
 		<repository>
 			<id>regalowl-repo</id>
-			<url>http://www.regalowl.net:8080/archiva/repository/snapshots</url>
+			<url>https://buildhive.cloudbees.com/view/All/job/RegalOwl/job/HyperConomy/</url>
 		</repository> 
 		<repository>
 			<id>citizens-repo</id>
@@ -29,13 +29,13 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.7.2-R0.1-SNAPSHOT</version>
+			<version>1.7.2-R0.2-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>regalowl.hyperconomy</groupId>
 			<artifactId>hyperconomy</artifactId>
-			<version>0.974.1-SNAPSHOT</version>
+			<version>0.974.2-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>                
 		<dependency>
@@ -51,33 +51,13 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>2.0</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<filters>
-								<filter>
-									<artifact>*:*</artifact>
-									<excludes>
-										<exclude>META-INF/*.SF</exclude>
-										<exclude>META-INF/*.DSA</exclude>
-										<exclude>META-INF/*.RSA</exclude>
-									</excludes>
-								</filter>
-							</filters>
-						</configuration>
-					</execution>
-				</executions>
+					<configuration> 
+						<source>1.6</source>
+						<target>1.6</target>
+					</configuration>
 			</plugin>
 		</plugins>
 	</build>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-	</properties>
 	<url>http://dev.bukkit.org/server-mods/hypermerchant/</url>
 </project>
 

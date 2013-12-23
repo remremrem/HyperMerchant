@@ -73,7 +73,15 @@ public class ShopMenu implements Listener {
         this.npc = npc;
     	this.shop_trans = new ShopTransactions(player, this.shopname, this.plugin, this);
     	this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
-        this.inventory_name = this.shopname+"<>"+player.getName();
+    	
+        String iname = (this.shopname+"<>"+player.getName());
+        if (iname.length()>32) {
+        	this.inventory_name = iname.substring(0, 27)+this.plugin.uniquifier.uniquify();
+        } else {
+        	this.inventory_name = iname;
+        }
+
+	    //out.println("inventory name: "+ this.inventory_name);
         this.inventory = Bukkit.createInventory(player, size, this.inventory_name);
 
     	hp = hoAPI.getHyperPlayer(player.getName());
@@ -185,7 +193,7 @@ public class ShopMenu implements Listener {
 	    	count++;
 	    }
 	    return;
-    }
+    }    
     
     
     public void nextPage() {
@@ -258,6 +266,7 @@ public class ShopMenu implements Listener {
     
     void onInventoryClickOrCreative(InventoryClickEvent event) {
         if (event.getInventory().getTitle().equals(this.inventory_name)) {
+    	    //out.println("inventory name: "+ this.inventory.getName());
     		int slot_num = event.getRawSlot();
             if (slot_num < size) {
             	event.setCancelled(true);

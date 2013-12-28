@@ -2,6 +2,7 @@ package grokswell.hypermerchant;
 
 //import static java.lang.System.out;
 
+//import java.io.File;
 import java.util.ArrayList;
 
 import net.citizensnpcs.api.CitizensAPI;
@@ -23,12 +24,14 @@ import regalowl.hyperconomy.HyperAPI;
 
 import grokswell.hypermerchant.HyperMerchantTrait;
 import grokswell.hypermerchant.ShopMenu;
+import grokswell.hypermerchant.Settings;
 
 public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	HyperEconAPI economyAPI = new HyperEconAPI();
 	HyperObjectAPI hoAPI = new HyperObjectAPI();
 	HyperAPI hyperAPI = new HyperAPI();
 	Uniquifier uniquifier = new Uniquifier();
+	Settings settings;
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args) {
@@ -132,13 +135,19 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 
 	@Override
 	public void onEnable() {
-		getServer().getPluginManager().registerEvents(this, this);		
+		getServer().getPluginManager().registerEvents(this, this);
+		
 		if (Bukkit.getPluginManager().getPlugin("Citizens") != null) {
 			CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(HyperMerchantTrait.class).withName("hypermerchant"));
-		
 		} else {
 			this.getLogger().info("Citizens not found. NPC hypermerchants will be disabled.");
 		}
+		
+		//dataFolder = getDataFolder();
+		//if (!dataFolder.isDirectory()) dataFolder.mkdir();
+		settings = new Settings(this);
+		//settings.load();
+		//YamlStorage config = settings.getConfig();
 
 
 	}

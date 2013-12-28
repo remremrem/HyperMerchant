@@ -9,6 +9,7 @@ import java.util.HashMap;
 import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -142,7 +143,7 @@ public class ShopMenu implements Listener {
 		ArrayList<String> page=(ArrayList<String>) pages.get(this.page_number);
 		
 		//Populate the shop stock slots for current page
-		for (String item : page) {
+		for (String item_name : page) {
 	        // Loop through all items on this page
 			double cost = 0.0;
 	        double value = 0.0;
@@ -151,18 +152,17 @@ public class ShopMenu implements Listener {
 	        //out.println("object_type: "+ hoAPI.getType(item, economy_name).name());
 	        //out.println("item name: "+ item);
 	        ItemStack stack;
-	        if (hoAPI.getType(item, economy_name).name().equals("ITEM")) {
-				HyperItem ho = (HyperItem) hoAPI.getHyperObject(item, economy_name, hyperAPI.getShop(shopname));
+	        if (hoAPI.getType(item_name, economy_name).name().equals("ITEM")) {
+				HyperItem ho = (HyperItem) hoAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
 				stock = ho.getStock();
 				
 				stack = new ItemStack(ho.getMaterialEnum(), 1);
 				stack.setDurability((short)ho.getDurability());
 				value = hoAPI.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1);
-				//out.println("getTrueSaleValue: "+ hoa.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1));
 				cost = hoAPI.getTruePurchasePrice(ho, EnchantmentClass.DIAMOND, 1);
 				
-			} else if (hoAPI.getType(item, economy_name).name().equals("ENCHANTMENT")) {
-				HyperEnchant he = (HyperEnchant) hoAPI.getHyperObject(item, economy_name, hyperAPI.getShop(shopname));
+			} else if (hoAPI.getType(item_name, economy_name).name().equals("ENCHANTMENT")) {
+				HyperEnchant he = (HyperEnchant) hoAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
 				stock = he.getStock();
 				
 				cost = hoAPI.getTruePurchasePrice(he, EnchantmentClass.DIAMOND, 1);
@@ -178,9 +178,9 @@ public class ShopMenu implements Listener {
 			//if (item.equals("xp")) {
 			//	stack = new ItemStack(Material.STONE, 1);
 			//}
+	        //.replaceAll("_", " ")
 
-			
-			this.setOption(count, stack, item, ChatColor.WHITE+"Price: "+ChatColor.DARK_PURPLE+String.format("%.2f", cost),
+			this.setOption(count, stack, item_name.replaceAll("_", " "), ChatColor.WHITE+"Price: "+ChatColor.DARK_PURPLE+String.format("%.2f", cost),
 					ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", value), 
 					ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) stock) );
 	        count++;
@@ -188,7 +188,7 @@ public class ShopMenu implements Listener {
 		
 		ItemStack stack;
 	    while (count < size-9) {
-			stack = new ItemStack(Material.CAULDRON, 1);
+			stack = new ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.SILVER.getData());
 	    	this.setOption(count, stack, " ", " ");
 	    	count++;
 	    }

@@ -37,7 +37,7 @@ public class ShopStock {
 		try {
     		ArrayList<HyperObject> available_objects = hoAPI.getAvailableObjects(shopname);
 			for (HyperObject ho:available_objects) {
-				object_names.add(ho.getName().toLowerCase());
+				object_names.add(ho.getDisplayName().toLowerCase());
 			}
 			//Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
 			Collections.sort(object_names, String.CASE_INSENSITIVE_ORDER);
@@ -64,6 +64,7 @@ public class ShopStock {
 			
 			Collections.sort(items_in_stock, String.CASE_INSENSITIVE_ORDER);
 			Collections.sort(item_types_sorted);
+			//out.println(items_in_stock);
 		} 
 		catch (Exception e) {
 			sender.sendMessage("Error, cannot open shop inventory");

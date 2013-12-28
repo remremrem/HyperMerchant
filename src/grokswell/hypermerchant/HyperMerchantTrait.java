@@ -19,7 +19,6 @@ import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperPlayer;
 
-import grokswell.hypermerchant.Settings.Setting;
 
 public class HyperMerchantTrait extends Trait {
 	HyperAPI hyperAPI = new HyperAPI();
@@ -29,19 +28,25 @@ public class HyperMerchantTrait extends Trait {
 	static ArrayList<String> shoplist;
 	HashMap<String,ShopMenu> customer_menus = new HashMap<String,ShopMenu>();
 	final HyperMerchantPlugin plugin;
-
-    
-	String farewellMsg = Setting.FAREWELL.asString();
-	String welcomeMsg = Setting.WELCOME.asString();
-	String denialMsg = Setting.DENIAL.asString();
-	String closedMsg = Setting.CLOSED.asString();
-	boolean offduty = Setting.OFFDUTY.asBoolean();
 	
 	public DataKey trait_key;
+	
+	String farewellMsg;
+	String welcomeMsg;
+	String denialMsg;
+	String closedMsg;
+	boolean offduty;
 
 	public HyperMerchantTrait() {
 		super("hypermerchant");
 		plugin = (HyperMerchantPlugin) Bukkit.getServer().getPluginManager().getPlugin("HyperMerchant");
+
+	    
+		farewellMsg = plugin.settings.FAREWELL;
+		welcomeMsg = plugin.settings.WELCOME;
+		denialMsg = plugin.settings.DENIAL;
+		closedMsg = plugin.settings.CLOSED;
+		offduty = plugin.settings.OFFDUTY;
 	}
 
 	@Override

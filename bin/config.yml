@@ -1,3 +1,7 @@
+Main:
+  enable-command: true
+  enable-npcs: true
+  offduty: true
 Messages:
   welcome: Welcome to my little shop.
   farewell: I thank you for your continued patronage.
@@ -7,5 +11,3 @@ PlayerShops:
   right-click-player-shop: true
   npc-for-hire: true
   npc-commission: 0.10
-Other:
-  player-trade-menu: true

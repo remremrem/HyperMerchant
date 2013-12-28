@@ -49,8 +49,9 @@ public class ShopTransactions {
 				player.sendMessage(hc_lang.get("CANT_SELL_CREATIVE"));
 				return false;
 			}
-		if ((hyperAPI.getShop(shopname).has(enchant))) {
-			HyperObject ho = hoAPI.getHyperObject(enchant,hyperAPI.getShopEconomy(shopname));
+
+		HyperObject ho = hoAPI.getHyperObject(enchant,hyperAPI.getShopEconomy(shopname));
+		if ((hyperAPI.getShop(shopname).isAvailable(ho))) {
 			TransactionResponse response = hoAPI.sell(player, ho, 1, hyperAPI.getShop(shopname));
 			response.sendMessages();
 			return true;
@@ -65,11 +66,12 @@ public class ShopTransactions {
 			}
 		int item_amount = item_stack.getAmount();
 		HyperObject ho = hoAPI.getHyperObject(item_stack, hyperAPI.getShopEconomy(shopname), hyperAPI.getShop(shopname));
-		String item_name = ho.getName().toLowerCase();
+		String item_name = ho.getDisplayName().toLowerCase();
+		//out.println(item_name);
+		ho = hoAPI.getHyperObject(item_name, hyperAPI.getShopEconomy(shopname), hyperAPI.getShop(shopname));
 		
-		if (shopmenu.shopstock.items_in_stock.contains(item_name) && (hyperAPI.getShop(shopname).has(item_name))) {
+		if (shopmenu.shopstock.items_in_stock.contains(item_name) && (hyperAPI.getShop(shopname).isAvailable(ho))) {
 			player.getInventory().addItem(item_stack);
-			ho = hoAPI.getHyperObject(item_name, hyperAPI.getShopEconomy(shopname), hyperAPI.getShop(shopname));
 			TransactionResponse response = hoAPI.sell(player, ho, item_amount, hyperAPI.getShop(shopname));
 			response.sendMessages();
 			return true;
@@ -79,7 +81,7 @@ public class ShopTransactions {
 	}
 	
 	public void Buy(String item, int qty) {
-		HyperObject ho = hoAPI.getHyperObject(item, hyperAPI.getShopEconomy(shopname), hyperAPI.getShop(shopname));
+		HyperObject ho = hoAPI.getHyperObject(item.replaceAll(" ", "_"), hyperAPI.getShopEconomy(shopname), hyperAPI.getShop(shopname));
 		if (!hp.hasBuyPermission(hyperAPI.getShop(shopname))) {
 			player.sendMessage("You cannot buy from this shop.");
 			return;

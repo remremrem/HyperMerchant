@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +33,7 @@ import regalowl.hyperconomy.EnchantmentClass;
 import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.HyperEnchant;
 import regalowl.hyperconomy.HyperItem;
+import regalowl.hyperconomy.HyperObject;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperPlayer;
 
@@ -154,11 +155,15 @@ public class ShopMenu implements Listener {
 	        ItemStack stack;
 	        if (hoAPI.getType(item_name, economy_name).name().equals("ITEM")) {
 				HyperItem ho = (HyperItem) hoAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
+				HyperObject hi = hoAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
 				stock = ho.getStock();
 				
 				stack = new ItemStack(ho.getMaterialEnum(), 1);
 				stack.setDurability((short)ho.getDurability());
-				value = hoAPI.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1);
+				//value = hoAPI.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1);
+
+				//out.println(value+" , "+ho);
+				value = hoAPI.getTheoreticalSaleValue(hi,EnchantmentClass.DIAMOND, 1);
 				cost = hoAPI.getTruePurchasePrice(ho, EnchantmentClass.DIAMOND, 1);
 				
 			} else if (hoAPI.getType(item_name, economy_name).name().equals("ENCHANTMENT")) {

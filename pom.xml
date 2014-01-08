@@ -33,6 +33,7 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>hyperconomy</groupId>
 			<artifactId>hyperconomy</artifactId>
 			<version>0.974.3-SNAPSHOT</version>
 			<scope>provided</scope>

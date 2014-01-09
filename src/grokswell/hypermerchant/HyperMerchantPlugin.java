@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 
 //import java.io.File;
 import java.util.ArrayList;
@@ -13,14 +13,21 @@ import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+
 
 import regalowl.hyperconomy.EconomyManager;
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.HyperEconAPI;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperAPI;
+import regalowl.hyperconomy.HyperPlayer;
+import regalowl.hyperconomy.PlayerShop;
 
 import grokswell.hypermerchant.HyperMerchantTrait;
 import grokswell.hypermerchant.ShopMenu;
@@ -32,6 +39,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	HyperAPI hyperAPI = new HyperAPI();
 	Uniquifier uniquifier = new Uniquifier();
 	Settings settings;
+	ArrayList<String> customer_cooldowns = new ArrayList<String>();
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args) {
@@ -151,5 +159,79 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 
 
 	}
+	
+	class RemoveCustomerCooldown extends BukkitRunnable {
+    	String playername;
+        public RemoveCustomerCooldown(String plynam) {
+        	playername = plynam;
+        }
+        public void run() {
+            // What you want to schedule goes here
+            customer_cooldowns.remove(playername);
+        }
+    }
+	
+	@EventHandler
+	public void onRightClick(PlayerInteractEntityEvent event) {
+		out.println("onRightClick playerinteractentityevent");
+		
+		if(!event.getRightClicked().getType().equals(EntityType.PLAYER)) return;
+		out.println("entity type = player");
+		Player owner = (Player) event.getRightClicked();
+		out.println("owner = "+owner.getName());
+		Player player = event.getPlayer();
+		String shopname = "";
+		for (String sn : hyperAPI.getPlayerShopList()){
+			out.println("try shopname = "+sn+" owner = "+hyperAPI.getPlayerShop(sn).getOwner().getName());
+			
+			if ( hyperAPI.getPlayerShop(sn).getOwner().getName().equals(owner.getName()) ) {
+				shopname = sn;
+				break;
+			}
+		}
+		out.println("shopname ="+shopname);
+		
+		if ("" == shopname) return;
+		out.println("shopname is good");
 
+		if (this.customer_cooldowns.contains(player.getName())) return;
+		
+		this.customer_cooldowns.add(player.getName());
+		new RemoveCustomerCooldown(player.getName()).runTaskLater(this, 60);
+		
+		if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 
+		   (!player.hasPermission("creative.hypermerchant"))) {
+			
+			player.sendMessage(ChatColor.YELLOW+"You may not interact with merchants while in creative mode.");
+			return;
+    	} 
+
+		PlayerShop shop = hyperAPI.getPlayerShop(shopname);
+		
+		//this.customer_menus.put(player.getName(), null);
+		
+//		if (!owner.hasPermission("hypermerchant.npc")) {
+//			if (!this.denialMsg.isEmpty()) {
+//				SpeechContext message = new SpeechContext(this.npc, this.denialMsg, player);
+//				new SimpleSpeechController(this.npc).speak(message);
+//			}
+//			return;
+//		}
+		
+		//HyperConomy hc;
+		//hc = HyperConomy.hc;
+		//EconomyManager ecoMan = hc.getEconomyManager();
+		HyperPlayer hp = hoAPI.getHyperPlayer(player.getName());
+			
+		if (!hp.hasBuyPermission(shop)) return;
+		
+		if ("player.offduty"=="true") return;
+		//if (player.offduty) return;
+
+		new ShopMenu(shopname, 54, this, player, player, null);
+				//ecoMan=null;
+				//hc=null;
+		return;
+
+	}
 }

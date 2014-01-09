@@ -24,7 +24,7 @@ public class HyperMerchantTrait extends Trait {
 	HyperAPI hyperAPI = new HyperAPI();
 	HyperObjectAPI hoAPI = new HyperObjectAPI();
 	String shop_name = hyperAPI.getGlobalShopAccount();
-	ArrayList<String> customer_cooldowns = new ArrayList<String>();
+	//ArrayList<String> customer_cooldowns = new ArrayList<String>();
 	static ArrayList<String> shoplist;
 	HashMap<String,ShopMenu> customer_menus = new HashMap<String,ShopMenu>();
 	final HyperMerchantPlugin plugin;
@@ -76,7 +76,7 @@ public class HyperMerchantTrait extends Trait {
         }
         public void run() {
             // What you want to schedule goes here
-            customer_cooldowns.remove(playername);
+            plugin.customer_cooldowns.remove(playername);
         }
     }
     
@@ -86,11 +86,11 @@ public class HyperMerchantTrait extends Trait {
 		
 		Player player = event.getClicker();
 		
-		if (this.customer_cooldowns.contains(player.getName())){
+		if (plugin.customer_cooldowns.contains(player.getName())){
 			event.setCancelled(true);
 			return;
 		}
-		this.customer_cooldowns.add(player.getName());
+		plugin.customer_cooldowns.add(player.getName());
 		new RemoveCustomerCooldown(player.getName()).runTaskLater(this.plugin, 60);
 		
 		if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 

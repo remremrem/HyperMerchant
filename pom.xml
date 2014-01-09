@@ -34,7 +34,7 @@
 		</dependency>
 		<dependency>
 			<groupId>hyperconomy</groupId>
-			<artifactId>*</artifactId>
+			<artifactId>hyperconomy</artifactId>
 			<version>0.974.3-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>                

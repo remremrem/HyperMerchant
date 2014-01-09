@@ -12,15 +12,9 @@
 			<url>http://repo.bukkit.org/content/groups/public</url>
 		</repository>
 		<repository>
-<<<<<<< HEAD
             <id>my-repo</id>
             <url>http://doyle.is-a-geek.net:8000/repo/</url>
-        </repository> 
-=======
-			<id>my-repo</id>
-			<url>http://doyle.is-a-geek.net:8000/repo/</url>
-		</repository> 
->>>>>>> 5f1cefd17c3bac669cd7ab395f771cb7779f40e1
+        </repository>
 		<repository>
 			<id>citizens-repo</id>
 			<url>http://repo.citizensnpcs.co</url>

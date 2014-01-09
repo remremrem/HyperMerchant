@@ -12,8 +12,8 @@
 			<url>http://repo.bukkit.org/content/groups/public</url>
 		</repository>
 		<repository>
-			<id>regalowl-repo</id>
-			<url>https://buildhive.cloudbees.com/view/All/job/RegalOwl/job/HyperConomy/lastSuccessfulBuild/regalowl.hyperconomy%24hyperconomy/artifact/regalowl.hyperconomy/</url>
+			<id>my-repo</id>
+			<url>http://doyle.is-a-geek.net:8000/repo/</url>
 		</repository> 
 		<repository>
 			<id>citizens-repo</id>

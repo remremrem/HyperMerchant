@@ -163,7 +163,7 @@ public class ShopMenu implements Listener {
 				//value = hoAPI.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1);
 
 				//out.println(value+" , "+ho);
-				value = hoAPI.getTheoreticalSaleValue(hi,EnchantmentClass.DIAMOND, 1);
+				value = hoAPI.getTheoreticalSaleValue(stack.getTypeId(), stack.getDurability(),1, economy_name);
 				cost = hoAPI.getTruePurchasePrice(ho, EnchantmentClass.DIAMOND, 1);
 				
 			} else if (hoAPI.getType(item_name, economy_name).name().equals("ENCHANTMENT")) {

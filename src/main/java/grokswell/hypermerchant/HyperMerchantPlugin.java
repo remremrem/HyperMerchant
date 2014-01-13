@@ -2,7 +2,6 @@ package grokswell.hypermerchant;
 
 //import static java.lang.System.out;
 
-//import java.io.File;
 import java.util.ArrayList;
 
 import net.citizensnpcs.api.CitizensAPI;
@@ -39,6 +38,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	HyperAPI hyperAPI = new HyperAPI();
 	Uniquifier uniquifier = new Uniquifier();
 	Settings settings;
+	Players playerData;
 	ArrayList<String> customer_cooldowns = new ArrayList<String>();
 	
 	@Override
@@ -85,6 +85,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			}
 		}
 		
+		
 		// SHOPMENU 
 		else if (cmd.getName().equalsIgnoreCase("shopmenu")) {
 			if (!(sender instanceof Player)) {
@@ -112,12 +113,37 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			}
 		}
 		
+		
 		//REMOTESHOPLIST
 		else if (cmd.getName().equalsIgnoreCase("remoteshoplist")) {
 			sender.sendMessage(ChatColor.YELLOW+"Valid shop names to use with command /remotemenu:");
 			sender.sendMessage(hyperAPI.listShops());
 			return true;
 		}
+		
+		
+		//ONDUTY
+		else if (cmd.getName().equalsIgnoreCase("onduty")) {
+			if (!(sender instanceof Player)) {
+				sender.sendMessage("Only players can use the command "+ChatColor.RED+"/remotemenu");
+				return true;
+			}
+			
+			String playerName = ((Player) sender).getName();
+			Boolean onduty = false;
+			onduty = playerData.getPlayerData().getBoolean(playerName+".onduty");
+			
+			if (onduty){
+				playerData.savePlayerData(playerName+".onduty", false);
+				sender.sendMessage(ChatColor.YELLOW+"You are now off duty. Other players cannot click on you to trade with your shop.");
+			} else {
+				playerData.savePlayerData(playerName+".onduty", true);
+				sender.sendMessage(ChatColor.YELLOW+"You are now on duty. Other players may click on you to trade with your shop.");
+			}
+			
+			return true;
+		}
+
 		
 		//HYPERMERCHANT
 		else if (cmd.getName().equalsIgnoreCase("hmerchant")) {
@@ -154,6 +180,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		//dataFolder = getDataFolder();
 		//if (!dataFolder.isDirectory()) dataFolder.mkdir();
 		settings = new Settings(this);
+		playerData = new Players(this);
 		//settings.load();
 		//YamlStorage config = settings.getConfig();
 
@@ -171,6 +198,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
         }
     }
 	
+	@SuppressWarnings("static-access")
 	@EventHandler
 	public void onRightClick(PlayerInteractEntityEvent event) {
 		//out.println("onRightClick playerinteractentityevent");
@@ -191,14 +219,18 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		}
 		//out.println("shopname ="+shopname);
 		
+		//return if the player who was clicked does not own a shop.
 		if ("" == shopname) return;
 		//out.println("shopname is good");
 
+		//return if the customer has already clicked to open the menu in the last few seconds
 		if (this.customer_cooldowns.contains(player.getName())) return;
 		
+		//add this player's name to the cooldown list to prevent them from click-spamming and glitching the menu
 		this.customer_cooldowns.add(player.getName());
 		new RemoveCustomerCooldown(player.getName()).runTaskLater(this, 60);
 		
+		//make sure player is not in creative mode without permission for shopping in creative.
 		if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 
 		   (!player.hasPermission("creative.hypermerchant"))) {
 			
@@ -206,31 +238,24 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			return;
     	} 
 
+		//if shop owners are required to be in their shops to trade..
+		if (settings.ONDUTY_IN_SHOP_ONLY) {
+			//.. return, if the shop owner is not in shop
+			if (hyperAPI.getPlayerShop(owner) != shopname) return;
+		}
+		
 		PlayerShop shop = hyperAPI.getPlayerShop(shopname);
-		
-		//this.customer_menus.put(player.getName(), null);
-		
-//		if (!owner.hasPermission("hypermerchant.npc")) {
-//			if (!this.denialMsg.isEmpty()) {
-//				SpeechContext message = new SpeechContext(this.npc, this.denialMsg, player);
-//				new SimpleSpeechController(this.npc).speak(message);
-//			}
-//			return;
-//		}
-		
-		//HyperConomy hc;
-		//hc = HyperConomy.hc;
-		//EconomyManager ecoMan = hc.getEconomyManager();
 		HyperPlayer hp = hoAPI.getHyperPlayer(player.getName());
-			
+		
+		//return if the player who clicked does not have permission to trade with this shop
 		if (!hp.hasBuyPermission(shop)) return;
 		
-		if ("player.offduty"=="true") return;
-		//if (player.offduty) return;
-
+		//return if the shop owner has set themselves to off-duty
+		if ( !playerData.getPlayerData().getBoolean(owner.getName()+".onduty") ) return;
+        
+		//if nothing has returned to this point, open a shopmenu for the player who clicked.
 		new ShopMenu(shopname, 54, this, player, player, null);
-				//ecoMan=null;
-				//hc=null;
+
 		return;
 
 	}

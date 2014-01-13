@@ -1,6 +1,6 @@
 name: HyperMerchant
 main: grokswell.hypermerchant.HyperMerchantPlugin
-version: 1.3b
+version: 1.31
 description: Inventory menu to be used with HyperConomy shops and NPC trait for Citizens2.
 author: Grokswell
 authors: [Grokswell] 
@@ -26,6 +26,12 @@ commands:
       permission: hypermerchant.remote
       permission-message: You do not have permission to use command /remoteshoplist.
       aliases: [rslist]
+   onduty:
+      description: Toggle a shop owner between being onduty or offduty.
+      usage: /onduty
+      permission: hypermerchant.onduty
+      permission-message: You do not have permission to use command /onduty.
+      aliases: [offduty]
    hmerchant:
       description: Set the properties of the currently selected hypermerchant npc.
       usage: "\n§4/hmerchant §csetshop §a[shopname] §6[--id idnum] §e- Set shop of selected hypermerchant.
@@ -58,6 +64,9 @@ permissions:
       default: true
    hypermerchant.npc:
       description: Allow interaction with hypermerchant npc.
+      default: true
+   hypermerchant.onduty:
+      description: Allow use of the /onduty command.
       default: true
    hypermerchant.remote:
       description: Allow use of the /remotemenu command.

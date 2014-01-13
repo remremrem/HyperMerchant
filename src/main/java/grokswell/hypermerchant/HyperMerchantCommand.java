@@ -93,6 +93,9 @@ public class HyperMerchantCommand {
 			}
 			
 			if (this_npc.hasTrait(HyperMerchantTrait.class)) {
+				
+				
+					//HMERCH INFO
 				if (args[0].equals("info")) {
 						if (this_npc.getTrait(HyperMerchantTrait.class).offduty) {
 							sender.sendMessage("\n"+ChatColor.YELLOW+this_npc.getName()+" is OFFDUTY");
@@ -100,7 +103,10 @@ public class HyperMerchantCommand {
 							sender.sendMessage("\n"+ChatColor.YELLOW+this_npc.getName()+" is ONDUTY");
 						}
 						sender.sendMessage(ChatColor.YELLOW+"ID: " + String.valueOf(this_npc.getId()) + " , SHOP: "+ this_npc.getTrait(HyperMerchantTrait.class).shop_name +"\n");
-				
+
+						
+						
+					//HMERCH SETSHOP
 				} else if (args[0].equals("setshop")) {
 					if (args.length>1) {
 						HyperConomy hc = HyperConomy.hc;
@@ -140,7 +146,9 @@ public class HyperMerchantCommand {
 							return;
 						}
 					}
+				
 					
+					//HMERCH GREETING
 				} else if (args[0].equals("greeting")) {
 					if (args.length>1) {
 						this_npc.getTrait(HyperMerchantTrait.class).welcomeMsg = buffer.toString();
@@ -155,7 +163,10 @@ public class HyperMerchantCommand {
 						}
 						sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer say a greeting to customers.");
 					}
+
+				
 					
+					//HMERCH FAREWELL
 				} else if (args[0].equals("farewell")) {
 					if (args.length>1) {
 						this_npc.getTrait(HyperMerchantTrait.class).farewellMsg = buffer.toString();
@@ -170,7 +181,10 @@ public class HyperMerchantCommand {
 						}
 						sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer say a farewell to customers.");
 					}
+
+				
 					
+					//HMERCH DENIAL
 				} else if (args[0].equals("denial")) {
 					if (args.length>1) {
 						this_npc.getTrait(HyperMerchantTrait.class).denialMsg = buffer.toString();
@@ -185,7 +199,10 @@ public class HyperMerchantCommand {
 						}
 						sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer inform customers that they are being denied service.");
 					}
+
+				
 					
+					//HMERCH CLOSED
 				} else if (args[0].equals("closed")) {
 					if (args.length>1) {
 						this_npc.getTrait(HyperMerchantTrait.class).closedMsg = buffer.toString();
@@ -200,8 +217,11 @@ public class HyperMerchantCommand {
 						}
 						sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer inform customers that when off duty.");
 					}
+
+				
 					
-				} else if (args[0].equals("offduty")) {
+					//HMERCH OFFUDTY
+				} else if (args[0].equals("offduty") || args[0].equals("onduty")) {
 					this_npc.getTrait(HyperMerchantTrait.class).offduty = !this_npc.getTrait(HyperMerchantTrait.class).offduty;
 					if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
 						this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
@@ -218,13 +238,16 @@ public class HyperMerchantCommand {
 					return;
 				}
 				return;
-
+				
+				
+				//if the player doesn't have a hypermerchant npc selected
 			} else {
 				sender.sendMessage(ChatColor.YELLOW+"You must have a hypermerchant npc " +
 						"selected to use the command "+ChatColor.RED+"/hmerchant.");
 				return;
 			}
 			
+			//for any other exception not explicitly checked for
 		} catch (Exception e){
 			HMP.getLogger().info("/hypermerchant call threw exception "+e);
 			sender.sendMessage(ChatColor.YELLOW+"You must have a hypermerchant npc " +

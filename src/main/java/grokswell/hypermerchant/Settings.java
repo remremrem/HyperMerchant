@@ -1,18 +1,15 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Settings {
-    private YamlConfiguration config;
 	private static File dataFolder;
-	private HyperMerchantPlugin plugin;
+	static private HyperMerchantPlugin plugin;
     
     //Defaults
 	static Boolean ENABLE_COMMAND = true;
@@ -26,16 +23,19 @@ public class Settings {
     static Boolean NPC_FOR_HIRE = true;
     static Double NPC_COMMISSION = 0.10;
     static Boolean RIGHT_CLICK_PLAYER_SHOP = true;
+    static Boolean ONDUTY_IN_SHOP_ONLY = true;
+    
     
     public Settings(HyperMerchantPlugin plgn) {
         plugin = plgn;
 		dataFolder = plugin.getDataFolder();
 		if (!dataFolder.isDirectory()) dataFolder.mkdir();
-        loadConfig(plugin);
+        loadConfig();
+        saveConfig();
         //config = new YamlStorage(new File(plugin.getDataFolder() + File.separator + "config.yml"), "HyperMerchant Configuration");
     }
     	  
-    private static void loadConfig(HyperMerchantPlugin plugin) {
+    private static void loadConfig() {
 		File configFile = null;
 		InputStream defConfigStream = null;
 		YamlConfiguration defConfig = null;
@@ -64,82 +64,65 @@ public class Settings {
         NPC_FOR_HIRE = config.getBoolean("PlayerShops.npc-for-hire");
         NPC_COMMISSION = config.getDouble("PlayerShops.npc-commission");
         RIGHT_CLICK_PLAYER_SHOP = config.getBoolean("PlayerShops.right-click-player-shop");
-		
-
-		// Update file in resource folder.
-		FileConfiguration cleanConfig = new YamlConfiguration();
-		//Map<String, Object> configValues = config.getDefaults().getValues(false);
-		out.println("config");
-		//for (Map.Entry<String, Object> configEntry : configValues.entrySet()) {
-		//out.println(configEntry);
-		//out.println(configEntry.getValue());
-		
-		cleanConfig.set("Main.enable-command", "true");
-		cleanConfig.set("Main.enable-npcs", "true");
-		cleanConfig.set("Main.offduty", "false");
-		cleanConfig.set("Messages.welcome", "Welcome to my little shop.");
-		cleanConfig.set("Messages.farewell", "I thank you for your continued patronage.");
-		cleanConfig.set("Messages.denial", ("I'm afraid you are not a shop member. " +
-        		"I am not authorized to do business with you."));
-		cleanConfig.set("Messages.closed", "I am sorry, I am closed for business at this time.");
-		cleanConfig.set("PlayerShops.npc-for-hire", "true");
-		cleanConfig.set("PlayerShops.npc-commission", "0.10");
-		cleanConfig.set("PlayerShops.right-click-player-shop", "true");
-		
-		//}
-
-		try {
-			cleanConfig.save(configFile);
-		} catch(IOException ex) {
-			plugin.getLogger().severe("Cannot save config.yml");
-		}
+        ONDUTY_IN_SHOP_ONLY = config.getBoolean("PlayerShops.onduty-in-shop-only");
     }
+	  
+	public static void saveConfig() {
+		File configFile = null;
+		YamlConfiguration config = null;
+		
+		configFile = new File(dataFolder, "config.yml");
+		config = YamlConfiguration.loadConfiguration(configFile);
+
+	    config.set("Main.enable-command", ENABLE_COMMAND);
+	    config.set("Main.offduty", ENABLE_NPCS);
+	    config.set("Messages.offduty", OFFDUTY);
+	    config.set("Messages.welcome", WELCOME);
+	    config.set("Messages.farewell", FAREWELL);
+	    config.set("Messages.denial", DENIAL);
+	    config.set("Messages.closed", CLOSED);
+	    config.set("PlayerShops.npc-for-hire", NPC_FOR_HIRE);
+	    config.set("PlayerShops.npc-commission", NPC_COMMISSION);
+	    config.set("PlayerShops.right-click-player-shop", RIGHT_CLICK_PLAYER_SHOP);
+	    config.set("PlayerShops.onduty-in-shop-only", ONDUTY_IN_SHOP_ONLY);
+	    
+		try {
+			config.save(configFile);
+		}
+		catch(IOException ex) {
+			plugin.getLogger().severe("Cannot save to config.yml");
+		}
+		}
+	
+//		FileConfiguration cleanConfig = new YamlConfiguration();
+//
+//		cleanConfig.set("Main.enable-command", "true");
+//		cleanConfig.set("Main.enable-npcs", "true");
+//		cleanConfig.set("Main.offduty", "false");
+//		cleanConfig.set("Messages.welcome", "Welcome to my little shop.");
+//		cleanConfig.set("Messages.farewell", "I thank you for your continued patronage.");
+//		cleanConfig.set("Messages.denial", ("I'm afraid you are not a shop member. " +
+//        		"I am not authorized to do business with you."));
+//		cleanConfig.set("Messages.closed", "I am sorry, I am closed for business at this time.");
+//		cleanConfig.set("PlayerShops.npc-for-hire", "true");
+//		cleanConfig.set("PlayerShops.npc-commission", "10");
+//		cleanConfig.set("PlayerShops.right-click-player-shop", "true");
+//		cleanConfig.set("PlayerShops.onduty-in-shop-only", "true");
+//		
+//
+//		try {
+//
+//			if (configFile.exists()) {
+//				cleanConfig.load(configFile);
+//			} else {
+//				cleanConfig.save(configFile);
+//			}
+//		}
+//		catch (InvalidConfigurationException e) {
+//			plugin.getLogger().severe("Invalid configuration found in config.yml");
+//		} 
+//    	catch(IOException ex) {
+//			plugin.getLogger().severe("Cannot save config.yml");
+//    	}
+    
 }
-
-//    public enum Setting {
-//        ENABLE_COMMAND("enable_command.default", 1),
-//        ENABLE_NPC("enable_npc.default", 1),
-//        WELCOME("welcome.default", "Welcome to my little shop."),
-//        FAREWELL("farewell.default", "I thank you for your continued patronage."),
-//        DENIAL("denial.default", "I'm afraid you are not a shop member. " +
-//        		"I am not authorized to do business with you."),
-//        CLOSED("closed.default", "I am sorry, I am closed for business at this time."),
-//        OFFDUTY("offduty.default", false);
-//
-//        private String path;
-//        private Object value;
-//
-//        Setting(String path, Object value) {
-//            this.path = path;
-//            this.value = value;
-//        }
-//
-//        public boolean asBoolean() {
-//            return (Boolean) value;
-//        }
-//
-//        public double asDouble() {
-//            if (value instanceof String)
-//                return Double.valueOf((String) value);
-//            if (value instanceof Integer)
-//                return (Integer) value;
-//            return (Double) value;
-//        }
-//
-//        public int asInt() {
-//            return (Integer) value;
-//        }
-//
-//        public String asString() {
-//            return value.toString();
-//        }
-//
-//        private Object get() {
-//            return value;
-//        }
-//
-//        private void set(Object value) {
-//            this.value = value;
-//        }
-//    }
-

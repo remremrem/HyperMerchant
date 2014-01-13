@@ -75,8 +75,8 @@ public class Settings {
 		config = YamlConfiguration.loadConfiguration(configFile);
 
 	    config.set("Main.enable-command", ENABLE_COMMAND);
-	    config.set("Main.offduty", ENABLE_NPCS);
-	    config.set("Messages.offduty", OFFDUTY);
+	    config.set("Main.enable-npcs", ENABLE_NPCS);
+	    config.set("Main.offduty", OFFDUTY);
 	    config.set("Messages.welcome", WELCOME);
 	    config.set("Messages.farewell", FAREWELL);
 	    config.set("Messages.denial", DENIAL);

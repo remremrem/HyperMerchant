@@ -1,13 +1,14 @@
 Main:
   enable-command: true
-  enable-npcs: true
+  enable-npcs: 'true'
   offduty: true
 Messages:
-  welcome: Welcome to my little shop.
-  farewell: I thank you for your continued patronage.
+  welcome: Hi Everybody!
+  farewell: Thanks for the business, pal.
   denial: I'm afraid you are not a shop member. I am not authorized to do business with you.
   closed: I am sorry, I am closed for business at this time.
 PlayerShops:
-  right-click-player-shop: true
   npc-for-hire: true
-  npc-commission: 0.10
+  npc-commission: 10.0
+  right-click-player-shop: true
+  onduty-in-shop-only: true

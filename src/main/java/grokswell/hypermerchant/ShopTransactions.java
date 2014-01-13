@@ -43,7 +43,7 @@ public class ShopTransactions {
 		hc_lang = hc.getLanguageFile();
 
 	}
-	//SELL ENCHANT
+	//PLAYER SELLS ENCHANT TO SHOP
 	public boolean Sell(String enchant) {
 			if (player.getGameMode() == GameMode.CREATIVE) {
 				player.sendMessage(hc_lang.get("CANT_SELL_CREATIVE"));
@@ -51,14 +51,14 @@ public class ShopTransactions {
 			}
 
 		HyperObject ho = hoAPI.getHyperObject(enchant,hyperAPI.getShopEconomy(shopname));
-		if ((hyperAPI.getShop(shopname).isAvailable(ho))) {
+		if ((hyperAPI.getShop(shopname).isTradeable(ho))) {
 			TransactionResponse response = hoAPI.sell(player, ho, 1, hyperAPI.getShop(shopname));
 			response.sendMessages();
 			return true;
 		}
 		return false;
 	}
-	//SELL ITEM
+	//PLAYER SELLS ITEM TO SHOP
 	public boolean Sell(ItemStack item_stack) {
 			if (player.getGameMode() == GameMode.CREATIVE) {
 				player.sendMessage(hc_lang.get("CANT_SELL_CREATIVE"));
@@ -70,7 +70,7 @@ public class ShopTransactions {
 		//out.println(item_name);
 		ho = hoAPI.getHyperObject(item_name, hyperAPI.getShopEconomy(shopname), hyperAPI.getShop(shopname));
 		
-		if (shopmenu.shopstock.items_in_stock.contains(item_name) && (hyperAPI.getShop(shopname).isAvailable(ho))) {
+		if (shopmenu.shopstock.items_in_stock.contains(item_name) && (hyperAPI.getShop(shopname).isTradeable(ho))) {
 			player.getInventory().addItem(item_stack);
 			TransactionResponse response = hoAPI.sell(player, ho, item_amount, hyperAPI.getShop(shopname));
 			response.sendMessages();
@@ -80,6 +80,7 @@ public class ShopTransactions {
 		return false;
 	}
 	
+	//PLAYER BUYS ITEM FROM SHOP
 	public void Buy(String item, int qty) {
 		HyperObject ho = hoAPI.getHyperObject(item.replaceAll(" ", "_"), hyperAPI.getShopEconomy(shopname), hyperAPI.getShop(shopname));
 		if (!hp.hasBuyPermission(hyperAPI.getShop(shopname))) {

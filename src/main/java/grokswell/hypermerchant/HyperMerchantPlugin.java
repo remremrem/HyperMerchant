@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 //import java.io.File;
 import java.util.ArrayList;
@@ -173,26 +173,26 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	
 	@EventHandler
 	public void onRightClick(PlayerInteractEntityEvent event) {
-		out.println("onRightClick playerinteractentityevent");
+		//out.println("onRightClick playerinteractentityevent");
 		
 		if(!event.getRightClicked().getType().equals(EntityType.PLAYER)) return;
-		out.println("entity type = player");
+		//out.println("entity type = player");
 		Player owner = (Player) event.getRightClicked();
-		out.println("owner = "+owner.getName());
+		//out.println("owner = "+owner.getName());
 		Player player = event.getPlayer();
 		String shopname = "";
 		for (String sn : hyperAPI.getPlayerShopList()){
-			out.println("try shopname = "+sn+" owner = "+hyperAPI.getPlayerShop(sn).getOwner().getName());
+			//out.println("try shopname = "+sn+" owner = "+hyperAPI.getPlayerShop(sn).getOwner().getName());
 			
 			if ( hyperAPI.getPlayerShop(sn).getOwner().getName().equals(owner.getName()) ) {
 				shopname = sn;
 				break;
 			}
 		}
-		out.println("shopname ="+shopname);
+		//out.println("shopname ="+shopname);
 		
 		if ("" == shopname) return;
-		out.println("shopname is good");
+		//out.println("shopname is good");
 
 		if (this.customer_cooldowns.contains(player.getName())) return;
 		

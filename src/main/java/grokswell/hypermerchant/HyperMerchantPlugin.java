@@ -40,6 +40,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	Settings settings;
 	Players playerData;
 	ArrayList<String> customer_cooldowns = new ArrayList<String>();
+	Boolean citizens_is_loaded = false;
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args) {
@@ -147,9 +148,11 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		
 		//HYPERMERCHANT
 		else if (cmd.getName().equalsIgnoreCase("hmerchant")) {
-			if (args.length < 1) {
+			if (!this.citizens_is_loaded) {
+				sender.sendMessage(ChatColor.RED+"Citizens is not loaded. NPCs are unavailable at this time.");
+				return true;
+			} else if (args.length < 1) {
 				return false;	
-				
 			} else {
 				new HyperMerchantCommand(sender, args, this);
 				return true;
@@ -173,6 +176,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		
 		if (Bukkit.getPluginManager().getPlugin("Citizens") != null) {
 			CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(HyperMerchantTrait.class).withName("hypermerchant"));
+			this.citizens_is_loaded = true;
 		} else {
 			this.getLogger().info("Citizens not found. NPC hypermerchants will be disabled.");
 		}

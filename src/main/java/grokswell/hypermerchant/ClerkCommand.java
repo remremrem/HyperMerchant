@@ -11,13 +11,16 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.NPCSelector;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import regalowl.hyperconomy.EconomyManager;
 import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.HyperConomy;
+import regalowl.hyperconomy.Shop;
 
 //#Hire a clerk to work in the shop you are standing in
 ///clerk hire <NAME> -t <TYPE> -s <SHOPNAME>
@@ -95,7 +98,7 @@ public class ClerkCommand {
 			String shopname = null;
 			
 			
-			
+			//CLERK LIST
 			if (args[0].equals("list")) {
 				for (NPC npc: CitizensAPI.getNPCRegistry()) {
 					if (npc.hasTrait(HyperMerchantTrait.class)) {
@@ -108,7 +111,58 @@ public class ClerkCommand {
 					}
 				}
 				return;
+				
+			// CLERK HIRE	
+			} else if (args[0].equals("hire")) {
+				if (args.length < 2) {
+					sender.sendMessage(ChatColor.YELLOW+"You must specify a name for your new clerk");
+					return;
+				}
+				String clerk_name = args[1];
+				String clerk_type = "player";
+				String shop_name = null;
+
+				if (args.length > 2) {
+					if (args[2] == "-s") {
+						shop_name = args[3];
+					} else {
+						clerk_type = args[2];
+					}
+				}
+				if (args.length > 4) {
+					if (args[3] == "-s") {
+						shop_name = args[4];
+					}
+				}
+
+				this_npc = npcReg.createNPC(EntityType.valueOf(clerk_type), clerk_name); 
+				this_npc.addTrait(HyperMerchantTrait.class);
+				
+				
+				String player_in_shop_name=hyperAPI.getPlayerShop(player);
+				if (shop_name == null) {
+					shop_name = player_in_shop_name;
+				}
+				
+				
+				if (shop_name == null) {
+					sender.sendMessage(ChatColor.YELLOW+"You must specify a shop name, or be standing " +
+										"inside of a shop to use the command "+ChatColor.RED+"/clerk hire <npc name> [npc type] -s [shop name].");
+					return;
+						
+				} else if (shopnames.contains(shop_name)){
+					if (shop_name == player_in_shop_name ) {
+						this_npc.teleport(player.getLocation(), TeleportCause.PLUGIN);
+					} else {
+						this_npc.teleport(hyperAPI.getShop(shop_name).getLocation1(), TeleportCause.PLUGIN);
+					}
+
+				}
+				
+				return;
 			
+					
+			// CLERK --id
 			} else if (argslist.contains("--id")) {
 				int id_index = argslist.indexOf("--id") + 1;
 				this_npc = CitizensAPI.getNPCRegistry().getById(Integer.parseInt(args[id_index]));
@@ -145,7 +199,7 @@ public class ClerkCommand {
 			if (this_npc.hasTrait(HyperMerchantTrait.class)) {
 				
 				
-					//Clerk INFO
+				//Clerk INFO
 				if (args[0].equals("info")) {
 						if (this_npc.getTrait(HyperMerchantTrait.class).offduty) {
 							sender.sendMessage("\n"+ChatColor.YELLOW+this_npc.getName()+" is OFFDUTY");
@@ -159,40 +213,23 @@ public class ClerkCommand {
 					//Clerk SETSHOP
 				} else if (args[0].equals("setshop")) {
 					if (args.length>1) {
-						HyperConomy hc = HyperConomy.hc;
-						EconomyManager ecoMan = hc.getEconomyManager();
-						ArrayList<String> shoplist = ecoMan.listShops();
 						
-						if (shoplist.contains(shopname)) {
-							//this_npc.getTrait(HyperMerchantTrait.class).trait_key.setString("shop_name",args[0]);
-							this_npc.getTrait(HyperMerchantTrait.class).shop_name = shopname;
-							if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
-								this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+						if (shopnames.contains(shopname)) {
+							if (hyperAPI.getPlayerShopList().contains(shopname)) {
+								new HyperMerchantCommand(sender, args, HMP);
+								return;
 							}
-							sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" has been assigned to shop "+
-												this_npc.getTrait(HyperMerchantTrait.class).shop_name);
-							return;
-							
-						} else {
-							sender.sendMessage(ChatColor.YELLOW+"You must provide one valid shop name. " +
-									"Use "+ChatColor.RED+"/remoteshoplist "+ChatColor.YELLOW+ 
-											"or "+ChatColor.RED+"/rslist "+ChatColor.YELLOW+
-											"for valid shop names. Use exact spelling.");
-							return;
 						}
 						
 					} else {
-						String name=hyperAPI.getPlayerShop(player);
-						if (name.isEmpty()) {
+						String in_shop_name=hyperAPI.getPlayerShop(player);
+						if (in_shop_name.isEmpty()) {
 							sender.sendMessage(ChatColor.YELLOW+"You must specify a shop name, or be standing " +
-												"inside of a shop to use the command "+ChatColor.RED+"/setshop.");
+												"inside of a shop to use the command "+ChatColor.RED+"/clerk setshop.");
 							return;
 								
-						} else {
-							this_npc.getTrait(HyperMerchantTrait.class).shop_name = name;
-							this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
-							sender.sendMessage(ChatColor.YELLOW+"NPC "+this_npc.getName()+" has been assigned to shop "+
-												this_npc.getTrait(HyperMerchantTrait.class).shop_name);
+						} else if (shopnames.contains(in_shop_name)){
+							new HyperMerchantCommand(sender, args, HMP);
 							return;
 						}
 					}
@@ -227,7 +264,8 @@ public class ClerkCommand {
 				//if the player doesn't have a hypermerchant npc selected
 				} else {
 					sender.sendMessage(ChatColor.YELLOW+"You must have one of your clerk NPCs " +
-							"selected to use the command "+ChatColor.RED+"/clerk.");
+							"selected to use the command "+ChatColor.RED+"/clerk"+ChatColor.YELLOW+
+							" without the --id flag");
 					return;
 				}
 			}

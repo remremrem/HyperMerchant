@@ -109,11 +109,8 @@ public class HyperMerchantCommand {
 					//HMERCH SETSHOP
 				} else if (args[0].equals("setshop")) {
 					if (args.length>1) {
-						HyperConomy hc = HyperConomy.hc;
-						EconomyManager ecoMan = hc.getEconomyManager();
-						ArrayList<String> shoplist = ecoMan.listShops();
 						
-						if (shoplist.contains(shopname)) {
+						if (hyperAPI.getServerShopList().contains(shopname) || hyperAPI.getPlayerShopList().contains(shopname)) {
 							//this_npc.getTrait(HyperMerchantTrait.class).trait_key.setString("shop_name",args[0]);
 							this_npc.getTrait(HyperMerchantTrait.class).shop_name = shopname;
 							if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {

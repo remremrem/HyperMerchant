@@ -160,11 +160,11 @@ public class ShopMenu implements Listener {
 				
 				stack = new ItemStack(ho.getMaterialEnum(), 1);
 				stack.setDurability((short)ho.getDurability());
-				//value = hoAPI.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1);
+				value = hoAPI.getTrueSaleValue(stack.getType(), stack.getDurability(),1,player, economy_name);
 
 				//out.println(value+" , "+ho);
-				value = hoAPI.getTheoreticalSaleValue(stack.getTypeId(), stack.getDurability(),1, economy_name);
-				cost = hoAPI.getTruePurchasePrice(ho, EnchantmentClass.DIAMOND, 1);
+				//value = hoAPI.getTheoreticalSaleValue(stack.getType(), stack.getDurability(),1, economy_name);
+				cost = hoAPI.getTruePurchasePrice(stack.getType(), stack.getDurability(),1, economy_name);
 				
 			} else if (hoAPI.getType(item_name, economy_name).name().equals("ENCHANTMENT")) {
 				HyperEnchant he = (HyperEnchant) hoAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));

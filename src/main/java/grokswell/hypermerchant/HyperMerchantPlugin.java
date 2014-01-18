@@ -157,7 +157,22 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 				new HyperMerchantCommand(sender, args, this);
 				return true;
 			}
+		
+		}
+		//CLERK
+		else if (cmd.getName().equalsIgnoreCase("clerk")) {
+			if (!this.citizens_is_loaded) {
+				sender.sendMessage(ChatColor.RED+"Citizens is not loaded. NPCs are unavailable at this time.");
+				return true;
+			} else if (args.length < 1) {
+				return false;	
+			} else {
+				new ClerkCommand(sender, args, this);
+				return true;
+			}
 			
+			
+					
 		} else {
 			return true;
 		}

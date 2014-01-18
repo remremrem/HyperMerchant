@@ -1,7 +1,7 @@
 package grokswell.hypermerchant;
 
 
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,9 +14,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import regalowl.hyperconomy.EconomyManager;
 import regalowl.hyperconomy.HyperAPI;
-import regalowl.hyperconomy.HyperConomy;
 
 public class HyperMerchantCommand {
 	CommandSender sender;

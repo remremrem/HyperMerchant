@@ -17,50 +17,14 @@ import org.bukkit.entity.Player;
 
 import regalowl.hyperconomy.HyperAPI;
 
-//#Hire a clerk to work in the shop you are standing in
-///clerk hire <NAME> -t <TYPE> -s <SHOPNAME>
-//
-//#Teleport the selected clerk to the location you are standing
-///clerk tp
-//
-//#Select a clerk by name
-///clerk select [NAME or ID]
-//
-//#fire the currently selected clerk, or by name.
-///clerk fire [NAME or ID]
-//
-//#toggle a clerk to offduty
-///clerk offduty --id
-//
-//#move your clerk to a different shop that you own
-///clerk setshop <SHOPNAME> --id
-//
-//#set clerk to a different type of npc
-///clerk type <TYPE> --id
-//
-//#List your clerks by ID and name
-///clerk list
-//
-//#set clerk's greeting message
-///clerk greeting <MESSAGE> --id
-//
-//#set clerk's farewell message
-///clerk farewell <MESSAGE> --id
-//
-//#set clerk's closed message
-///clerk closed <MESSAGE> --id
-//
-//#set clerk's denial message
-///clerk denial <MESSAGE> --id
-
-public class ClerkCommand {
+public class MerchantMethods {
 	CommandSender sender;
 	HyperAPI hyperAPI = new HyperAPI();
 	ArrayList<String> shopnames;
 	NPCRegistry npcReg;
 	NPCSelector npcSel;
 	
-	ClerkCommand(CommandSender snder, String[] args, HyperMerchantPlugin HMP) {
+	MerchantMethods(CommandSender snder, String[] args, HyperMerchantPlugin HMP) {
 		//HyperConomy hc = HyperConomy.hc;
 		//ShopFactory hc_factory = hc.getShopFactory();
 		//DataHandler hc_functions = hc.getDataFunctions();

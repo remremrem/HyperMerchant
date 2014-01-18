@@ -50,6 +50,27 @@ commands:
       permission: hypermerchant.manage
       permission-message: You do not have permission to use command /hmerchant.
       aliases: [hmerch]
+   clerk:
+      description: Manage you clerk NPCs.
+      usage: "\n§4/clerk §csetshop §a[shopname] §6[--id idnum] §e- Set shop of selected clerk.
+  	    Set to shop player is standing in if no [shopname] argument provided.\n\n
+  	    §4/clerk §chire §a[name] §6[npc type] §6[-s shopname] §e- Hire a clerk to work in the shop you are standing in. Or use -s flag to hire for any shop.\n\n
+  	    §4/clerk §cfire §6[--id idnum] §e- Fire the selected clerk, or specify clerk to fire by ID.\n\n
+  	    §4/clerk §coffduty §6[--id idnum] §e- Toggle clerk in and out of offduty mode.\n\n
+        §4/clerk §cgreeting §a[welcome message] §6[--id idnum] §e- Set text clerk says upon player interaction.
+  	    Leave [welcome message] argument empty for no text.\n\n
+        §4/clerk §cfarewell §a[goodbye message] §6[--id idnum] §e- Set text clerk says upon player closing menu.
+  	    Leave [goodbye message] argument empty for no text.\n\n
+        §4/clerk §cdenial §a[deny message] §6[--id idnum] §e- Set text clerk says when player is not permitted to use a shop.
+  	    Leave [deny message] argument empty for no text.\n\n
+  	    §4/clerk §cclosed §a[closed message] §6[--id idnum] §e- Set text clerk says to a player when clerk is off duty.
+  	    Leave [closed message] argument empty for no text.\n\n
+  	    §4/clerk §clist §e- List information of all your clerk NPCs.\n\n
+  	    §4/clerk §cinfo §6[--id idnum] §e- Show information of a single clerk NPC.\n\n
+  	    §4/clerk §ctype §a[npc type] §6[--id idnum] §e- Set your clerk to a different type of NPC."
+      permission: hypermerchant.manage
+      permission-message: You do not have permission to use command /clerk.
+      aliases: [hclerk]
     
 permissions:
    hypermerchant.*:
@@ -59,6 +80,8 @@ permissions:
          hypermerchant.remote: true
          hypermerchant.npc: true
          hypermerchant.manage: true
+         hypermerchant.clerk: true
+         hypermerchant.onduty: true
    hypermerchant.menu:
       description: Allow use of the /shopmenu command.
       default: true
@@ -74,6 +97,9 @@ permissions:
    hypermerchant.manage:
       description: Allow use of the /hmerchant command.
       default: op
+   hypermerchant.clerk:
+      description: Allow use of the /clerk command.
+      default: true
    creative.hypermerchant:
       description: Allow player to purchase and sell while in creative mode.
       default: false

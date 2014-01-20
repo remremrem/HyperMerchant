@@ -21,7 +21,7 @@ public class Settings {
     		"I am not authorized to do business with you.";
     static String CLOSED = "I am sorry, I am closed for business at this time.";
     static Boolean NPC_FOR_HIRE = true;
-    static Double NPC_COMMISSION = 0.10;
+    static Double NPC_COMMISSION = 10.0;
     static Boolean RIGHT_CLICK_PLAYER_SHOP = true;
     static Boolean ONDUTY_IN_SHOP_ONLY = true;
     
@@ -93,36 +93,4 @@ public class Settings {
 			plugin.getLogger().severe("Cannot save to config.yml");
 		}
 		}
-	
-//		FileConfiguration cleanConfig = new YamlConfiguration();
-//
-//		cleanConfig.set("Main.enable-command", "true");
-//		cleanConfig.set("Main.enable-npcs", "true");
-//		cleanConfig.set("Main.offduty", "false");
-//		cleanConfig.set("Messages.welcome", "Welcome to my little shop.");
-//		cleanConfig.set("Messages.farewell", "I thank you for your continued patronage.");
-//		cleanConfig.set("Messages.denial", ("I'm afraid you are not a shop member. " +
-//        		"I am not authorized to do business with you."));
-//		cleanConfig.set("Messages.closed", "I am sorry, I am closed for business at this time.");
-//		cleanConfig.set("PlayerShops.npc-for-hire", "true");
-//		cleanConfig.set("PlayerShops.npc-commission", "10");
-//		cleanConfig.set("PlayerShops.right-click-player-shop", "true");
-//		cleanConfig.set("PlayerShops.onduty-in-shop-only", "true");
-//		
-//
-//		try {
-//
-//			if (configFile.exists()) {
-//				cleanConfig.load(configFile);
-//			} else {
-//				cleanConfig.save(configFile);
-//			}
-//		}
-//		catch (InvalidConfigurationException e) {
-//			plugin.getLogger().severe("Invalid configuration found in config.yml");
-//		} 
-//    	catch(IOException ex) {
-//			plugin.getLogger().severe("Cannot save config.yml");
-//    	}
-    
 }

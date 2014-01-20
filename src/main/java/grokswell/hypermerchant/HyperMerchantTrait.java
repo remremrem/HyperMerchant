@@ -24,7 +24,6 @@ public class HyperMerchantTrait extends Trait {
 	HyperAPI hyperAPI = new HyperAPI();
 	HyperObjectAPI hoAPI = new HyperObjectAPI();
 	String shop_name = hyperAPI.getGlobalShopAccount();
-	//ArrayList<String> customer_cooldowns = new ArrayList<String>();
 	static ArrayList<String> shoplist;
 	HashMap<String,ShopMenu> customer_menus = new HashMap<String,ShopMenu>();
 	final HyperMerchantPlugin plugin;
@@ -35,6 +34,7 @@ public class HyperMerchantTrait extends Trait {
 	String welcomeMsg;
 	String denialMsg;
 	String closedMsg;
+	double comission;
 	boolean offduty;
 
 	public HyperMerchantTrait() {
@@ -46,6 +46,7 @@ public class HyperMerchantTrait extends Trait {
 		welcomeMsg = plugin.settings.WELCOME;
 		denialMsg = plugin.settings.DENIAL;
 		closedMsg = plugin.settings.CLOSED;
+		comission = plugin.settings.NPC_COMMISSION;
 		offduty = plugin.settings.OFFDUTY;
 	}
 
@@ -64,6 +65,8 @@ public class HyperMerchantTrait extends Trait {
 			this.denialMsg = key.getString("denial.default");
 		if (key.keyExists("closed.default"))
 			this.closedMsg = key.getString("closed.default");
+		if (key.keyExists("comission.default"))
+			this.comission = key.getDouble("comission.default");
 		if (key.keyExists("offduty.default"))
 			this.offduty = key.getBoolean("offduty.default");
 
@@ -102,7 +105,6 @@ public class HyperMerchantTrait extends Trait {
     	} 
 		
 		
-		//this.customer_menus.put(player.getName(), null);
 		
 		if (!player.hasPermission("hypermerchant.npc")) {
 			if (!this.denialMsg.isEmpty()) {
@@ -112,9 +114,6 @@ public class HyperMerchantTrait extends Trait {
 			return;
 		}
 		
-		//HyperConomy hc;
-		//hc = HyperConomy.hc;
-		//EconomyManager ecoMan = hc.getEconomyManager();
 		HyperPlayer hp = hoAPI.getHyperPlayer(player.getName());
 			
 		if (!hp.hasBuyPermission(hyperAPI.getShop(this.shop_name))) {
@@ -165,6 +164,7 @@ public class HyperMerchantTrait extends Trait {
 		key.setString("denial.default", this.denialMsg);
 		key.setString("welcome.default", this.welcomeMsg);
 		key.setString("closed.default", this.closedMsg);
+		key.setDouble("comission.default", this.comission);
 		key.setBoolean("offduty.default", this.offduty);
 		
 	}

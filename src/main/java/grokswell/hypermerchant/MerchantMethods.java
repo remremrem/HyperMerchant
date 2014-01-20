@@ -1,9 +1,7 @@
 package grokswell.hypermerchant;
 
+import static java.lang.System.out;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -11,255 +9,288 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.NPCSelector;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import regalowl.hyperconomy.HyperAPI;
 
+
 public class MerchantMethods {
-	CommandSender sender;
-	HyperAPI hyperAPI = new HyperAPI();
-	ArrayList<String> shopnames;
 	NPCRegistry npcReg;
 	NPCSelector npcSel;
-	
-	MerchantMethods(CommandSender snder, String[] args, HyperMerchantPlugin HMP) {
-		//HyperConomy hc = HyperConomy.hc;
-		//ShopFactory hc_factory = hc.getShopFactory();
-		//DataHandler hc_functions = hc.getDataFunctions();
-		//String shopname = sname;
-		this.sender = snder;
-		Player player = null;
-		
+	HyperAPI hyperAPI = new HyperAPI();
 
-		npcSel = CitizensAPI.getDefaultNPCSelector();
-		npcReg = CitizensAPI.getNPCRegistry();
-
-		List<String> argslist = Arrays.asList(args);
-		
-		if (!(sender instanceof Player)) {
-			if ((!argslist.contains("--id")) && (!args[0].equals("list"))) {
-				sender.sendMessage(ChatColor.YELLOW+"You must have an NPC selected or use the --id flag to execute this commnad");
-				return;
+	public String ListMerchants(Player player) {
+		String message = "";
+		if (player == null) {
+			for (NPC npc: CitizensAPI.getNPCRegistry()) {
+				if (npc.hasTrait(HyperMerchantTrait.class)) {
+					if (npc.getTrait(HyperMerchantTrait.class).offduty) {
+						message.concat(ChatColor.YELLOW+npc.getName()+" is OFFDUTY\n");
+					} else {
+						message.concat(ChatColor.YELLOW+npc.getName()+" is ONDUTY\n");
+					}
+					message.concat(ChatColor.YELLOW+"ID: " + String.valueOf(npc.getId()) + " , SHOP: "+ npc.getTrait(HyperMerchantTrait.class).shop_name +"\n");
+				}
 			}
 		} else {
-			//if a player sent the command, cast snder to player and make a list of shops this player owns.
-			player = (Player) snder;
-			shopnames = new ArrayList<String>();
-			for (String sn : hyperAPI.getPlayerShopList()){
-				if ( hyperAPI.getPlayerShop(sn).getOwner().getName().equals(player.getName()) ) {
-					shopnames.add(sn);
+			for (NPC npc: CitizensAPI.getNPCRegistry()) {
+				if (npc.hasTrait(HyperMerchantTrait.class)) {
+					if (npc.data().get("owner") == player.getName()){
+						if (npc.getTrait(HyperMerchantTrait.class).offduty) {
+							message.concat(ChatColor.YELLOW+npc.getName()+" is OFFDUTY\n");
+						} else {
+							message.concat(ChatColor.YELLOW+npc.getName()+" is ONDUTY\n");
+						}
+						message.concat(ChatColor.YELLOW+"ID: " + String.valueOf(npc.getId()) + " , SHOP: "+ npc.getTrait(HyperMerchantTrait.class).shop_name +"\n");
+					}
 				}
 			}
 		}
-		
-		try {
-			NPC this_npc;
-			StringBuilder buffer = new StringBuilder();
-			String shopname = null;
 			
-			
-			//CLERK LIST
-			if (args[0].equals("list")) {
-				for (NPC npc: CitizensAPI.getNPCRegistry()) {
-					if (npc.hasTrait(HyperMerchantTrait.class)) {
-						if (npc.data().get("owner") == player.getName()){
-							if (npc.getTrait(HyperMerchantTrait.class).offduty) {
-								sender.sendMessage(ChatColor.YELLOW+npc.getName()+" is OFFDUTY");
-							} else {
-								sender.sendMessage(ChatColor.YELLOW+npc.getName()+" is ONDUTY");
-							}
-							sender.sendMessage(ChatColor.YELLOW+"ID: " + String.valueOf(npc.getId()) + " , SHOP: "+ npc.getTrait(HyperMerchantTrait.class).shop_name +"\n");
-						}
-					}
-				}
-				return;
-				
-			// CLERK HIRE	
-			} else if (args[0].equals("hire")) {
-				if (args.length < 2) {
-					sender.sendMessage(ChatColor.YELLOW+"You must specify a name for your new clerk");
-					return;
-				}
-				String clerk_name = args[1];
-				String clerk_type = "player";
-				String shop_name = null;
-
-				if (args.length > 2) {
-					if (args[2] == "-s") {
-						shop_name = args[3];
-					} else {
-						clerk_type = args[2];
-					}
-				}
-				if (args.length > 4) {
-					if (args[3] == "-s") {
-						shop_name = args[4];
-					}
-				}
-
-				this_npc = npcReg.createNPC(EntityType.valueOf(clerk_type.toUpperCase()), clerk_name); 
-				this_npc.addTrait(HyperMerchantTrait.class);
-				
-				
-				String player_in_shop_name=hyperAPI.getPlayerShop(player);
-				if (shop_name == null) {
-					shop_name = player_in_shop_name;
-				}
-				
-				
-				if (shop_name == null) {
-					sender.sendMessage(ChatColor.YELLOW+"You must specify a shop name, or be standing " +
-										"inside of a shop to use the command "+ChatColor.RED+"/clerk hire <npc name> [npc type] -s [shop name].");
-					return;
-						
-				} else if (shopnames.contains(shop_name)){
-					this_npc.getTrait(HyperMerchantTrait.class).shop_name = shopname;
-					if (shop_name == player_in_shop_name ) {
-						this_npc.spawn(player.getLocation());
-					} else {
-						this_npc.spawn(hyperAPI.getShop(shop_name).getLocation1());
-					}
-
-				}
-				
-				return;
-			
-					
-			// CLERK --id
-			} else if (argslist.contains("--id")) {
-				int id_index = argslist.indexOf("--id") + 1;
-				this_npc = CitizensAPI.getNPCRegistry().getById(Integer.parseInt(args[id_index]));
-				
-				if (id_index > 2) {
-					if (args[0].equals("setshop")) {
-						shopname = args[1];
-					}
-					for(int i = 1; i < id_index-1; i++) {
-					    buffer.append(' ').append(args[i]);
-					} 
-				} else {
-					if (args[0].equals("setshop")) {
-						shopname = args[id_index+1];
-					}
-					for(int i = id_index+1; i < args.length; i++) {
-					    buffer.append(' ').append(args[i]);
-					}
-				}
-
-			}  else {
-			
-				this_npc = npcSel.getSelected(player);
-				if (args[0].equals("setshop")) {
-					shopname = args[1];
-				}
-				for(int i = 1; i < args.length; i++) {
-				    buffer.append(' ').append(args[i]);
-				}
-			}
-			
-			
-			//
-			if (this_npc.hasTrait(HyperMerchantTrait.class)) {
-				
-				
-				//Clerk INFO
-				if (args[0].equals("info")) {
-						if (this_npc.getTrait(HyperMerchantTrait.class).offduty) {
-							sender.sendMessage("\n"+ChatColor.YELLOW+this_npc.getName()+" is OFFDUTY");
-						} else {
-							sender.sendMessage("\n"+ChatColor.YELLOW+this_npc.getName()+" is ONDUTY");
-						}
-						sender.sendMessage(ChatColor.YELLOW+"ID: " + String.valueOf(this_npc.getId()) + " , SHOP: "+ this_npc.getTrait(HyperMerchantTrait.class).shop_name +"\n");
-
-						
-						
-					//Clerk SETSHOP
-				} else if (args[0].equals("setshop")) {
-					if (args.length>1) {
-						
-						if (shopnames.contains(shopname)) {
-							if (hyperAPI.getPlayerShopList().contains(shopname)) {
-								new HyperMerchantCommand(sender, args, HMP);
-								return;
-							}
-						}
-						
-					} else {
-						String in_shop_name=hyperAPI.getPlayerShop(player);
-						if (in_shop_name.isEmpty()) {
-							sender.sendMessage(ChatColor.YELLOW+"You must specify a shop name, or be standing " +
-												"inside of a shop to use the command "+ChatColor.RED+"/clerk setshop.");
-							return;
-								
-						} else if (shopnames.contains(in_shop_name)){
-							new HyperMerchantCommand(sender, args, HMP);
-							return;
-						}
-					}
-				
-					
-					//Clerk TYPE
-				} else if (args[0].equals("type")) {
-					if (args.length == 2) {
-						try {
-							this_npc.setBukkitEntityType(EntityType.valueOf(args[1].toUpperCase()));
-						} catch  (Exception e){
-							sender.sendMessage(ChatColor.YELLOW+"Invalid Clerk type");
-						}
-						
-					}
-					return;
-				
-					
-					//Clerk FIRE
-				} else if (args[0].equals("fire")) {
-					this_npc.destroy();
-					return;
-				
-					
-					//Clerk GREETING
-				} else if (args[0].equals("greeting")) {
-					new HyperMerchantCommand(sender, args, HMP);
-					return;
-					
-					//Clerk FAREWELL
-				} else if (args[0].equals("farewell")) {
-					new HyperMerchantCommand(sender, args, HMP);
-					return;
-					
-					//Clerk DENIAL
-				} else if (args[0].equals("denial")) {
-					new HyperMerchantCommand(sender, args, HMP);
-					return;
-					
-					//Clerk CLOSED
-				} else if (args[0].equals("closed")) {
-					new HyperMerchantCommand(sender, args, HMP);
-					return;
-					
-					//Clerk OFFDUTY
-				} else if (args[0].equals("offduty") || args[0].equals("onduty")) {
-					new HyperMerchantCommand(sender, args, HMP);
-					return;
-				
-				
-				//if the player doesn't have a hypermerchant npc selected
-				} else {
-					sender.sendMessage(ChatColor.YELLOW+"You must have one of your clerk NPCs " +
-							"selected to use the command "+ChatColor.RED+"/clerk"+ChatColor.YELLOW+
-							" without the --id flag");
-					return;
-				}
-			}
-			
-			//for any other exception not explicitly checked for
-		} catch (Exception e){
-			HMP.getLogger().info("/clerk call threw exception "+e);
-			sender.sendMessage(ChatColor.YELLOW+"You must have a hypermerchant NPC " +
-								"selected to use the command "+ChatColor.RED+"/clerk.");
-			return;
-		}	
+		return message;
 	}
+	
+
+	public String GetInfo(CommandSender sender, int id) {
+		String message = "";
+		NPC npc = npcReg.getById(id);
+		if (npc == null) {
+			return null;
+		}
+		
+		if (npc.getTrait(HyperMerchantTrait.class).offduty) {
+			message.concat(ChatColor.YELLOW+npc.getName()+" is OFFDUTY\n");
+		} else {
+			message.concat(ChatColor.YELLOW+npc.getName()+" is ONDUTY\n");
+		}
+		
+		message.concat(ChatColor.YELLOW+"ID: " + String.valueOf(npc.getId()) + " , SHOP: "+ npc.getTrait(HyperMerchantTrait.class).shop_name +"\n");
+		return message;
+	}
+	
+
+	public String GetEmployer(int id) {
+		NPC npc = npcReg.getById(id);
+		if (npc == null) {
+			return null;
+		}
+		
+		String ownerName = null;
+		String shopName = GetShop(id);
+		for (String name : hyperAPI.getPlayerShopList()) {
+			if (name == shopName) {
+				ownerName = hyperAPI.getPlayerShop(name).getOwner().getName();
+			}
+		}
+		return ownerName;
+	}
+	
+
+	public String GetShop(int id) {
+		NPC npc = npcReg.getById(id);
+		
+		if (npc == null) {
+			return null;
+		}
+		
+		return npc.getTrait(HyperMerchantTrait.class).shop_name;
+	}
+
+	
+	public boolean Teleport(int id, Location location) {
+		NPC this_npc = npcReg.getById(id); 
+		this_npc.teleport(location, TeleportCause.PLUGIN);
+		return true;
+	}
+
+	
+	public boolean Hire(String npcname, String npctype, String shopname, Location location) {
+		NPC this_npc;
+		String npc_type = npctype;
+		if (npc_type == null){
+			npc_type = "PLAYER";
+		}
+
+		this_npc = npcReg.createNPC(EntityType.valueOf(npc_type.toUpperCase()), npcname); 
+		this_npc.addTrait(HyperMerchantTrait.class);
+
+		this_npc.getTrait(HyperMerchantTrait.class).shop_name = shopname;
+		this_npc.spawn(location);
+		
+		return true;
+	}
+
+	
+	public boolean Fire(int id) {
+		NPC npc = npcReg.getById(id);
+		npc.destroy();
+		return true;
+	}
+
+	
+	public boolean Select(String npcname, Player player) {
+		player.performCommand("npc select "+npcname);
+		return true;
+	}
+
+	
+	public boolean Select(int id, Player player) {
+		player.performCommand("npc select "+Integer.toString(id));
+		return true;
+	}
+
+	
+	public String SetShop(int id, String shopname) {
+		String message = "";
+		NPC this_npc = npcReg.getById(id);
+		
+
+		if (shopname.isEmpty()) {
+			message.concat(ChatColor.YELLOW+"You must specify a shop name, or be standing " +
+								"inside of a shop to use the command "+ChatColor.RED+"setshop.");
+			
+		} else if (hyperAPI.getServerShopList().contains(shopname) || hyperAPI.getPlayerShopList().contains(shopname)) {
+			this_npc.getTrait(HyperMerchantTrait.class).shop_name = shopname;
+			message.concat(ChatColor.YELLOW+"NPC "+this_npc.getName()+" has been assigned to shop "+
+								this_npc.getTrait(HyperMerchantTrait.class).shop_name);
+			
+		} else {
+			message.concat(ChatColor.YELLOW+"You must provide a valid shop name. " +
+					"Use "+ChatColor.RED+"/remoteshoplist "+ChatColor.YELLOW+ 
+							"or "+ChatColor.RED+"/rslist "+ChatColor.YELLOW+
+							"for valid shop names. Use exact spelling.");	
+		}	
+		
+		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+		}
+		
+		return message;
+	}
+
+	
+	public boolean SetType(int id, String npctype) {
+		NPC this_npc = npcReg.getById(id);
+        try {
+        	this_npc.setBukkitEntityType(EntityType.valueOf(npctype.toUpperCase()));
+    		return true;
+        } catch (Exception e) {
+			out.println("EXCEPTION: "+e);
+        	return false;
+        }
+	}
+
+
+	public String SetComission(int id, double percentage) {
+		String message = "";
+		NPC this_npc = npcReg.getById(id);
+		this_npc.getTrait(HyperMerchantTrait.class).comission = percentage;
+		message.concat(ChatColor.YELLOW+"NPC "+this_npc.getName()+" now recieves a "+percentage+"% comission");
+		
+		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+		}
+		
+		return message;
+	}
+	
+	
+	public String ToggleOffduty(int id) {
+		String message = "";
+		NPC this_npc = npcReg.getById(id);
+		this_npc.getTrait(HyperMerchantTrait.class).offduty = !this_npc.getTrait(HyperMerchantTrait.class).offduty;
+		
+		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+		}
+		
+		if (this_npc.getTrait(HyperMerchantTrait.class).offduty) {
+			message.concat(ChatColor.YELLOW+"NPC "+this_npc.getName()+" is now off duty.");
+		} else {
+			message.concat(ChatColor.YELLOW+"NPC "+this_npc.getName()+" is now on duty.");
+		}
+		return message;
+	}
+
+	
+	public String SetGreeting(int id, String greeting) {
+		String message = "";
+		NPC this_npc = npcReg.getById(id);
+		this_npc.getTrait(HyperMerchantTrait.class).welcomeMsg = greeting;
+		
+		if (greeting=="") {
+			message.concat(ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer say a greeting to customers.");
+		} else {
+			message.concat(ChatColor.YELLOW+"NPC "+this_npc.getName()+" greeting message has been updated.");
+		}
+		
+		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+		}
+		
+		return message;
+	}
+
+	
+	public String SetFarewell(int id, String farewell) {
+		String message = "";
+		NPC this_npc = npcReg.getById(id);
+		this_npc.getTrait(HyperMerchantTrait.class).farewellMsg = farewell;
+		
+		if (farewell=="") {
+			message.concat(ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer say a farewell to customers.");
+		} else {
+			message.concat(ChatColor.YELLOW+"NPC "+this_npc.getName()+" farewell message has been updated.");
+		}
+		
+		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+		}
+		
+		return message;
+	}
+
+	
+	public String SetClosed(int id, String closed) {
+		String message = "";
+		NPC this_npc = npcReg.getById(id);
+		this_npc.getTrait(HyperMerchantTrait.class).closedMsg = closed;
+		
+		if (closed=="") {
+			message.concat(ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer say a closed message to customers.");
+		} else {
+			message.concat(ChatColor.YELLOW+"NPC "+this_npc.getName()+" closed message has been updated.");
+		}
+		
+		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+		}
+		
+		return message;
+	}
+
+	
+	public String SetDenial(int id, String denial) {
+		String message = "";
+		NPC this_npc = npcReg.getById(id);
+		this_npc.getTrait(HyperMerchantTrait.class).denialMsg = denial;
+		
+		if (denial=="") {
+			message.concat(ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer say a denial message to customers.");
+		} else {
+			message.concat(ChatColor.YELLOW+"NPC "+this_npc.getName()+" denial message has been updated.");
+		}
+		
+		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+		}
+		
+		return message;
+	}
+		
 }

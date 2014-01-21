@@ -2,6 +2,8 @@ package grokswell.hypermerchant;
 
 //import static java.lang.System.out;
 
+//import static java.lang.System.out;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,10 +35,10 @@ import regalowl.hyperconomy.EnchantmentClass;
 import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.HyperEnchant;
 import regalowl.hyperconomy.HyperItem;
+import regalowl.hyperconomy.HyperItemStack;
 import regalowl.hyperconomy.HyperObject;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperPlayer;
-
 import grokswell.hypermerchant.ShopTransactions;
  
 public class ShopMenu implements Listener {
@@ -306,10 +308,11 @@ public class ShopMenu implements Listener {
 	        		// SELLING ENCHANTS
 	        		if (!enchants.isEmpty()) {
 	                	String display_name = this.optionIcons[slot_num].getItemMeta().getDisplayName().replace("§6", "");
-	                	if (shopstock.items_in_stock.contains(display_name)) {
+            			String enchant_name = display_name.replace(" ", "_");
+	                	if (shopstock.items_in_stock.contains(display_name.replace(" ", "_"))) {
 	                		ItemStack item_holding = player.getItemInHand().clone();
 	                		player.setItemInHand(player.getItemOnCursor().clone());
-	                		if (this.shop_trans.Sell(display_name)) {
+	                		if (this.shop_trans.Sell(enchant_name)) {
 	            				player.setItemOnCursor(player.getItemInHand());
 	            				player.setItemInHand(item_holding);
 	                		} else {

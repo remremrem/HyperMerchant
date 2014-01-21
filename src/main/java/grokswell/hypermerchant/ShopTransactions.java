@@ -51,6 +51,8 @@ public class ShopTransactions {
 			}
 
 		HyperObject ho = hoAPI.getHyperObject(enchant,hyperAPI.getShopEconomy(shopname));
+		//out.println("display name: "+enchant);
+		//out.println("hyperobject: "+ho.getDisplayName()+" aliases: "+ho.getAliasesString()+ " name: "+ho.getName());
 		if ((hyperAPI.getShop(shopname).isTradeable(ho))) {
 			TransactionResponse response = hoAPI.sell(player, ho, 1, hyperAPI.getShop(shopname));
 			response.sendMessages();

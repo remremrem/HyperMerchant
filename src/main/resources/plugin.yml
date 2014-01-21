@@ -1,6 +1,6 @@
 name: HyperMerchant
 main: grokswell.hypermerchant.HyperMerchantPlugin
-version: 1.31-dev
+version: 1.4-dev
 description: Inventory menu to be used with HyperConomy shops and NPC trait for Citizens2.
 author: Grokswell
 authors: [Grokswell] 
@@ -37,6 +37,7 @@ commands:
       usage: "\n§4/hmerchant §csetshop §a[shopname] §6[--id idnum] §e- Set shop of selected hypermerchant.
   	    Set to shop player is standing in if no [shopname] argument provided.\n\n
   	    §4/hmerchant §coffduty §6[--id idnum] §e- Toggle npc in and out of offduty mode.\n\n
+  	    §4/hmerchant §ccomission §a[percent] §6[--id idnum] §e- Set the Merchant's comission, where percent is a number between 0 and 100.\n\n
         §4/hmerchant §cgreeting §a[welcome message] §6[--id idnum] §e- Set text NPC says upon player interaction.
   	    Leave [welcome message] argument empty for no text.\n\n
         §4/hmerchant §cfarewell §a[goodbye message] §6[--id idnum] §e- Set text NPC says upon player closing menu.
@@ -54,9 +55,12 @@ commands:
       description: Manage you clerk NPCs.
       usage: "\n§4/clerk §csetshop §a[shopname] §6[--id idnum] §e- Set shop of selected clerk.
   	    Set to shop player is standing in if no [shopname] argument provided.\n\n
-  	    §4/clerk §chire §a[name] §6[npc type] §6[-s shopname] §e- Hire a clerk to work in the shop you are standing in. Or use -s flag to hire for any shop.\n\n
+  	    §4/clerk §chire §a[name] §6[npc type] §6[-s shopname] §e- Hire a clerk to work in the shop you are standing in. Or use -s flag to hire for any shop.
+  	    The new clerk will spawn in one corner of the your shop\n\n
   	    §4/clerk §cfire §6[--id idnum] §e- Fire the selected clerk, or specify clerk to fire by ID.\n\n
+  	    §4/clerk §cselect §a[name or idnum] §e- Select one of your clerk npcs.\n\n
   	    §4/clerk §coffduty §6[--id idnum] §e- Toggle clerk in and out of offduty mode.\n\n
+  	    §4/clerk §ctp §6[--id idnum] §e- Teleport a clerk to your current position.\n\n
         §4/clerk §cgreeting §a[welcome message] §6[--id idnum] §e- Set text clerk says upon player interaction.
   	    Leave [welcome message] argument empty for no text.\n\n
         §4/clerk §cfarewell §a[goodbye message] §6[--id idnum] §e- Set text clerk says upon player closing menu.
@@ -68,7 +72,7 @@ commands:
   	    §4/clerk §clist §e- List information of all your clerk NPCs.\n\n
   	    §4/clerk §cinfo §6[--id idnum] §e- Show information of a single clerk NPC.\n\n
   	    §4/clerk §ctype §a[npc type] §6[--id idnum] §e- Set your clerk to a different type of NPC."
-      permission: hypermerchant.manage
+      permission: hypermerchant.clerk
       permission-message: You do not have permission to use command /clerk.
       aliases: [hclerk]
     
@@ -101,5 +105,5 @@ permissions:
       description: Allow use of the /clerk command.
       default: true
    creative.hypermerchant:
-      description: Allow player to purchase and sell while in creative mode.
+      description: Allow player to purchase and sell while in creative mode. Be extremely careful with this permission.
       default: false

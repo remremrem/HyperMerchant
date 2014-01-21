@@ -5,7 +5,6 @@ package grokswell.hypermerchant;
 import java.util.Arrays;
 import java.util.List;
 
-
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCSelector;
@@ -45,7 +44,7 @@ public class ClerkCommand {
 			String shopname = null;
 			
 			
-			
+			//CLERK LIST
 			if (args[0].equals("list")) {
 				for (NPC npc: CitizensAPI.getNPCRegistry()) {
 					if (npc.hasTrait(HyperMerchantTrait.class)) {
@@ -59,6 +58,33 @@ public class ClerkCommand {
 				}
 				return;
 			
+			//CLERK HIRE
+			} else if (args[0].equals("hire")) {
+				String npctype;
+				if (args[2] == "-s") {
+					shopname = args[3];
+					npctype="PLAYER";
+				} else if (args[3] == "-s") {
+					shopname = args[4];
+					npctype=args[2].toUpperCase();
+				} else if (args.length == 3) {
+					npctype=args[2].toUpperCase();
+					shopname = hyperAPI.getPlayerShop(player);
+				} else {
+					npctype="PLAYER";
+					shopname = hyperAPI.getPlayerShop(player);
+				}
+				
+				if  (merchmeth.Hire(args[1], npctype, shopname, hyperAPI.getPlayerShop(shopname).getLocation1())) {
+					int clerk_count = HMP.playerData.getPlayerData().getInt(player.getName()+".clerkcount");
+					HMP.playerData.savePlayerData(player.getName()+".clerkcount", clerk_count+1);
+				}
+				//sender.sendMessage(ChatColor.YELLOW+"You are now off duty. Other players cannot click on you to trade with your shop.");
+				return;
+			//END CLERK HIRE
+
+
+			//check if the npc is being spcified by it's citizens id number.
 			} else if (argslist.contains("--id")) {
 				int id_index = argslist.indexOf("--id") + 1;
 				IDarg = Integer.parseInt(args[id_index]);
@@ -105,9 +131,23 @@ public class ClerkCommand {
 				}
 			}
 
+			//CLERK FIRE
+			if (args[0].equals("fire")) {
+				String npc_name = this_npc.getName();
+				if (merchmeth.Fire(this_npc.getId())){
+					int clerk_count = HMP.playerData.getPlayerData().getInt(player.getName()+".clerkcount");
+					HMP.playerData.savePlayerData(player.getName()+".clerkcount", clerk_count-1);
+					
+					sender.sendMessage(ChatColor.YELLOW+npc_name+" has been fired!");
+				}
+				return;
+				
+			
+				
+				
 			
 			//CLERK SELECT
-			if (args[0].equals("select")) {
+			} else if (args[0].equals("select")) {
 				if (IDarg != -1) {
 					merchmeth.Select(IDarg, player);
 					
@@ -115,11 +155,20 @@ public class ClerkCommand {
 					
 					try {
 						int id = Integer.parseInt(args[1]);
-						merchmeth.Select(id, player);
+						NPC npc = CitizensAPI.getNPCRegistry().getById(id);
+						String shop_name = npc.getTrait(HyperMerchantTrait.class).shop_name;
+						//MAKE SURE THE NPC WORKS FOR THIS PLAYER
+						if (hyperAPI.getPlayerShop(shop_name).getOwner().getName() == player.getName()) {
+							merchmeth.Select(id, player);
+						}
+						return;
 						
 					} catch (Exception e) {
-						merchmeth.Select(args[1], player);
+						//do nothing on exception
 					}
+					sender.sendMessage(ChatColor.YELLOW+"You must specify one of your clerks by ID. Use "+ChatColor.RED+
+								"/clerk list "+ChatColor.YELLOW+"to your clerk's ID numbers.");
+					return;
 				}
 			
 				
@@ -130,7 +179,6 @@ public class ClerkCommand {
 			    if (args[0].equals("info")) {
 					String message = merchmeth.GetInfo(sender, this_npc.getId());
 					sender.sendMessage(message);
-				
 					
 					//CLERK TP
 			    } else if (args[0].equals("tp")) {

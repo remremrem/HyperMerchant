@@ -16,7 +16,7 @@ public class Players {
         plugin = plgn;
 		dataFolder = plugin.getDataFolder();
 		playerData = new YamlConfiguration();
-		if (!dataFolder.isDirectory()) dataFolder.mkdir();
+		if ( !dataFolder.isDirectory() )  dataFolder.mkdir();
 		loadPlayerData();
     }
     
@@ -35,7 +35,6 @@ public class Players {
     	catch(IOException ex) {
 			plugin.getLogger().severe("Cannot save to players.yml");
     	}
-    	
     }
     
     

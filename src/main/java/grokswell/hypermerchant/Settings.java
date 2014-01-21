@@ -24,6 +24,8 @@ public class Settings {
     static Double NPC_COMMISSION = 10.0;
     static Boolean RIGHT_CLICK_PLAYER_SHOP = true;
     static Boolean ONDUTY_IN_SHOP_ONLY = true;
+    static Boolean NPC_IN_SHOP_ONLY = true;
+    static int MAX_NPCS_PER_PLAYER = 2;
     
     
     public Settings(HyperMerchantPlugin plgn) {
@@ -32,7 +34,6 @@ public class Settings {
 		if (!dataFolder.isDirectory()) dataFolder.mkdir();
         loadConfig();
         saveConfig();
-        //config = new YamlStorage(new File(plugin.getDataFolder() + File.separator + "config.yml"), "HyperMerchant Configuration");
     }
     	  
     private static void loadConfig() {
@@ -65,6 +66,8 @@ public class Settings {
         NPC_COMMISSION = config.getDouble("PlayerShops.npc-commission");
         RIGHT_CLICK_PLAYER_SHOP = config.getBoolean("PlayerShops.right-click-player-shop");
         ONDUTY_IN_SHOP_ONLY = config.getBoolean("PlayerShops.onduty-in-shop-only");
+        NPC_IN_SHOP_ONLY = config.getBoolean("PlayerShops.npc-in-shop-only");
+        MAX_NPCS_PER_PLAYER = config.getInt("PlayerShops.max-npcs-per-player");
     }
 	  
 	public static void saveConfig() {
@@ -85,6 +88,8 @@ public class Settings {
 	    config.set("PlayerShops.npc-commission", NPC_COMMISSION);
 	    config.set("PlayerShops.right-click-player-shop", RIGHT_CLICK_PLAYER_SHOP);
 	    config.set("PlayerShops.onduty-in-shop-only", ONDUTY_IN_SHOP_ONLY);
+	    config.set("PlayerShops.npc-in-shop-only", NPC_IN_SHOP_ONLY);
+	    config.set("PlayerShops.max-npcs-per-player", MAX_NPCS_PER_PLAYER);
 	    
 		try {
 			config.save(configFile);

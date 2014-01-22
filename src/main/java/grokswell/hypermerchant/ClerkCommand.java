@@ -76,9 +76,15 @@ public class ClerkCommand {
 					shopname = hyperAPI.getPlayerShop(player);
 				}
 				out.println("shopname: "+shopname);
-				if  (merchmeth.Hire(args[1], npctype, shopname, hyperAPI.getPlayerShop(shopname).getLocation1())) {
+				if (args.length < 2) {
+					sender.sendMessage(ChatColor.YELLOW+"You must provide a name for your new clerk.");
+					return;
+				}
+				int npcid = merchmeth.Hire(args[1], npctype, shopname, hyperAPI.getPlayerShop(shopname).getLocation1());
+				if ( npcid != -1 ) {
 					int clerk_count = HMP.playerData.getPlayerData().getInt(player.getName()+".clerkcount");
 					HMP.playerData.savePlayerData(player.getName()+".clerkcount", clerk_count+1);
+					player.performCommand("npc select "+npcid);
 				}
 				//sender.sendMessage(ChatColor.YELLOW+"You are now off duty. Other players cannot click on you to trade with your shop.");
 				return;
@@ -92,7 +98,8 @@ public class ClerkCommand {
 				this_npc = CitizensAPI.getNPCRegistry().getById(IDarg);
 				
 				//MAKE SURE THIS NPC WORKS FOR THIS PLAYER
-				if (merchmeth.GetEmployer(IDarg) != player.getName()) {
+				out.println("OWNER: "+merchmeth.GetEmployer(IDarg));
+				if ( !merchmeth.GetEmployer(IDarg).equals(player.getName()) ) {
 					sender.sendMessage(ChatColor.YELLOW+"You may only perform this command on an NPC that works for you.");
 					return;
 				}
@@ -116,9 +123,10 @@ public class ClerkCommand {
 			}  else {
 			
 				this_npc = sel.getSelected(player);
-				
+
+				out.println("OWNER2: "+merchmeth.GetEmployer(this_npc.getId()));
 				//MAKE SURE THIS NPC WORKS FOR THIS PLAYER
-				if (merchmeth.GetEmployer(this_npc.getId()) != player.getName()) {
+				if ( !merchmeth.GetEmployer(this_npc.getId()).equals(player.getName()) ) {
 					sender.sendMessage(ChatColor.YELLOW+"You may only perform this command on an NPC that works for you.");
 					return;
 				}

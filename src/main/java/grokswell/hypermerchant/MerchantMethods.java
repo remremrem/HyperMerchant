@@ -80,10 +80,16 @@ public class MerchantMethods {
 		}
 		
 		String ownerName = null;
+		out.println("ID: "+id);
 		String shopName = GetShop(id);
+		out.println("shopname: "+shopName);
 		for (String name : hyperAPI.getPlayerShopList()) {
-			if (name == shopName) {
+			out.println("name: "+name);
+			if (name.equals(shopName) ) {
 				ownerName = hyperAPI.getPlayerShop(name).getOwner().getName();
+				out.println("shop: "+hyperAPI.getPlayerShop(name));
+				out.println("owner: "+hyperAPI.getPlayerShop(name).getOwner());
+				out.println("ownername: "+ownerName);
 			}
 		}
 		return ownerName;
@@ -108,9 +114,10 @@ public class MerchantMethods {
 	}
 
 	
-	public boolean Hire(String npcname, String npctype, String shopname, Location location) {
+	public int Hire(String npcname, String npctype, String shopname, Location location) {
 		NPC this_npc;
 		String npc_type = npctype;
+		int id = -1;
 		out.println(npc_type);
 		if (npc_type == null){
 			npc_type = "PLAYER";
@@ -122,7 +129,9 @@ public class MerchantMethods {
 		this_npc.getTrait(HyperMerchantTrait.class).shop_name = shopname;
 		this_npc.spawn(location);
 		
-		return true;
+		id = this_npc.getId();
+		
+		return id;
 	}
 
 	

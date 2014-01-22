@@ -23,7 +23,6 @@ import regalowl.hyperconomy.HyperPlayer;
 public class HyperMerchantTrait extends Trait {
 	HyperAPI hyperAPI = new HyperAPI();
 	HyperObjectAPI hoAPI = new HyperObjectAPI();
-	String shop_name = hyperAPI.getGlobalShopAccount();
 	static ArrayList<String> shoplist;
 	HashMap<String,ShopMenu> customer_menus = new HashMap<String,ShopMenu>();
 	final HyperMerchantPlugin plugin;
@@ -36,6 +35,7 @@ public class HyperMerchantTrait extends Trait {
 	String closedMsg;
 	double comission;
 	boolean offduty;
+	String shop_name;
 
 	public HyperMerchantTrait() {
 		super("hypermerchant");
@@ -48,6 +48,7 @@ public class HyperMerchantTrait extends Trait {
 		closedMsg = plugin.settings.CLOSED;
 		comission = plugin.settings.NPC_COMMISSION;
 		offduty = plugin.settings.OFFDUTY;
+		shop_name = hyperAPI.getGlobalShopAccount();
 	}
 
 	@Override

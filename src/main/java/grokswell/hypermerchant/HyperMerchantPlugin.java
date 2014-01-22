@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 
 import java.util.ArrayList;
 
@@ -190,8 +190,13 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		getServer().getPluginManager().registerEvents(this, this);
 		
 		if (Bukkit.getPluginManager().getPlugin("Citizens") != null) {
-			CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(HyperMerchantTrait.class).withName("hypermerchant"));
-			this.citizens_is_loaded = true;
+			try {
+				CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(HyperMerchantTrait.class).withName("hypermerchant"));
+				this.citizens_is_loaded = true;
+			} catch (IllegalArgumentException e) {
+				this.citizens_is_loaded = true;
+				//out.println("EXCEPTION: "+e);
+			}
 		} else {
 			this.getLogger().info("Citizens not found. NPC hypermerchants will be disabled.");
 		}

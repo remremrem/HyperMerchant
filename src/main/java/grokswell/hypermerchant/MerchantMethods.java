@@ -19,14 +19,14 @@ import regalowl.hyperconomy.HyperAPI;
 
 
 public class MerchantMethods {
-	NPCRegistry npcReg;
-	NPCSelector npcSel;
+	NPCRegistry npcReg = CitizensAPI.getNPCRegistry();
+	NPCSelector npcSel = CitizensAPI.getDefaultNPCSelector();
 	HyperAPI hyperAPI = new HyperAPI();
 
 	public String ListMerchants(Player player) {
 		String message = "";
 		if (player == null) {
-			for (NPC npc: CitizensAPI.getNPCRegistry()) {
+			for (NPC npc: npcReg) {
 				if (npc.hasTrait(HyperMerchantTrait.class)) {
 					if (npc.getTrait(HyperMerchantTrait.class).offduty) {
 						message.concat(ChatColor.YELLOW+npc.getName()+" is OFFDUTY\n");
@@ -37,7 +37,7 @@ public class MerchantMethods {
 				}
 			}
 		} else {
-			for (NPC npc: CitizensAPI.getNPCRegistry()) {
+			for (NPC npc: npcReg) {
 				if (npc.hasTrait(HyperMerchantTrait.class)) {
 					if (npc.data().get("owner") == player.getName()){
 						if (npc.getTrait(HyperMerchantTrait.class).offduty) {
@@ -111,6 +111,7 @@ public class MerchantMethods {
 	public boolean Hire(String npcname, String npctype, String shopname, Location location) {
 		NPC this_npc;
 		String npc_type = npctype;
+		out.println(npc_type);
 		if (npc_type == null){
 			npc_type = "PLAYER";
 		}

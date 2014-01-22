@@ -1,5 +1,6 @@
 package grokswell.hypermerchant;
 
+import static java.lang.System.out;
 
 //import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +39,7 @@ public class ClerkCommand {
 			player = (Player) snder;
 		}
 		
-		try {
+		//try {
 			NPC this_npc;
 			StringBuilder buffer = new StringBuilder();
 			String shopname = null;
@@ -61,10 +62,10 @@ public class ClerkCommand {
 			//CLERK HIRE
 			} else if (args[0].equals("hire")) {
 				String npctype;
-				if (args[2] == "-s") {
+				if (args.length > 3 && args[2] == "-s") {
 					shopname = args[3];
 					npctype="PLAYER";
-				} else if (args[3] == "-s") {
+				} else if (args.length > 4 && args[3] == "-s") {
 					shopname = args[4];
 					npctype=args[2].toUpperCase();
 				} else if (args.length == 3) {
@@ -74,7 +75,7 @@ public class ClerkCommand {
 					npctype="PLAYER";
 					shopname = hyperAPI.getPlayerShop(player);
 				}
-				
+				out.println("shopname: "+shopname);
 				if  (merchmeth.Hire(args[1], npctype, shopname, hyperAPI.getPlayerShop(shopname).getLocation1())) {
 					int clerk_count = HMP.playerData.getPlayerData().getInt(player.getName()+".clerkcount");
 					HMP.playerData.savePlayerData(player.getName()+".clerkcount", clerk_count+1);
@@ -278,11 +279,12 @@ public class ClerkCommand {
 			}
 			
 			//for any other exception not explicitly checked for
-		} catch (Exception e){
-			HMP.getLogger().info("/hypermerchant call threw exception "+e);
-			sender.sendMessage(ChatColor.YELLOW+"You must have a hypermerchant npc " +
-								"selected to use the command "+ChatColor.RED+"/hmerchant.");
-			return;
-		}	
+		//} catch (Exception e){
+		//	HMP.getLogger().info("/hypermerchant call threw exception "+e);
+		//	sender.sendMessage(ChatColor.YELLOW+"You must have a hypermerchant npc " +
+		//						"selected to use the command "+ChatColor.RED+"/hmerchant.");
+		//	return;
+		//}	
+		return;						
 	}
 }

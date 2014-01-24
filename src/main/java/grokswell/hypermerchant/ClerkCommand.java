@@ -58,7 +58,32 @@ public class ClerkCommand {
 					}
 				}
 				return;
-			
+				
+			//CLERK SELECT
+			} else if (args[0].equals("select")) {
+				if (IDarg != -1) {
+					merchmeth.Select(IDarg, player);
+					return;
+				} else if (args.length > 1){
+					
+					try {
+						int id = Integer.parseInt(args[1]);
+						NPC npc = CitizensAPI.getNPCRegistry().getById(id);
+						String shop_name = npc.getTrait(HyperMerchantTrait.class).shop_name;
+						//MAKE SURE THE NPC WORKS FOR THIS PLAYER
+						if (hyperAPI.getPlayerShop(shop_name).getOwner().getName() == player.getName()) {
+							merchmeth.Select(id, player);
+						}
+						return;
+						
+					} catch (Exception e) {
+						//do nothing on exception
+					}
+					sender.sendMessage(ChatColor.YELLOW+"You must specify one of your clerks by ID. Use "+ChatColor.RED+
+								"/clerk list "+ChatColor.YELLOW+"to your clerk's ID numbers.");
+					return;
+				}
+				return;
 			//CLERK HIRE
 			} else if (args[0].equals("hire")) {
 				String npctype;
@@ -119,12 +144,13 @@ public class ClerkCommand {
 					    buffer.append(' ').append(args[i]);
 					}
 				}
-
+	
+			//CHECK IF PLAYER HAS A CLERK SELECTED
 			}  else {
 			
 				this_npc = sel.getSelected(player);
 
-				out.println("OWNER2: "+merchmeth.GetEmployer(this_npc.getId()));
+				//out.println("OWNER2: "+merchmeth.GetEmployer(this_npc.getId()));
 				//MAKE SURE THIS NPC WORKS FOR THIS PLAYER
 				if ( !merchmeth.GetEmployer(this_npc.getId()).equals(player.getName()) ) {
 					sender.sendMessage(ChatColor.YELLOW+"You may only perform this command on an NPC that works for you.");
@@ -151,37 +177,7 @@ public class ClerkCommand {
 				}
 				return;
 				
-			
-				
-				
-			
-			//CLERK SELECT
-			} else if (args[0].equals("select")) {
-				if (IDarg != -1) {
-					merchmeth.Select(IDarg, player);
-					
-				} else if (args.length > 1){
-					
-					try {
-						int id = Integer.parseInt(args[1]);
-						NPC npc = CitizensAPI.getNPCRegistry().getById(id);
-						String shop_name = npc.getTrait(HyperMerchantTrait.class).shop_name;
-						//MAKE SURE THE NPC WORKS FOR THIS PLAYER
-						if (hyperAPI.getPlayerShop(shop_name).getOwner().getName() == player.getName()) {
-							merchmeth.Select(id, player);
-						}
-						return;
-						
-					} catch (Exception e) {
-						//do nothing on exception
-					}
-					sender.sendMessage(ChatColor.YELLOW+"You must specify one of your clerks by ID. Use "+ChatColor.RED+
-								"/clerk list "+ChatColor.YELLOW+"to your clerk's ID numbers.");
-					return;
-				}
-			
-				
-				
+	
 			} else if (this_npc.hasTrait(HyperMerchantTrait.class)) {
 				
 					//CLERK INFO
@@ -292,7 +288,6 @@ public class ClerkCommand {
 		//	sender.sendMessage(ChatColor.YELLOW+"You must have a hypermerchant npc " +
 		//						"selected to use the command "+ChatColor.RED+"/hmerchant.");
 		//	return;
-		//}	
-		return;						
+		//}					
 	}
 }

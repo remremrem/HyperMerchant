@@ -5,12 +5,14 @@ import static java.lang.System.out;
 import java.util.ArrayList;
 
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.CitizensPlugin;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.entity.EntityType;
@@ -188,8 +190,11 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);
+		Plugin p = Bukkit.getPluginManager().getPlugin("Citizens");
 		
-		if (Bukkit.getPluginManager().getPlugin("Citizens") != null) {
+		CitizensPlugin cp = (CitizensPlugin) p;
+		//CitizensAPI.setImplementation(cp);
+		if (cp != null) {
 			try {
 				CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(HyperMerchantTrait.class).withName("hypermerchant"));
 				this.citizens_is_loaded = true;

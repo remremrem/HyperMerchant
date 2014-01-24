@@ -219,9 +219,9 @@ public class MerchantMethods {
 		}
 		
 		if (this_npc.getTrait(HyperMerchantTrait.class).offduty) {
-			message.concat(ChatColor.YELLOW+"NPC "+this_npc.getName()+" is now off duty.");
+			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+" is now off duty.";
 		} else {
-			message.concat(ChatColor.YELLOW+"NPC "+this_npc.getName()+" is now on duty.");
+			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+" is now on duty.";
 		}
 		return message;
 	}

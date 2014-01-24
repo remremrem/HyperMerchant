@@ -2,12 +2,16 @@ package grokswell.hypermerchant;
 
 import static java.lang.System.out;
 
+
+
+import java.util.ArrayList;
 //import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.NPCSelector;
 
 import org.bukkit.ChatColor;
@@ -27,7 +31,8 @@ public class ClerkCommand {
 		merchmeth = new MerchantMethods();
 		this.sender = snder;
 		Player player = null;
-		NPCSelector sel = CitizensAPI.getDefaultNPCSelector(); 
+		NPCSelector sel = CitizensAPI.getDefaultNPCSelector();
+		NPCRegistry npcReg = CitizensAPI.getNPCRegistry();
 		List<String> argslist = Arrays.asList(args);
 		
 		if (!(sender instanceof Player)) {
@@ -49,41 +54,52 @@ public class ClerkCommand {
 			if (args[0].equals("list")) {
 				for (NPC npc: CitizensAPI.getNPCRegistry()) {
 					if (npc.hasTrait(HyperMerchantTrait.class)) {
-						if (npc.getTrait(HyperMerchantTrait.class).offduty) {
-							sender.sendMessage(ChatColor.YELLOW+npc.getName()+" is OFFDUTY");
-						} else {
-							sender.sendMessage(ChatColor.YELLOW+npc.getName()+" is ONDUTY");
+						String shop_name = npc.getTrait(HyperMerchantTrait.class).shop_name;
+						//MAKE SURE THE NPC WORKS FOR THIS PLAYER
+						if (hyperAPI.getPlayerShopList().contains(shop_name)){
+							if (hyperAPI.getPlayerShop(shop_name).getOwner().getName().equals(player.getName()) ) {
+								if (npc.getTrait(HyperMerchantTrait.class).offduty) {
+									sender.sendMessage(ChatColor.YELLOW+npc.getName()+" is OFFDUTY");
+								} else {
+									sender.sendMessage(ChatColor.YELLOW+npc.getName()+" is ONDUTY");
+								}
+								sender.sendMessage(ChatColor.YELLOW+"ID: " + String.valueOf(npc.getId()) + " , SHOP: "+ npc.getTrait(HyperMerchantTrait.class).shop_name +"\n");
+							}
 						}
-						sender.sendMessage(ChatColor.YELLOW+"ID: " + String.valueOf(npc.getId()) + " , SHOP: "+ npc.getTrait(HyperMerchantTrait.class).shop_name +"\n");
 					}
 				}
 				return;
 				
 			//CLERK SELECT
 			} else if (args[0].equals("select")) {
-				if (IDarg != -1) {
-					merchmeth.Select(IDarg, player);
-					return;
-				} else if (args.length > 1){
-					
+				if (args.length > 1){
+					int id;
 					try {
-						int id = Integer.parseInt(args[1]);
+						id = Integer.parseInt(args[1]);
 						NPC npc = CitizensAPI.getNPCRegistry().getById(id);
 						String shop_name = npc.getTrait(HyperMerchantTrait.class).shop_name;
 						//MAKE SURE THE NPC WORKS FOR THIS PLAYER
-						if (hyperAPI.getPlayerShop(shop_name).getOwner().getName() == player.getName()) {
+						if (hyperAPI.getPlayerShop(shop_name).getOwner().getName().equals(player.getName()) ) {
 							merchmeth.Select(id, player);
 						}
 						return;
-						
 					} catch (Exception e) {
-						//do nothing on exception
+						String npcname = args[1];
+						for (NPC npc : npcReg) {
+							if (npc.hasTrait(HyperMerchantTrait.class) && npc.getName().toLowerCase().equals(npcname.toLowerCase())) {
+								String shop_name = npc.getTrait(HyperMerchantTrait.class).shop_name;
+								if (hyperAPI.getPlayerShop(shop_name).getOwner().getName().equals(player.getName()) ) {
+									merchmeth.Select(npc.getId(), player);
+									return;
+								}
+							}
+						}
 					}
-					sender.sendMessage(ChatColor.YELLOW+"You must specify one of your clerks by ID. Use "+ChatColor.RED+
-								"/clerk list "+ChatColor.YELLOW+"to your clerk's ID numbers.");
-					return;
 				}
+				sender.sendMessage(ChatColor.YELLOW+"You must specify one of your clerks by ID or name. Use "+ChatColor.RED+
+						"/clerk list "+ChatColor.YELLOW+"to view your clerk's names and ID numbers.");
 				return;
+				
 			//CLERK HIRE
 			} else if (args[0].equals("hire")) {
 				String npctype;

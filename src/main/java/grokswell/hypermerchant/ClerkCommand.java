@@ -4,8 +4,6 @@ import static java.lang.System.out;
 
 
 
-import java.util.ArrayList;
-//import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -80,7 +78,7 @@ public class ClerkCommand {
 						String shop_name = npc.getTrait(HyperMerchantTrait.class).shop_name;
 						//MAKE SURE THE NPC WORKS FOR THIS PLAYER
 						if (hyperAPI.getPlayerShop(shop_name).getOwner().getName().equals(player.getName()) ) {
-							merchmeth.Select(id, player);
+							merchmeth.Select(id, player,HMP);
 						}
 						return;
 					} catch (Exception e) {
@@ -88,9 +86,13 @@ public class ClerkCommand {
 						for (NPC npc : npcReg) {
 							if (npc.hasTrait(HyperMerchantTrait.class) && npc.getName().toLowerCase().equals(npcname.toLowerCase())) {
 								String shop_name = npc.getTrait(HyperMerchantTrait.class).shop_name;
-								if (hyperAPI.getPlayerShop(shop_name).getOwner().getName().equals(player.getName()) ) {
-									merchmeth.Select(npc.getId(), player);
-									return;
+								try {
+									if (hyperAPI.getPlayerShop(shop_name).getOwner().getName().equals(player.getName()) ) {
+										merchmeth.Select(npc.getId(), player,HMP);
+										return;
+									}
+								} catch (Exception NullPointerException) {
+									//do nothing
 								}
 							}
 						}
@@ -102,6 +104,20 @@ public class ClerkCommand {
 				
 			//CLERK HIRE
 			} else if (args[0].equals("hire")) {
+				int clerkcount = 0;
+				for (NPC npc : npcReg) {
+					if (npc.hasTrait(HyperMerchantTrait.class)) {
+						if (merchmeth.GetEmployer(npc.getId()) != null) {
+							if (merchmeth.GetEmployer(npc.getId()).equals(player.getName())) {
+								clerkcount = clerkcount+1;
+							}
+						}
+					}
+				}
+				if (clerkcount >= HMP.settings.MAX_NPCS_PER_PLAYER) {
+					sender.sendMessage(ChatColor.YELLOW+"You already have the maximum number of clerks you may hire.");
+					return;
+				}
 				String npctype;
 				if (args.length > 3 && args[2] == "-s") {
 					shopname = args[3];
@@ -137,9 +153,11 @@ public class ClerkCommand {
 				int id_index = argslist.indexOf("--id") + 1;
 				IDarg = Integer.parseInt(args[id_index]);
 				this_npc = CitizensAPI.getNPCRegistry().getById(IDarg);
-				
 				//MAKE SURE THIS NPC WORKS FOR THIS PLAYER
-				out.println("OWNER: "+merchmeth.GetEmployer(IDarg));
+				if ( merchmeth.GetEmployer(IDarg)==null ){
+					sender.sendMessage(ChatColor.YELLOW+"You may only perform this command on an NPC that works for you.");
+					return;
+				}
 				if ( !merchmeth.GetEmployer(IDarg).equals(player.getName()) ) {
 					sender.sendMessage(ChatColor.YELLOW+"You may only perform this command on an NPC that works for you.");
 					return;
@@ -166,17 +184,27 @@ public class ClerkCommand {
 			
 				this_npc = sel.getSelected(player);
 
-				//out.println("OWNER2: "+merchmeth.GetEmployer(this_npc.getId()));
+				out.println("selected npc: "+sel.getSelected(player));
+				if (this_npc == null) {
+					sender.sendMessage(ChatColor.YELLOW+"You must have a clerk selected or specify one using the [--id] flag.");
+					return;
+				}
 				//MAKE SURE THIS NPC WORKS FOR THIS PLAYER
-				if ( !merchmeth.GetEmployer(this_npc.getId()).equals(player.getName()) ) {
-					sender.sendMessage(ChatColor.YELLOW+"You may only perform this command on an NPC that works for you.");
+				if (this_npc.hasTrait(HyperMerchantTrait.class)) {
+					sender.sendMessage(ChatColor.YELLOW+"You may only perform this command on a clerk that works for you.");
+					if ( !merchmeth.GetEmployer(this_npc.getId()).equals(player.getName()) ) {
+						sender.sendMessage(ChatColor.YELLOW+"You may only perform this command on a clerk that works for you.");
+					}
 					return;
 				}
 				
-				
-				if (args[0].equals("setshop")) {
-					shopname = args[1];
-				}
+//				if (args[0].equals("setshop")) {
+//					if (args.length == 2) {
+//						shopname = args[1];
+//					} else {
+//						shopname = hyperAPI.getPlayerShop(player);
+//					}
+//				}
 				for(int i = 1; i < args.length; i++) {
 				    buffer.append(' ').append(args[i]);
 				}
@@ -196,27 +224,35 @@ public class ClerkCommand {
 	
 			} else if (this_npc.hasTrait(HyperMerchantTrait.class)) {
 				
-					//CLERK INFO
+				//CLERK INFO
 			    if (args[0].equals("info")) {
 					String message = merchmeth.GetInfo(sender, this_npc.getId());
 					sender.sendMessage(message);
 					
-					//CLERK TP
+				//CLERK TP
 			    } else if (args[0].equals("tp")) {
-			    	String player_in_shop = hyperAPI.getPlayerShop(player);
 			    
-					if (player_in_shop != null) {
-						if (hyperAPI.getPlayerShop(player_in_shop).getOwner().getName() 
-								== player.getName()) {
-							
-							merchmeth.Teleport(this_npc.getId(), player.getLocation());
+					if (!HMP.settings.NPC_IN_SHOP_ONLY)  {
+						merchmeth.Teleport(this_npc.getId(), player.getLocation());
+					} else {
+						String player_in_shop = hyperAPI.getPlayerShop(player);
+						out.println("player in shop: "+player_in_shop);
+						if (!player_in_shop.equals("")) {
+							if ( hyperAPI.getPlayerShop(player_in_shop).getOwner().getName().equals(player.getName()) ) {
+								merchmeth.Teleport(this_npc.getId(), player.getLocation());
+							} else {
+								sender.sendMessage(ChatColor.YELLOW+"You must be standing inside of a shop that you own.");
+							}
+						} else {
+							sender.sendMessage(ChatColor.YELLOW+"You must be standing inside of a shop that you own.");
 						}
 					}
-						
-					//CLERK SETSHOP
+					return;	
+					
+				//CLERK SETSHOP
 				} else if (args[0].equals("setshop")) {
 					if (args.length>1) {
-						String message = merchmeth.SetShop(this_npc.getId(), shopname);
+						String message = merchmeth.SetShop(this_npc.getId(), args[1]);
 						sender.sendMessage(message);
 						return;
 
@@ -226,16 +262,7 @@ public class ClerkCommand {
 						sender.sendMessage(message);
 						return;
 					}
-				
-					
-					//CLERK COMISSION
-				//} else if (args[0].equals("comission")) {
-				//	if (args.length>1) {
-				//		String message = merchmeth.SetComission(this_npc.getId(), Double.valueOf(args[1]));
-				//		sender.sendMessage(message);
-				//	}
-				
-					
+
 					//CLERK GREETING
 				} else if (args[0].equals("greeting")) {
 					String greeting = "";

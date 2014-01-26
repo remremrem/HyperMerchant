@@ -91,26 +91,26 @@ public class HyperMerchantCommand {
 				}
 			}
 			
-				//HMERCH SELECT
-			if (this_npc.hasTrait(HyperMerchantTrait.class)) {
-				if (args[0].equals("select")) {
-					if (IDarg != -1) {
-						merchmeth.Select(IDarg, player);
-						
-					} else if (args.length > 1){
-						
-						try {
-							int id = Integer.parseInt(args[1]);
-							merchmeth.Select(id, player);
-							
-						} catch (Exception e) {
-							merchmeth.Select(args[1], player);
-						}
-					}
+//				//HMERCH SELECT
+//			if (this_npc.hasTrait(HyperMerchantTrait.class)) {
+//				if (args[0].equals("select")) {
+//					if (IDarg != -1) {
+//						merchmeth.Select(IDarg, player);
+//						
+//					} else if (args.length > 1){
+//						
+//						try {
+//							int id = Integer.parseInt(args[1]);
+//							merchmeth.Select(id, player);
+//							
+//						} catch (Exception e) {
+//							merchmeth.Select(args[1], player);
+//						}
+//					}
 				
 				
 					//HMERCH INFO
-			    } else if (args[0].equals("info")) {
+			    if (args[0].equals("info")) {
 					String message = merchmeth.GetInfo(sender, this_npc.getId());
 					sender.sendMessage(message);
 						
@@ -194,11 +194,11 @@ public class HyperMerchantCommand {
 				
 				
 				//if the player doesn't have a hypermerchant npc selected
-			} else {
-				sender.sendMessage(ChatColor.YELLOW+"You must have a hypermerchant npc " +
-						"selected to use the command "+ChatColor.RED+"/hmerchant.");
-				return;
-			}
+			//} else {
+			//	sender.sendMessage(ChatColor.YELLOW+"You must have a hypermerchant npc " +
+			//			"selected to use the command "+ChatColor.RED+"/hmerchant.");
+			//	return;
+			//}
 			
 			//for any other exception not explicitly checked for
 		} catch (Exception e){

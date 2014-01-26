@@ -191,11 +191,10 @@ public class ClerkCommand {
 				}
 				//MAKE SURE THIS NPC WORKS FOR THIS PLAYER
 				if (this_npc.hasTrait(HyperMerchantTrait.class)) {
-					sender.sendMessage(ChatColor.YELLOW+"You may only perform this command on a clerk that works for you.");
 					if ( !merchmeth.GetEmployer(this_npc.getId()).equals(player.getName()) ) {
 						sender.sendMessage(ChatColor.YELLOW+"You may only perform this command on a clerk that works for you.");
+						return;
 					}
-					return;
 				}
 				
 //				if (args[0].equals("setshop")) {

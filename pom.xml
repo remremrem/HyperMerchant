@@ -15,10 +15,6 @@
             <id>my-repo</id>
             <url>http://doyle.is-a-geek.net:8000/repo/</url>
         </repository>
-		<repository>
-			<id>citizens-repo</id>
-			<url>http://repo.citizensnpcs.co</url>
-		</repository>
 	</repositories>
 	<scm>
 		<developerConnection>scm:git:git@github.com:remremrem/HyperMerchant.git</developerConnection>

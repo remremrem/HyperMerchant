@@ -4,12 +4,15 @@ package grokswell.hypermerchant;
 
 import java.util.ArrayList;
 
+import net.citizensnpcs.api.npc.NPC;
+
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.HyperConomy;
+import regalowl.hyperconomy.HyperEconAPI;
 import regalowl.hyperconomy.HyperObject;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperPlayer;
@@ -30,6 +33,7 @@ public class ShopTransactions {
     //HyperEconomy hEcon;
 	HyperObjectAPI hoAPI = new HyperObjectAPI();
 	HyperAPI hyperAPI = new HyperAPI();
+	HyperEconAPI heAPI = new HyperEconAPI();
 	
 	public ShopTransactions(Player plyr, String sname, HyperMerchantPlugin plgn, ShopMenu sm) {
 		player=plyr;
@@ -81,13 +85,18 @@ public class ShopTransactions {
 	}
 	
 	//PLAYER BUYS ITEM FROM SHOP
-	public void Buy(String item, int qty) {
+	public void Buy(String item, int qty, double commission) {
 		HyperObject ho = hoAPI.getHyperObject(item.replaceAll(" ", "_"), hyperAPI.getShopEconomy(shopname), hyperAPI.getShop(shopname));
 		if (!hp.hasBuyPermission(hyperAPI.getShop(shopname))) {
 			player.sendMessage("You cannot buy from this shop.");
 			return;
 		}
 		TransactionResponse response = hoAPI.buy(player, ho, qty, hyperAPI.getShop(shopname));
+		if (commission > 0.0) {
+		    double amount = response.getTotalPrice()*commission;
+			heAPI.withdraw(amount, hyperAPI.getShop(shopname).getOwner().getPlayer());
+			heAPI.depositShop(amount);
+		}
 		response.sendMessages();
 	}
 

@@ -109,13 +109,13 @@ public class HyperMerchantCommand {
 //					}
 				
 				
-					//HMERCH INFO
+				//HMERCH INFO
 			    if (args[0].equals("info")) {
 					String message = merchmeth.GetInfo(sender, this_npc.getId());
 					sender.sendMessage(message);
 						
 						
-					//HMERCH SETSHOP
+				//HMERCH SETSHOP
 				} else if (args[0].equals("setshop")) {
 					if (args.length>1) {
 						String message = merchmeth.SetShop(this_npc.getId(), shopname);
@@ -130,15 +130,23 @@ public class HyperMerchantCommand {
 					}
 				
 					
-					//HMERCH COMISSION
-				} else if (args[0].equals("comission")) {
+				//HMERCH COMMISSION
+				} else if (args[0].equals("commission")) {
 					if (args.length>1) {
-						String message = merchmeth.SetComission(this_npc.getId(), Double.valueOf(args[1]));
-						sender.sendMessage(message);
+						try {
+							String message = merchmeth.SetCommission(this_npc.getId(), Double.valueOf(args[1]));
+							sender.sendMessage(message);
+						} catch (Exception e) {
+							sender.sendMessage(ChatColor.YELLOW+args[1]+" is not a valid commission percentage.");
+
+						}
+					} else {
+						sender.sendMessage(ChatColor.YELLOW+"This merchant's commission is "+String.valueOf( this_npc.getTrait(HyperMerchantTrait.class).comission )+" precent.");
 					}
+					return;
 				
 					
-					//HMERCH GREETING
+				//HMERCH GREETING
 				} else if (args[0].equals("greeting")) {
 					String greeting = "";
 					if (args.length>1) {
@@ -148,7 +156,7 @@ public class HyperMerchantCommand {
 					sender.sendMessage(message);
 
 				
-					//HMERCH FAREWELL
+				//HMERCH FAREWELL
 				} else if (args[0].equals("farewell")) {
 					String farewell = "";
 					if (args.length>1) {
@@ -158,7 +166,7 @@ public class HyperMerchantCommand {
 					sender.sendMessage(message);
 
 				
-					//HMERCH DENIAL
+				//HMERCH DENIAL
 				} else if (args[0].equals("denial")) {
 					String denial = "";
 					if (args.length>1) {
@@ -168,7 +176,7 @@ public class HyperMerchantCommand {
 					sender.sendMessage(message);
 
 				
-					//HMERCH CLOSED
+				//HMERCH CLOSED
 				} else if (args[0].equals("closed")) {
 					String closed = "";
 					if (args.length>1) {
@@ -178,7 +186,7 @@ public class HyperMerchantCommand {
 					sender.sendMessage(message);
 
 				
-					//HMERCH OFFUDTY
+				//HMERCH OFFDUTY
 				} else if (args[0].equals("offduty") || args[0].equals("onduty")) {
 					String message = merchmeth.ToggleOffduty(this_npc.getId());
 						sender.sendMessage(message);
@@ -187,7 +195,7 @@ public class HyperMerchantCommand {
 					//ANY OTHER ARGUMENTS THAT ARE INVALID
 				}else {
 					sender.sendMessage(ChatColor.YELLOW+"Valid "+ChatColor.DARK_RED+"/hmerchant"+ChatColor.YELLOW+" subcommands are:\n" +
-							ChatColor.RED+"setshop , offduty , greeting , farewell , denial , closed.");
+							ChatColor.RED+"info, setshop , offduty , greeting , farewell , denial , closed, commission.");
 					return;
 				}
 				return;

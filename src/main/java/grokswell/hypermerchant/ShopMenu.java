@@ -56,6 +56,7 @@ public class ShopMenu implements Listener {
 	String economy_name;
 	ShopStock shopstock;
 	NPC npc;
+	double commission;
 	ArrayList<ArrayList<String>> pages;
 	HyperAPI hyperAPI = new HyperAPI();
 	HyperObjectAPI hoAPI = new HyperObjectAPI();
@@ -72,6 +73,9 @@ public class ShopMenu implements Listener {
         this.optionIcons = new ItemStack[size];
         this.player=plyr;
         this.npc = npc;
+        if (!this.npc.equals(null)) {
+        	this.commission = npc.getTrait(HyperMerchantTrait.class).comission*.01;
+        }
     	this.shop_trans = new ShopTransactions(player, this.shopname, this.plugin, this);
     	this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
     	
@@ -280,14 +284,14 @@ public class ShopMenu implements Listener {
         		if (this.optionNames[slot_num] != null && this.optionNames[slot_num] != " ") {
                     if (event.isLeftClick()){
                     	if (event.isShiftClick()){
-                    		this.shop_trans.Buy(this.optionNames[slot_num], 8);
+                    		this.shop_trans.Buy(this.optionNames[slot_num], 8, commission);
                     	}
                     	else {
-                    		this.shop_trans.Buy(this.optionNames[slot_num], 1);
+                    		this.shop_trans.Buy(this.optionNames[slot_num], 1, commission);
                     	}
                     }
                     else if (event.isRightClick() && event.isShiftClick()) {
-                    	this.shop_trans.Buy(this.optionNames[slot_num], this.optionIcons[slot_num].getMaxStackSize());
+                    	this.shop_trans.Buy(this.optionNames[slot_num], this.optionIcons[slot_num].getMaxStackSize(), commission);
                     	//return;
                     }        
         		}

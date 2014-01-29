@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 
 
@@ -132,7 +132,7 @@ public class ClerkCommand {
 					npctype="PLAYER";
 					shopname = hyperAPI.getPlayerShop(player);
 				}
-				out.println("shopname: "+shopname);
+				//out.println("shopname: "+shopname);
 				if (args.length < 2) {
 					sender.sendMessage(ChatColor.YELLOW+"You must provide a name for your new clerk.");
 					return;
@@ -184,7 +184,7 @@ public class ClerkCommand {
 			
 				this_npc = sel.getSelected(player);
 
-				out.println("selected npc: "+sel.getSelected(player));
+				//out.println("selected npc: "+sel.getSelected(player));
 				if (this_npc == null) {
 					sender.sendMessage(ChatColor.YELLOW+"You must have a clerk selected or specify one using the [--id] flag.");
 					return;
@@ -235,7 +235,7 @@ public class ClerkCommand {
 						merchmeth.Teleport(this_npc.getId(), player.getLocation());
 					} else {
 						String player_in_shop = hyperAPI.getPlayerShop(player);
-						out.println("player in shop: "+player_in_shop);
+						//out.println("player in shop: "+player_in_shop);
 						if (!player_in_shop.equals("")) {
 							if ( hyperAPI.getPlayerShop(player_in_shop).getOwner().getName().equals(player.getName()) ) {
 								merchmeth.Teleport(this_npc.getId(), player.getLocation());
@@ -262,7 +262,7 @@ public class ClerkCommand {
 						return;
 					}
 
-					//CLERK GREETING
+				//CLERK GREETING
 				} else if (args[0].equals("greeting")) {
 					String greeting = "";
 					if (args.length>1) {
@@ -272,7 +272,7 @@ public class ClerkCommand {
 					sender.sendMessage(message);
 
 				
-					//CLERK FAREWELL
+				//CLERK FAREWELL
 				} else if (args[0].equals("farewell")) {
 					String farewell = "";
 					if (args.length>1) {
@@ -282,7 +282,7 @@ public class ClerkCommand {
 					sender.sendMessage(message);
 
 				
-					//CLERK DENIAL
+				//CLERK DENIAL
 				} else if (args[0].equals("denial")) {
 					String denial = "";
 					if (args.length>1) {
@@ -292,7 +292,7 @@ public class ClerkCommand {
 					sender.sendMessage(message);
 
 				
-					//CLERK CLOSED
+				//CLERK CLOSED
 				} else if (args[0].equals("closed")) {
 					String closed = "";
 					if (args.length>1) {
@@ -302,16 +302,30 @@ public class ClerkCommand {
 					sender.sendMessage(message);
 
 				
-					//CLERK OFFUDTY
+				//CLERK OFFUDTY
 				} else if (args[0].equals("offduty") || args[0].equals("onduty")) {
 					String message = merchmeth.ToggleOffduty(this_npc.getId());
 						sender.sendMessage(message);
 
 						
+				//CLERK TYPE
+				} else if (args[0].equals("type")) {
+					if (args.length>1) {
+						merchmeth.SetType(this_npc.getId(), args[1]);
+					} else {
+						sender.sendMessage(ChatColor.YELLOW+"You must specify a valid npc type.");
+					}
+
+					
+				//CLERK OUTFIT
+				} else if (args[0].equals("outfit")) {
+					merchmeth.Equip(this_npc.getId(), player,HMP);
+
+						
 					//ANY OTHER ARGUMENTS THAT ARE INVALID
 				}else {
-					sender.sendMessage(ChatColor.YELLOW+"Valid "+ChatColor.DARK_RED+"/hmerchant"+ChatColor.YELLOW+" subcommands are:\n" +
-							ChatColor.RED+"setshop , offduty , greeting , farewell , denial , closed.");
+					sender.sendMessage(ChatColor.YELLOW+"Valid "+ChatColor.DARK_RED+"/clerk"+ChatColor.YELLOW+" subcommands are:\n" +
+							ChatColor.RED+"hire, fire, info, select, setshop , offduty , greeting , farewell , denial , closed, outfit, type.");
 					return;
 				}
 				return;

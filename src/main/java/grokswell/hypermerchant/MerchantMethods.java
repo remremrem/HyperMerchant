@@ -8,14 +8,12 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.NPCSelector;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.Plugin;
 
 import regalowl.hyperconomy.HyperAPI;
@@ -83,16 +81,16 @@ public class MerchantMethods {
 		}
 		
 		String ownerName = null;
-		out.println("ID: "+id);
+		//out.println("ID: "+id);
 		String shopName = GetShop(id);
-		out.println("shopname: "+shopName);
+		//out.println("shopname: "+shopName);
 		for (String name : hyperAPI.getPlayerShopList()) {
-			out.println("name: "+name);
+			//out.println("name: "+name);
 			if (name.equals(shopName) ) {
 				ownerName = hyperAPI.getPlayerShop(name).getOwner().getName();
-				out.println("shop: "+hyperAPI.getPlayerShop(name));
-				out.println("owner: "+hyperAPI.getPlayerShop(name).getOwner());
-				out.println("ownername: "+ownerName);
+				//out.println("shop: "+hyperAPI.getPlayerShop(name));
+				//out.println("owner: "+hyperAPI.getPlayerShop(name).getOwner());
+				//out.println("ownername: "+ownerName);
 			}
 		}
 		return ownerName;
@@ -157,6 +155,18 @@ public class MerchantMethods {
 	}
 
 	
+	public boolean Equip(int id, Player player,Plugin plugin) {
+		if (player.hasPermission("citizens.npc.edit.equip")) {
+			player.performCommand("npc equip");
+		} else {
+		    player.addAttachment(plugin, "citizens.npc.edit.equip", true);
+			player.performCommand("npc equip");
+			player.addAttachment(plugin, "citizens.npc.edit.equip", false);
+		}
+		return true;
+	}
+
+	
 	public String SetShop(int id, String shopname) {
 		String message = "";
 		NPC this_npc = npcReg.getById(id);
@@ -198,7 +208,7 @@ public class MerchantMethods {
 	}
 
 
-	public String SetComission(int id, double percentage) {
+	public String SetCommission(int id, double percentage) {
 		String message = "";
 		NPC this_npc = npcReg.getById(id);
 		this_npc.getTrait(HyperMerchantTrait.class).comission = percentage;

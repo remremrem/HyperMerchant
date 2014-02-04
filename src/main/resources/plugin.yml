@@ -32,11 +32,25 @@ commands:
       permission: hypermerchant.onduty
       permission-message: You do not have permission to use command /onduty.
       aliases: [offduty]
+   closeshop:
+      description: Permanently close the shop you have rented.
+      usage: /closeshop
+      permission: hypermerchant.closeshop
+      permission-message: You do not have permission to use command /closeshop.
+      aliases: [shopclose]
+   fireclerk:
+      description: Fire the clerk that you have currently selected.
+      usage: /fireclerk
+      permission: hypermerchant.fireclerk
+      permission-message: You do not have permission to use command /fireclerk.
+      aliases: [hfire]
    hmerchant:
       description: Set the properties of the currently selected hypermerchant npc.
       usage: "\n§4/hmerchant §csetshop §a[shopname] §6[--id idnum] §e- Set shop of selected hypermerchant.
   	    Set to shop player is standing in if no [shopname] argument provided.\n\n
   	    §4/hmerchant §coffduty §6[--id idnum] §e- Toggle npc in and out of offduty mode.\n\n
+  	    §4/hmerchant §crental §6[--id idnum] §e- Toggle npc as having a shop for rent. npc must already be assigned to a shop.\n\n
+  	    §4/hmerchant §cforhire §6[--id idnum] §e- Toggle npc as being for hire. npc must not be assigned to a shop.\n\n
   	    §4/hmerchant §ccomission §a[percent] §6[--id idnum] §e- Set the Merchant's comission, where percent is a number between 0 and 100.\n\n
         §4/hmerchant §cgreeting §a[welcome message] §6[--id idnum] §e- Set text NPC says upon player interaction.
   	    Leave [welcome message] argument empty for no text.\n\n
@@ -70,7 +84,6 @@ commands:
   	    §4/clerk §cclosed §a[closed message] §6[--id idnum] §e- Set text clerk says to a player when clerk is off duty.
   	    Leave [closed message] argument empty for no text.\n\n
   	    §4/clerk §clist §e- List information of all your clerk NPCs.\n\n
-  	    §4/clerk §cinfo §6[--id idnum] §e- Show information of a single clerk NPC.\n\n
   	    §4/clerk §ctype §a[npc type] §6[--id idnum] §e- Set your clerk to a different type of NPC."
       permission: hypermerchant.clerk
       permission-message: You do not have permission to use command /clerk.
@@ -92,6 +105,12 @@ permissions:
    hypermerchant.npc:
       description: Allow interaction with hypermerchant npc.
       default: true
+   hypermerchant.fireclerk:
+      description: Allow use of the /fireclerk command.
+      default: true
+   hypermerchant.closeshop:
+      description: Allow use of the /closeshop command.
+      default: true
    hypermerchant.onduty:
       description: Allow use of the /onduty command.
       default: true
@@ -103,7 +122,7 @@ permissions:
       default: op
    hypermerchant.clerk:
       description: Allow use of the /clerk command.
-      default: true
+      default: op
    creative.hypermerchant:
       description: Allow player to purchase and sell while in creative mode. Be extremely careful with this permission.
       default: false

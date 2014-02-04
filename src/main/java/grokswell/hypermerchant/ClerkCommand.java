@@ -11,6 +11,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.NPCSelector;
+import net.citizensnpcs.api.trait.trait.Owner;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -104,16 +105,7 @@ public class ClerkCommand {
 				
 			//CLERK HIRE
 			} else if (args[0].equals("hire")) {
-				int clerkcount = 0;
-				for (NPC npc : npcReg) {
-					if (npc.hasTrait(HyperMerchantTrait.class)) {
-						if (merchmeth.GetEmployer(npc.getId()) != null) {
-							if (merchmeth.GetEmployer(npc.getId()).equals(player.getName())) {
-								clerkcount = clerkcount+1;
-							}
-						}
-					}
-				}
+				int clerkcount = merchmeth.GetClerkCount(player);
 				if (clerkcount >= HMP.settings.MAX_NPCS_PER_PLAYER) {
 					sender.sendMessage(ChatColor.YELLOW+"You already have the maximum number of clerks you may hire.");
 					return;
@@ -142,13 +134,16 @@ public class ClerkCommand {
 					int clerk_count = HMP.playerData.getPlayerData().getInt(player.getName()+".clerkcount");
 					HMP.playerData.savePlayerData(player.getName()+".clerkcount", clerk_count+1);
 					player.performCommand("npc select "+npcid);
+					NPC npc = npcReg.getById(npcid);
+					npc.getTrait(Owner.class).setOwner(player.getName());
 				}
+
 				//sender.sendMessage(ChatColor.YELLOW+"You are now off duty. Other players cannot click on you to trade with your shop.");
 				return;
 			//END CLERK HIRE
 
 
-			//check if the npc is being spcified by it's citizens id number.
+			//check if the npc is being specified by it's citizens id number.
 			} else if (argslist.contains("--id")) {
 				int id_index = argslist.indexOf("--id") + 1;
 				IDarg = Integer.parseInt(args[id_index]);
@@ -224,12 +219,12 @@ public class ClerkCommand {
 			} else if (this_npc.hasTrait(HyperMerchantTrait.class)) {
 				
 				//CLERK INFO
-			    if (args[0].equals("info")) {
-					String message = merchmeth.GetInfo(sender, this_npc.getId());
-					sender.sendMessage(message);
+			    //if (args[0].equals("info")) {
+				//	String message = merchmeth.GetInfo(sender, this_npc.getId());
+				//	sender.sendMessage(message);
 					
 				//CLERK TP
-			    } else if (args[0].equals("tp")) {
+			    if (args[0].equals("tp")) {
 			    
 					if (!HMP.settings.NPC_IN_SHOP_ONLY)  {
 						merchmeth.Teleport(this_npc.getId(), player.getLocation());

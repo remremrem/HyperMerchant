@@ -1,8 +1,9 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.CitizensPlugin;
@@ -19,6 +20,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 
@@ -42,7 +44,9 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	Settings settings;
 	Players playerData;
 	ArrayList<String> customer_cooldowns = new ArrayList<String>();
+	HashMap<String,HyperMerchantTrait> hire_cooldowns = new HashMap<String,HyperMerchantTrait>();
 	Boolean citizens_is_loaded = false;
+	MerchantMethods merchmeth;
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args) {
@@ -161,6 +165,8 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			}
 		
 		}
+		
+		
 		//CLERK
 		else if (cmd.getName().equalsIgnoreCase("clerk")) {
 			if (!this.citizens_is_loaded) {
@@ -170,6 +176,40 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 				return false;	
 			} else {
 				new ClerkCommand(sender, args, this);
+				return true;
+			}
+			
+		}
+		
+		
+		//FIRECLERK
+		else if (cmd.getName().equalsIgnoreCase("fireclerk")) {
+			if (!this.citizens_is_loaded) {
+				sender.sendMessage(ChatColor.RED+"Citizens is not loaded. NPCs are unavailable at this time.");
+				return true;
+			} else if (args.length > 0) {
+				return false;	
+			} else {
+				merchmeth.FireClerk((Player) sender);
+				return true;
+			}
+			
+		}
+		
+		
+		//CLOSESHOP
+		else if (cmd.getName().equalsIgnoreCase("closeshop")) {
+			if (!this.citizens_is_loaded) {
+				sender.sendMessage(ChatColor.RED+"Citizens is not loaded. NPCs are unavailable at this time.");
+				return true;
+			} else if (args.length == 1) {
+				if (args[0] == "confirm") {
+					merchmeth.CloseShop((Player) sender);
+				}
+
+				return true;
+			} else {				
+				sender.sendMessage(ChatColor.YELLOW+"Before you close the shop, make sure you take anything you want to keep. Type \"closeshop confirm\"");
 				return true;
 			}
 			
@@ -198,6 +238,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			try {
 				CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(HyperMerchantTrait.class).withName("hypermerchant"));
 				this.citizens_is_loaded = true;
+				merchmeth = new MerchantMethods();
 			} catch (IllegalArgumentException e) {
 				this.citizens_is_loaded = true;
 				//out.println("EXCEPTION: "+e);
@@ -287,5 +328,18 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 
 		return;
 
+	}
+	
+
+	@EventHandler
+	public void onPlayerChat(AsyncPlayerChatEvent event) {
+		Player player = event.getPlayer();
+		String shopname = event.getMessage();
+		event.setCancelled(true);
+		out.println("Player "+player.getName()+" picked shop "+shopname);
+		if (this.hire_cooldowns.containsKey(player.getName())) {
+			out.println(this.hire_cooldowns.get(player.getName()));
+			this.hire_cooldowns.get(player.getName()).Hire(shopname, player);
+		}
 	}
 }

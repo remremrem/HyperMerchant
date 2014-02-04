@@ -7,6 +7,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.NPCSelector;
+import net.citizensnpcs.api.trait.trait.Owner;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -23,6 +24,7 @@ public class MerchantMethods {
 	NPCRegistry npcReg = CitizensAPI.getNPCRegistry();
 	NPCSelector npcSel = CitizensAPI.getDefaultNPCSelector();
 	HyperAPI hyperAPI = new HyperAPI();
+	Utils utils = new Utils();
 
 	public String ListMerchants(Player player) {
 		String message = "";
@@ -64,16 +66,43 @@ public class MerchantMethods {
 		}
 		
 		if (npc.getTrait(HyperMerchantTrait.class).offduty) {
-			message=message+ChatColor.YELLOW+npc.getName()+" is OFFDUTY\n";
+			message=message+ChatColor.YELLOW+npc.getName()+" is OFFDUTY.\n";
 		} else {
-			message=message+ChatColor.YELLOW+npc.getName()+" is ONDUTY\n";
+			message=message+ChatColor.YELLOW+npc.getName()+" is ONDUTY.\n";
+		}
+		
+		if (npc.getTrait(HyperMerchantTrait.class).forhire) {
+			message=message+ChatColor.YELLOW+npc.getName()+" is for hire.\n";
+		} else {
+			message=message+ChatColor.YELLOW+npc.getName()+" is not for hire.\n";
+		}
+		
+		if (npc.getTrait(HyperMerchantTrait.class).rental) {
+			message=message+ChatColor.YELLOW+npc.getName()+" has a shop for rent.\n";
+		} else {
+			message=message+ChatColor.YELLOW+npc.getName()+" does not have a shop for rent.\n";
 		}
 		
 		message=message+ChatColor.YELLOW+"ID: " + String.valueOf(npc.getId()) + " , SHOP: "+ npc.getTrait(HyperMerchantTrait.class).shop_name +"\n";
 		return message;
 	}
 	
-
+	
+	public int GetClerkCount(Player player) {
+		int clerkcount = 0;
+		for (NPC npc : npcReg) {
+			if (npc.hasTrait(HyperMerchantTrait.class)) {
+				if (GetEmployer(npc.getId()) != null) {
+					if (GetEmployer(npc.getId()).equals(player.getName())) {
+						clerkcount = clerkcount+1;
+					}
+				}
+			}
+		}
+		return clerkcount;
+	}
+	
+	
 	public String GetEmployer(int id) {
 		NPC npc = npcReg.getById(id);
 		if (npc == null) {
@@ -129,7 +158,7 @@ public class MerchantMethods {
 
 		this_npc.getTrait(HyperMerchantTrait.class).shop_name = shopname;
 		this_npc.spawn(location);
-		
+
 		id = this_npc.getId();
 		
 		return id;
@@ -238,6 +267,48 @@ public class MerchantMethods {
 		}
 		return message;
 	}
+	
+	
+	public String ToggleForHire(int id) {
+		String message = "";
+		NPC this_npc = npcReg.getById(id);
+		this_npc.getTrait(HyperMerchantTrait.class).forhire = !this_npc.getTrait(HyperMerchantTrait.class).forhire;
+		this_npc.getTrait(HyperMerchantTrait.class).rental = false;
+		this_npc.getTrait(HyperMerchantTrait.class).rented = false;
+		this_npc.getTrait(HyperMerchantTrait.class).hired = false;
+		
+		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+		}
+		
+		if (this_npc.getTrait(HyperMerchantTrait.class).forhire) {
+			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+" is no longer for hire.";
+		} else {
+			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+" is now for hire.";
+		}
+		return message;
+	}
+	
+	
+	public String ToggleRental(int id) {
+		String message = "";
+		NPC this_npc = npcReg.getById(id);
+		this_npc.getTrait(HyperMerchantTrait.class).rental = !this_npc.getTrait(HyperMerchantTrait.class).rental;
+		this_npc.getTrait(HyperMerchantTrait.class).forhire = false;
+		this_npc.getTrait(HyperMerchantTrait.class).rented = false;
+		this_npc.getTrait(HyperMerchantTrait.class).hired = false;
+		
+		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+		}
+		
+		if (this_npc.getTrait(HyperMerchantTrait.class).rental) {
+			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+"'s shop is no longer for rent.";
+		} else {
+			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+"'s shop is now for rent.";
+		}
+		return message;
+	}
 
 	
 	public String SetGreeting(int id, String greeting) {
@@ -310,6 +381,70 @@ public class MerchantMethods {
 		
 		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
 			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+		}
+		
+		return message;
+	}
+
+	
+	public String FireClerk(Player player) {
+		String message = "";
+		NPC npc = npcSel.getSelected(player);
+		String shopname = npc.getTrait(HyperMerchantTrait.class).shop_name;
+		if (npc.getTrait(HyperMerchantTrait.class).hired) {
+			if (hyperAPI.getPlayerShop(shopname).getOwner().getPlayer() == player) {
+				npc.getTrait(HyperMerchantTrait.class).hired = false;
+				npc.getTrait(HyperMerchantTrait.class).forhire = true;
+				Teleport(npc.getId(), utils.StringToLoc(npc.getTrait(HyperMerchantTrait.class).location));
+				npc.getTrait(HyperMerchantTrait.class).shop_name = null;
+				npc.getTrait(HyperMerchantTrait.class).location = null;
+				message = "The npc no longer works for you.";
+			}
+		} else {
+			message = "You cannot use the fireclerk command on the selected npc.";
+			return message;
+		}
+		
+		//if (denial=="") {
+		//	message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer say a denial message to customers.";
+		//} else {
+		//	message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" denial message has been updated.";
+		//}
+		
+		if (npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+			npc.getTrait(HyperMerchantTrait.class).save(npc.getTrait(HyperMerchantTrait.class).trait_key);
+		}
+		
+		return message;
+	}
+
+	
+	public String CloseShop(Player player) {
+		String message = "";
+		NPC npc = npcSel.getSelected(player);
+		String shopname = npc.getTrait(HyperMerchantTrait.class).shop_name;
+		if (npc.getTrait(HyperMerchantTrait.class).rented) {
+			if (hyperAPI.getPlayerShop(shopname).getOwner().getPlayer() == player) {
+				npc.getTrait(HyperMerchantTrait.class).rented = false;
+				npc.getTrait(HyperMerchantTrait.class).rental = true;
+				Teleport(npc.getId(), utils.StringToLoc(npc.getTrait(HyperMerchantTrait.class).location));
+				npc.getTrait(HyperMerchantTrait.class).shop_name = null;
+				npc.getTrait(HyperMerchantTrait.class).location = null;
+				message = "This shop is now closed.";
+			}
+		} else {
+			message = "You cannot use the /closeshop command on the selected npc.";
+			return message;
+		}
+		
+		//if (denial=="") {
+		//	message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer say a denial message to customers.";
+		//} else {
+		//	message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" denial message has been updated.";
+		//}
+		
+		if (npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+			npc.getTrait(HyperMerchantTrait.class).save(npc.getTrait(HyperMerchantTrait.class).trait_key);
 		}
 		
 		return message;

@@ -192,6 +192,18 @@ public class HyperMerchantCommand {
 						sender.sendMessage(message);
 
 						
+				//HMERCH FORHIRE
+				} else if (args[0].equals("forhire")) {
+					String message = merchmeth.ToggleForHire(this_npc.getId());
+						sender.sendMessage(message);
+
+								
+				//HMERCH RENTAL
+				} else if (args[0].equals("rental")) {
+					String message = merchmeth.ToggleRental(this_npc.getId());
+						sender.sendMessage(message);
+
+						
 					//ANY OTHER ARGUMENTS THAT ARE INVALID
 				}else {
 					sender.sendMessage(ChatColor.YELLOW+"Valid "+ChatColor.DARK_RED+"/hmerchant"+ChatColor.YELLOW+" subcommands are:\n" +

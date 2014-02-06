@@ -73,8 +73,10 @@ public class ShopMenu implements Listener {
         this.optionIcons = new ItemStack[size];
         this.player=plyr;
         this.npc = npc;
-        if (!this.npc.equals(null)) {
+        if (!(this.npc==null)) {
         	this.commission = npc.getTrait(HyperMerchantTrait.class).comission*.01;
+        } else {
+        	this.commission = 0.0;
         }
     	this.shop_trans = new ShopTransactions(player, this.shopname, this.plugin, this);
     	this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);

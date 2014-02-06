@@ -281,7 +281,7 @@ public class MerchantMethods {
 			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
 		}
 		
-		if (this_npc.getTrait(HyperMerchantTrait.class).forhire) {
+		if (!this_npc.getTrait(HyperMerchantTrait.class).forhire) {
 			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+" is no longer for hire.";
 		} else {
 			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+" is now for hire.";
@@ -302,10 +302,10 @@ public class MerchantMethods {
 			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
 		}
 		
-		if (this_npc.getTrait(HyperMerchantTrait.class).rental) {
-			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+"'s shop is now for rent.";
-		} else {
+		if (!this_npc.getTrait(HyperMerchantTrait.class).rental) {
 			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+"'s shop is no longer for rent.";
+		} else {
+			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+"'s shop is now for rent.";
 		}
 		return message;
 	}
@@ -391,17 +391,21 @@ public class MerchantMethods {
 		String message = "";
 		NPC npc = npcSel.getSelected(player);
 		String shopname = npc.getTrait(HyperMerchantTrait.class).shop_name;
+		out.println("hired: "+npc.getTrait(HyperMerchantTrait.class).hired);
 		if (npc.getTrait(HyperMerchantTrait.class).hired) {
+			out.println("shopname: "+shopname);
+			out.println("shop owner: "+hyperAPI.getPlayerShop(shopname).getOwner().getPlayer().getName());
 			if (hyperAPI.getPlayerShop(shopname).getOwner().getPlayer() == player) {
 				npc.getTrait(HyperMerchantTrait.class).hired = false;
 				npc.getTrait(HyperMerchantTrait.class).forhire = true;
 				Teleport(npc.getId(), utils.StringToLoc(npc.getTrait(HyperMerchantTrait.class).location));
 				npc.getTrait(HyperMerchantTrait.class).shop_name = null;
 				npc.getTrait(HyperMerchantTrait.class).location = null;
-				message = "The npc no longer works for you.";
+				message = npc.getName()+" no longer works for you.";
+				return message;
 			}
 		} else {
-			message = "You cannot use the fireclerk command on the selected npc.";
+			message = "You cannot use the /fireclerk command on the selected npc.";
 			return message;
 		}
 		
@@ -423,12 +427,14 @@ public class MerchantMethods {
 		String message = "";
 		NPC npc = npcSel.getSelected(player);
 		String shopname = npc.getTrait(HyperMerchantTrait.class).shop_name;
+		out.println("rented: "+npc.getTrait(HyperMerchantTrait.class).rented);
 		if (npc.getTrait(HyperMerchantTrait.class).rented) {
+			out.println("shopname: "+shopname);
+			out.println("shop owner: "+hyperAPI.getPlayerShop(shopname).getOwner().getPlayer().getName());
 			if (hyperAPI.getPlayerShop(shopname).getOwner().getPlayer() == player) {
 				npc.getTrait(HyperMerchantTrait.class).rented = false;
 				npc.getTrait(HyperMerchantTrait.class).rental = true;
 				Teleport(npc.getId(), utils.StringToLoc(npc.getTrait(HyperMerchantTrait.class).location));
-				npc.getTrait(HyperMerchantTrait.class).shop_name = null;
 				npc.getTrait(HyperMerchantTrait.class).location = null;
 				message = "This shop is now closed.";
 			}

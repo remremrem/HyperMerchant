@@ -190,7 +190,8 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			} else if (args.length > 0) {
 				return false;	
 			} else {
-				merchmeth.FireClerk((Player) sender);
+				String message = merchmeth.FireClerk((Player) sender);
+				sender.sendMessage(ChatColor.YELLOW+message);
 				return true;
 			}
 			
@@ -202,14 +203,15 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			if (!this.citizens_is_loaded) {
 				sender.sendMessage(ChatColor.RED+"Citizens is not loaded. NPCs are unavailable at this time.");
 				return true;
-			} else if (args.length == 1) {
-				if (args[0] == "confirm") {
+			}
+			if (args.length == 1) {
+				if (args[0].equals("confirm")) {
 					merchmeth.CloseShop((Player) sender);
 				}
 
 				return true;
 			} else {				
-				sender.sendMessage(ChatColor.YELLOW+"Before you close the shop, make sure you take anything you want to keep. Type \"closeshop confirm\"");
+				sender.sendMessage(ChatColor.YELLOW+"Before you close the shop, make sure you take anything you want to keep. Type \"/closeshop confirm\"");
 				return true;
 			}
 			

@@ -1,5 +1,7 @@
 package grokswell.hypermerchant;
 
+import static java.lang.System.out;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -14,7 +16,12 @@ public class Utils {
 	public Location StringToLoc(String s) {
 		String[] sa = s.split(",");
 		World w= Bukkit.getServer().getWorld(sa[0]);
-		Location loc = new Location(w,Integer.getInteger(sa[1]),Integer.getInteger(sa[2]),Integer.getInteger(sa[3]));
+		out.println(sa+"   "+w);
+		out.println(sa[0]);
+		out.println(sa[1]);
+		out.println(sa[2]);
+		out.println(sa[3]);
+		Location loc = new Location(w,Integer.parseInt(sa[1]),Integer.parseInt(sa[2]),Integer.parseInt(sa[3]));
 		return loc;
 	}
 }

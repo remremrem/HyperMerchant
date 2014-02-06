@@ -12,6 +12,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.NPCSelector;
 import net.citizensnpcs.api.trait.trait.Owner;
+import net.citizensnpcs.trait.LookClose;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -136,6 +137,7 @@ public class ClerkCommand {
 					player.performCommand("npc select "+npcid);
 					NPC npc = npcReg.getById(npcid);
 					npc.getTrait(Owner.class).setOwner(player.getName());
+					npc.getTrait(LookClose.class).lookClose(true);
 				}
 
 				//sender.sendMessage(ChatColor.YELLOW+"You are now off duty. Other players cannot click on you to trade with your shop.");

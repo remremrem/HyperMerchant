@@ -334,11 +334,11 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
-		String shopname = event.getMessage();
-		event.setCancelled(true);
-		out.println("Player "+player.getName()+" picked shop "+shopname);
 		if (this.hire_cooldowns.containsKey(player.getName())) {
-			out.println(this.hire_cooldowns.get(player.getName()));
+			event.setCancelled(true);
+			String shopname = event.getMessage();
+			//out.println("Player "+player.getName()+" picked shop "+shopname);
+			//out.println(this.hire_cooldowns.get(player.getName()));
 			this.hire_cooldowns.get(player.getName()).Hire(shopname, player);
 		}
 	}

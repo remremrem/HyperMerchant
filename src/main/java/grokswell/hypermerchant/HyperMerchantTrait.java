@@ -8,6 +8,7 @@ import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -16,7 +17,6 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.speech.SimpleSpeechController;
-
 import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.HyperEconAPI;
 import regalowl.hyperconomy.HyperObjectAPI;
@@ -156,18 +156,21 @@ public class HyperMerchantTrait extends Trait {
     public void Hire(String shopname, Player player){
 		if (hyperAPI.getPlayerShopList().contains(shopname)){
 			if (hyperAPI.getPlayerShop(shopname).getOwner().getPlayer() == player) {
+		    	if (!this.npc.isSpawned()){
+		    		this.npc.spawn(this.npc.getStoredLocation());
+		    	}
 		    	merchmeth.SetShop(this.npc.getId(), shopname);
 		    	this.hired = true;
 		    	this.rented = false;
 		    	this.forhire = false;
 		    	this.rental = false;
 		    	this.offduty = false;
-		    	this.location = utils.LocToString(this.npc.getStoredLocation());
+		    	this.location = utils.LocToString(this.npc.getEntity().getLocation());
 		        hire_cooldown.remove(player.getName());
 		        plugin.hire_cooldowns.remove(player.getName());
 		        player.sendMessage(ChatColor.YELLOW+this.npc.getName()+" Now works in your shop, "+shopname);
 				merchmeth.Teleport(this.npc.getId(), hyperAPI.getPlayerShop(shopname).getLocation1());
-			}
+		    }
 		}
     }
     
@@ -257,9 +260,8 @@ public class HyperMerchantTrait extends Trait {
 			if  (!this.rentalMsg.isEmpty()) {
 				SpeechContext message = new SpeechContext(this.npc, this.rentalMsg, player);
 				new SimpleSpeechController(this.npc).speak(message);
-			} else {
-				player.sendMessage(ChatColor.YELLOW+"Click this clerk again within 8 seconds to rent this shop.");
 			}
+			player.sendMessage(ChatColor.YELLOW+"Click this clerk again within 8 seconds to rent this shop.");
 			new RemoveRentalCooldown(player.getName()).runTaskLater(this.plugin, 160);
 			return;
 		}

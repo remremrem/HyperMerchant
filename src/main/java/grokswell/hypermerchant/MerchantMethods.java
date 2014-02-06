@@ -303,9 +303,9 @@ public class MerchantMethods {
 		}
 		
 		if (this_npc.getTrait(HyperMerchantTrait.class).rental) {
-			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+"'s shop is no longer for rent.";
-		} else {
 			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+"'s shop is now for rent.";
+		} else {
+			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+"'s shop is no longer for rent.";
 		}
 		return message;
 	}

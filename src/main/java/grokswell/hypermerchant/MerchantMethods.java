@@ -390,6 +390,10 @@ public class MerchantMethods {
 	public String FireClerk(Player player) {
 		String message = "";
 		NPC npc = npcSel.getSelected(player);
+		if (npc == null) {
+			message ="You must select a clerk that works for you.";
+			return message;
+		}
 		String shopname = npc.getTrait(HyperMerchantTrait.class).shop_name;
 		out.println("hired: "+npc.getTrait(HyperMerchantTrait.class).hired);
 		if (npc.getTrait(HyperMerchantTrait.class).hired) {
@@ -402,23 +406,18 @@ public class MerchantMethods {
 				npc.getTrait(HyperMerchantTrait.class).shop_name = null;
 				npc.getTrait(HyperMerchantTrait.class).location = null;
 				message = npc.getName()+" no longer works for you.";
+			} else {
+				message ="You must select a clerk that works for you.";
 				return message;
 			}
 		} else {
-			message = "You cannot use the /fireclerk command on the selected npc.";
+			message = "You cannot use the /fireclerk command on the selected npc, "+npc.getName()+".";
 			return message;
 		}
-		
-		//if (denial=="") {
-		//	message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer say a denial message to customers.";
-		//} else {
-		//	message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" denial message has been updated.";
-		//}
 		
 		if (npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
 			npc.getTrait(HyperMerchantTrait.class).save(npc.getTrait(HyperMerchantTrait.class).trait_key);
 		}
-		
 		return message;
 	}
 
@@ -426,33 +425,33 @@ public class MerchantMethods {
 	public String CloseShop(Player player) {
 		String message = "";
 		NPC npc = npcSel.getSelected(player);
+		if (npc == null) {
+			message ="You must select a clerk that works for you.";
+			return message;
+		}
 		String shopname = npc.getTrait(HyperMerchantTrait.class).shop_name;
-		out.println("rented: "+npc.getTrait(HyperMerchantTrait.class).rented);
+		//out.println("rented: "+npc.getTrait(HyperMerchantTrait.class).rented);
 		if (npc.getTrait(HyperMerchantTrait.class).rented) {
-			out.println("shopname: "+shopname);
-			out.println("shop owner: "+hyperAPI.getPlayerShop(shopname).getOwner().getPlayer().getName());
+			//out.println("shopname: "+shopname);
+			//out.println("shop owner: "+hyperAPI.getPlayerShop(shopname).getOwner().getPlayer().getName());
 			if (hyperAPI.getPlayerShop(shopname).getOwner().getPlayer() == player) {
 				npc.getTrait(HyperMerchantTrait.class).rented = false;
 				npc.getTrait(HyperMerchantTrait.class).rental = true;
 				Teleport(npc.getId(), utils.StringToLoc(npc.getTrait(HyperMerchantTrait.class).location));
 				npc.getTrait(HyperMerchantTrait.class).location = null;
-				message = "This shop is now closed.";
+				message = "The shop "+shopname+" is now closed.";
+			} else {
+				message ="You must select a clerk that works for you.";
+				return message;
 			}
 		} else {
 			message = "You cannot use the /closeshop command on the selected npc.";
 			return message;
 		}
 		
-		//if (denial=="") {
-		//	message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer say a denial message to customers.";
-		//} else {
-		//	message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" denial message has been updated.";
-		//}
-		
 		if (npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
 			npc.getTrait(HyperMerchantTrait.class).save(npc.getTrait(HyperMerchantTrait.class).trait_key);
 		}
-		
 		return message;
 	}
 		

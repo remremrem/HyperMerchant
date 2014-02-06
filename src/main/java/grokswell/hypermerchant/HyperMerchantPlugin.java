@@ -206,7 +206,8 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			}
 			if (args.length == 1) {
 				if (args[0].equals("confirm")) {
-					merchmeth.CloseShop((Player) sender);
+					String message = merchmeth.CloseShop((Player) sender);
+					sender.sendMessage(ChatColor.YELLOW+message);
 				}
 
 				return true;

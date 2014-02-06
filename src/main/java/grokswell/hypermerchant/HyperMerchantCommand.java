@@ -222,7 +222,11 @@ public class HyperMerchantCommand {
 			
 			//for any other exception not explicitly checked for
 		} catch (Exception e){
-			HMP.getLogger().info("/hypermerchant call threw exception "+e);
+			String subcommand = "";
+			if (args.length>0) {
+				subcommand = args[0];
+			}
+			HMP.getLogger().info("/hypermerchant "+subcommand+" call threw exception "+e);
 			sender.sendMessage(ChatColor.YELLOW+"You must have a hypermerchant npc " +
 								"selected to use the command "+ChatColor.RED+"/hmerchant.");
 			return;

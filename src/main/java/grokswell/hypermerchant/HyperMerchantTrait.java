@@ -186,9 +186,11 @@ public class HyperMerchantTrait extends Trait {
 			event.setCancelled(true);
 			return;
 		}
-		//add player to 1 second cooldown list to prevent spam clicking merchants.
-		plugin.customer_cooldowns.add(player.getName());
-		new RemoveCustomerCooldown(player.getName()).runTaskLater(this.plugin, 60);
+		//add player to 3 second cooldown list to prevent spam clicking merchants.
+		if (!this.rental){
+			plugin.customer_cooldowns.add(player.getName());
+			new RemoveCustomerCooldown(player.getName()).runTaskLater(this.plugin, 60);
+		}
 		
 		
 		// return if player is in creative mode without permission to use merchants in creative.
@@ -218,11 +220,9 @@ public class HyperMerchantTrait extends Trait {
 		if (this.forhire) {
 
 			//hire this merchant if player has clicked on this hypermerchant npc in the last 10 second.
-			if (hire_cooldown.contains(player.getName())){
-				//merchmeth.SetShop(this.npc.getId(), shopname)
-	            //hire_cooldown.remove(player.getName());
-				return;
-			}
+			//if (hire_cooldown.contains(player.getName())){
+			//	return;
+			//}
 			
 			//add player to 10 second cooldown list for hire confirmation.
 			hire_cooldown.add(player.getName());
@@ -250,7 +250,7 @@ public class HyperMerchantTrait extends Trait {
 				}
 				hyperAPI.getPlayerShop(this.shop_name).setOwner(hoAPI.getHyperPlayer(player.getName()));
 	            rental_cooldown.remove(player.getName());			
-	            player.sendMessage(ChatColor.YELLOW+"You are now renting the shop called "+this.shop_name);
+	            player.sendMessage(ChatColor.YELLOW+"You are now renting the shop named "+this.shop_name+".");
 	            this.location = utils.LocToString(this.npc.getEntity().getLocation());
 	            this.rental = false;
 	            this.rented = true;

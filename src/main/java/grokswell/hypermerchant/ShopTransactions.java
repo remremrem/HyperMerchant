@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 
 import java.util.ArrayList;
 
@@ -17,6 +17,7 @@ import regalowl.hyperconomy.HyperObject;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperPlayer;
 import regalowl.hyperconomy.LanguageFile;
+import regalowl.hyperconomy.PlayerShopObject;
 import regalowl.hyperconomy.TransactionResponse;
 
 public class ShopTransactions {
@@ -92,8 +93,10 @@ public class ShopTransactions {
 			return;
 		}
 		TransactionResponse response = hoAPI.buy(player, ho, qty, hyperAPI.getShop(shopname));
-		if (commission > 0.0) {
-		    double amount = response.getTotalPrice()*commission;
+		out.println("total price: "+response.getTotalPrice());
+		if (hyperAPI.getPlayerShopList().contains(shopname) && commission > 0.0) {
+		    PlayerShopObject pso = (PlayerShopObject) ho;
+		    double amount = pso.getBuyPrice()*commission;
 			heAPI.withdraw(amount, hyperAPI.getShop(shopname).getOwner().getPlayer());
 			heAPI.depositShop(amount);
 		}

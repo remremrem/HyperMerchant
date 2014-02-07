@@ -227,6 +227,9 @@ public class HyperMerchantTrait extends Trait {
 			//add player to 10 second cooldown list for hire confirmation.
 			hire_cooldown.add(player.getName());
 			plugin.hire_cooldowns.put(player.getName(), this);
+			if (this.comission > 0.0) {
+				player.sendMessage(ChatColor.YELLOW+"If you hire "+this.npc.getName()+", you will pay "+this.npc.getName()+" "+this.comission+" percent of all sales made by "+this.npc.getName()+".");
+			}
 			player.sendMessage(ChatColor.YELLOW+"Within 10 seconds, enter the name of the shop you would like this clerk to work at:");
 			for (String shopname : hyperAPI.getPlayerShopList()) {
 				if (hyperAPI.getPlayerShop(shopname).getOwner().getPlayer() == player){
@@ -249,7 +252,7 @@ public class HyperMerchantTrait extends Trait {
 		            return;
 				}
 				hyperAPI.getPlayerShop(this.shop_name).setOwner(hoAPI.getHyperPlayer(player.getName()));
-	            rental_cooldown.remove(player.getName());			
+	            rental_cooldown.remove(player.getName());
 	            player.sendMessage(ChatColor.YELLOW+"You are now renting the shop named "+this.shop_name+".");
 	            this.location = utils.LocToString(this.npc.getEntity().getLocation());
 	            this.rental = false;
@@ -266,6 +269,9 @@ public class HyperMerchantTrait extends Trait {
 				new SimpleSpeechController(this.npc).speak(message);
 			}
 			player.sendMessage(ChatColor.YELLOW+"Click this clerk again within 8 seconds to rent this shop.");
+			if (this.comission > 0.0) {
+				player.sendMessage(ChatColor.YELLOW+"You will pay "+this.npc.getName()+" "+this.comission+" percent of all sales made by "+this.npc.getName()+".");
+			}
 			new RemoveRentalCooldown(player.getName()).runTaskLater(this.plugin, 160);
 			return;
 		}

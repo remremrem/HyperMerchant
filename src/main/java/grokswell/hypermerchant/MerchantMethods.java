@@ -18,12 +18,16 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.plugin.Plugin;
 
 import regalowl.hyperconomy.HyperAPI;
+import regalowl.hyperconomy.HyperEconAPI;
+import regalowl.hyperconomy.HyperObjectAPI;
 
 
 public class MerchantMethods {
 	NPCRegistry npcReg = CitizensAPI.getNPCRegistry();
 	NPCSelector npcSel = CitizensAPI.getDefaultNPCSelector();
 	HyperAPI hyperAPI = new HyperAPI();
+	HyperEconAPI heAPI = new HyperEconAPI();
+	HyperObjectAPI hoAPI = new HyperObjectAPI();
 	Utils utils = new Utils();
 
 	public String ListMerchants(Player player) {
@@ -395,10 +399,10 @@ public class MerchantMethods {
 			return message;
 		}
 		String shopname = npc.getTrait(HyperMerchantTrait.class).shop_name;
-		out.println("hired: "+npc.getTrait(HyperMerchantTrait.class).hired);
+		//out.println("hired: "+npc.getTrait(HyperMerchantTrait.class).hired);
 		if (npc.getTrait(HyperMerchantTrait.class).hired) {
-			out.println("shopname: "+shopname);
-			out.println("shop owner: "+hyperAPI.getPlayerShop(shopname).getOwner().getPlayer().getName());
+			//out.println("shopname: "+shopname);
+			//out.println("shop owner: "+hyperAPI.getPlayerShop(shopname).getOwner().getPlayer().getName());
 			if (hyperAPI.getPlayerShop(shopname).getOwner().getPlayer() == player) {
 				npc.getTrait(HyperMerchantTrait.class).hired = false;
 				npc.getTrait(HyperMerchantTrait.class).forhire = true;
@@ -439,6 +443,7 @@ public class MerchantMethods {
 				npc.getTrait(HyperMerchantTrait.class).rental = true;
 				Teleport(npc.getId(), utils.StringToLoc(npc.getTrait(HyperMerchantTrait.class).location));
 				npc.getTrait(HyperMerchantTrait.class).location = null;
+				hyperAPI.getPlayerShop(shopname).setOwner(hoAPI.getHyperPlayer("hyperconomy"));
 				message = "The shop "+shopname+" is now closed.";
 			} else {
 				message ="You must select a clerk that works for you.";

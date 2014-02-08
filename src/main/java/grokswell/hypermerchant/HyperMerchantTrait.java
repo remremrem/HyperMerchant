@@ -8,7 +8,6 @@ import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -218,11 +217,6 @@ public class HyperMerchantTrait extends Trait {
 		
 		//Check if this merchant is "for hire"
 		if (this.forhire) {
-
-			//hire this merchant if player has clicked on this hypermerchant npc in the last 10 second.
-			//if (hire_cooldown.contains(player.getName())){
-			//	return;
-			//}
 			
 			//add player to 10 second cooldown list for hire confirmation.
 			hire_cooldown.add(player.getName());
@@ -261,6 +255,7 @@ public class HyperMerchantTrait extends Trait {
 	            this.forhire = false;
 				return;
 			}
+			
 			//add player to 8 second cooldown list for rental or hire confirmation.
 			rental_cooldown.add(player.getName());
 
@@ -268,10 +263,13 @@ public class HyperMerchantTrait extends Trait {
 				SpeechContext message = new SpeechContext(this.npc, this.rentalMsg, player);
 				new SimpleSpeechController(this.npc).speak(message);
 			}
+			
 			player.sendMessage(ChatColor.YELLOW+"Click this clerk again within 8 seconds to rent this shop.");
 			if (this.comission > 0.0) {
 				player.sendMessage(ChatColor.YELLOW+"You will pay "+this.npc.getName()+" "+this.comission+" percent of all sales made by "+this.npc.getName()+".");
 			}
+			
+			
 			new RemoveRentalCooldown(player.getName()).runTaskLater(this.plugin, 160);
 			return;
 		}
@@ -283,6 +281,7 @@ public class HyperMerchantTrait extends Trait {
 				SpeechContext message = new SpeechContext(this.npc, this.denialMsg, player);
 				new SimpleSpeechController(this.npc).speak(message);
 			}
+			
 			return;
 			
 		}
@@ -293,6 +292,7 @@ public class HyperMerchantTrait extends Trait {
 				SpeechContext message = new SpeechContext(this.npc, this.closedMsg, player);
 				new SimpleSpeechController(this.npc).speak(message);
 			}
+			
 			return;
 		}
 		
@@ -304,6 +304,7 @@ public class HyperMerchantTrait extends Trait {
 				SpeechContext message = new SpeechContext(this.npc, this.welcomeMsg, player);
 				new SimpleSpeechController(this.npc).speak(message);
 			}
+			
 			this.customer_menus.put(player.getName(), new ShopMenu(this.shop_name, 54, plugin, player, player, this.npc));
 			return;
 		
@@ -315,6 +316,7 @@ public class HyperMerchantTrait extends Trait {
 			}
 			plugin.getLogger().info("npc #"+this.npc.getId()+" is assigned to a shop named "+
 					shop_name+". This shop does not exist.");
+			
 			return;
 		
 		}

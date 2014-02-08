@@ -250,14 +250,8 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			this.getLogger().info("Citizens not found. NPC hypermerchants will be disabled.");
 		}
 		
-		//dataFolder = getDataFolder();
-		//if (!dataFolder.isDirectory()) dataFolder.mkdir();
 		settings = new Settings(this);
 		playerData = new Players(this);
-		//settings.load();
-		//YamlStorage config = settings.getConfig();
-
-
 	}
 	
 	class RemoveCustomerCooldown extends BukkitRunnable {
@@ -265,6 +259,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
         public RemoveCustomerCooldown(String plynam) {
         	playername = plynam;
         }
+        
         public void run() {
             // What you want to schedule goes here
             customer_cooldowns.remove(playername);
@@ -277,24 +272,19 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		//out.println("onRightClick playerinteractentityevent");
 		
 		if(!event.getRightClicked().getType().equals(EntityType.PLAYER)) return;
-		//out.println("entity type = player");
 		Player owner = (Player) event.getRightClicked();
-		//out.println("owner = "+owner.getName());
 		Player player = event.getPlayer();
 		String shopname = "";
 		for (String sn : hyperAPI.getPlayerShopList()){
-			//out.println("try shopname = "+sn+" owner = "+hyperAPI.getPlayerShop(sn).getOwner().getName());
 			
 			if ( hyperAPI.getPlayerShop(sn).getOwner().getName().equals(owner.getName()) ) {
 				shopname = sn;
 				break;
 			}
 		}
-		//out.println("shopname ="+shopname);
 		
 		//return if the player who was clicked does not own a shop.
 		if ("" == shopname) return;
-		//out.println("shopname is good");
 
 		//return if the customer has already clicked to open the menu in the last few seconds
 		if (this.customer_cooldowns.contains(player.getName())) return;
@@ -340,8 +330,6 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		if (this.hire_cooldowns.containsKey(player.getName())) {
 			event.setCancelled(true);
 			String shopname = event.getMessage();
-			//out.println("Player "+player.getName()+" picked shop "+shopname);
-			//out.println(this.hire_cooldowns.get(player.getName()));
 			this.hire_cooldowns.get(player.getName()).Hire(shopname, player);
 		}
 	}

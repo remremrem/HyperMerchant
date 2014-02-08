@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +27,7 @@ import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import regalowl.hyperconomy.EnchantmentClass;
@@ -156,8 +157,8 @@ public class ShopMenu implements Listener {
 			double cost = 0.0;
 	        double value = 0.0;
 	        double stock = 0.0;
-	        
 	        ItemStack stack;
+	        
 	        if (hoAPI.getType(item_name, economy_name).name().equals("ITEM")) {
 	        	HyperItem ho = (HyperItem) hoAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
 				stock = ho.getStock();
@@ -169,9 +170,9 @@ public class ShopMenu implements Listener {
 					PlayerShopObject pi = (PlayerShopObject) ho;
 					value = pi.getSellPrice();
 					cost = pi.getBuyPrice();
+					
 				//get price for server shop
 				} else {
-					//HyperObject hi = hoAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));				
 					//price for player to sell
 					value = hoAPI.getTrueSaleValue(stack.getType(), stack.getDurability(),1,player, economy_name);
 					//price for player to buy
@@ -199,12 +200,6 @@ public class ShopMenu implements Listener {
 			} else {
 				stack = new ItemStack(Material.AIR, 1, (short) 0);
 			}
-	        
-			
-			//if (item.equals("xp")) {
-			//	stack = new ItemStack(Material.STONE, 1);
-			//}
-	        //.replaceAll("_", " ")
 
 			this.setOption(count, stack, item_name.replaceAll("_", " "), ChatColor.WHITE+"Price: "+ChatColor.DARK_PURPLE+String.format("%.2f", cost),
 					ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", value), 
@@ -292,11 +287,11 @@ public class ShopMenu implements Listener {
     
     void onInventoryClickOrCreative(InventoryClickEvent event) {
         if (event.getInventory().getTitle().equals(this.inventory_name)) {
-    	    //out.println("inventory name: "+ this.inventory.getName());
     		int slot_num = event.getRawSlot();
             if (slot_num < size) {
             	event.setCancelled(true);
             }
+            
             ItemStack item_in_hand = event.getCursor();
             if (slot_num < size-9 && slot_num >= 0 && (item_in_hand.getType() == Material.AIR)) {
         		if (this.optionNames[slot_num] != null && this.optionNames[slot_num] != " ") {
@@ -314,21 +309,34 @@ public class ShopMenu implements Listener {
                     }        
         		}
             }
+            
+            
         	else if (slot_num < size && slot_num >= 0 && (item_in_hand.getType() != Material.AIR)){
         		if (!(hp.hasSellPermission(hyperAPI.getShop(this.shopname)))) {
         			player.sendMessage("You cannot sell to this shop.");
-        		} 
+        		}
         		else {
 	        		HashMap<String, Integer> enchants = new HashMap<String, Integer>();
-	        		for (Enchantment ench : item_in_hand.getEnchantments().keySet()) {
-	        			enchants.put(ench.getName(),item_in_hand.getEnchantments().get(ench));
+	        		if (item_in_hand.getType()==Material.ENCHANTED_BOOK) {
+	        			EnchantmentStorageMeta em = (EnchantmentStorageMeta) item_in_hand.getItemMeta();
+	        			for (Enchantment ench : em.getStoredEnchants().keySet()){
+	        				enchants.put(ench.getName(),item_in_hand.getEnchantments().get(ench));
+	        			}
+	        		} else {
+		        		for (Enchantment ench : item_in_hand.getEnchantments().keySet()) {
+		        			enchants.put(ench.getName(),item_in_hand.getEnchantments().get(ench));
+		        		}
 	        		}
+            		out.println("Enchants: "+enchants);
 	        		
 	        		// SELLING ENCHANTS
 	        		if (!enchants.isEmpty()) {
 	                	String display_name = this.optionIcons[slot_num].getItemMeta().getDisplayName().replace("§6", "");
             			String enchant_name = display_name.replace(" ", "_");
-	                	if (shopstock.items_in_stock.contains(display_name)) {
+                		out.println("Enchant name: "+enchant_name);
+                		out.println("display name: "+display_name);
+	                	if (shopstock.items_in_stock.contains(enchant_name)) {
+	                		out.println("shop has: "+display_name);
 	                		ItemStack item_holding = player.getItemInHand().clone();
 	                		player.setItemInHand(player.getItemOnCursor().clone());
 	                		if (this.shop_trans.Sell(enchant_name)) {

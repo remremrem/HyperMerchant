@@ -4,8 +4,6 @@ import static java.lang.System.out;
 
 import java.util.ArrayList;
 
-import net.citizensnpcs.api.npc.NPC;
-
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -27,27 +25,22 @@ public class ShopTransactions {
 	private Player player;
 	private HyperConomy hc;
 	private LanguageFile hc_lang;
-	//private EconomyManager ecoMan;
-    //private HyperMerchantPlugin plugin;
     private ShopMenu shopmenu;
     HyperPlayer hp;
-    //HyperEconomy hEcon;
 	HyperObjectAPI hoAPI = new HyperObjectAPI();
 	HyperAPI hyperAPI = new HyperAPI();
 	HyperEconAPI heAPI = new HyperEconAPI();
 	
 	public ShopTransactions(Player plyr, String sname, HyperMerchantPlugin plgn, ShopMenu sm) {
 		player=plyr;
-		//plugin=plgn;
 		shopname=sname;
 		shopmenu = sm;
 		hc = HyperConomy.hc;
-		//ecoMan = hc.getEconomyManager();
 		hp = hoAPI.getHyperPlayer(player.getName());
-	    //hEcon = hp.getHyperEconomy();
 		hc_lang = hc.getLanguageFile();
 
 	}
+	
 	//PLAYER SELLS ENCHANT TO SHOP
 	public boolean Sell(String enchant) {
 			if (player.getGameMode() == GameMode.CREATIVE) {
@@ -61,18 +54,21 @@ public class ShopTransactions {
 			response.sendMessages();
 			return true;
 		}
+		
+		
 		return false;
 	}
+	
 	//PLAYER SELLS ITEM TO SHOP
 	public boolean Sell(ItemStack item_stack) {
-			if (player.getGameMode() == GameMode.CREATIVE) {
-				player.sendMessage(hc_lang.get("CANT_SELL_CREATIVE"));
-				return false;
-			}
+		if (player.getGameMode() == GameMode.CREATIVE) {
+			player.sendMessage(hc_lang.get("CANT_SELL_CREATIVE"));
+			return false;
+		}
+			
 		int item_amount = item_stack.getAmount();
 		HyperObject ho = hoAPI.getHyperObject(item_stack, hyperAPI.getShopEconomy(shopname), hyperAPI.getShop(shopname));
 		String item_name = ho.getDisplayName().toLowerCase();
-		//out.println(item_name);
 		ho = hoAPI.getHyperObject(item_name, hyperAPI.getShopEconomy(shopname), hyperAPI.getShop(shopname));
 		
 		if (shopmenu.shopstock.items_in_stock.contains(item_name) && (hyperAPI.getShop(shopname).isTradeable(ho))) {
@@ -82,6 +78,8 @@ public class ShopTransactions {
 			return true;
 			
 		}
+		
+		
 		return false;
 	}
 	
@@ -92,14 +90,16 @@ public class ShopTransactions {
 			player.sendMessage("You cannot buy from this shop.");
 			return;
 		}
+		
 		TransactionResponse response = hoAPI.buy(player, ho, qty, hyperAPI.getShop(shopname));
-		out.println("total price: "+response.getTotalPrice());
+		
 		if (hyperAPI.getPlayerShopList().contains(shopname) && commission > 0.0) {
 		    PlayerShopObject pso = (PlayerShopObject) ho;
 		    double amount = pso.getBuyPrice()*commission;
 			heAPI.withdraw(amount, hyperAPI.getShop(shopname).getOwner().getPlayer());
 			heAPI.depositShop(amount);
 		}
+		
 		response.sendMessages();
 	}
 

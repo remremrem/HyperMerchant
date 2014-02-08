@@ -1,13 +1,13 @@
 package grokswell.hypermerchant;
 
 import static java.lang.System.out;
+import grokswell.util.Utils;
 
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.NPCSelector;
-import net.citizensnpcs.api.trait.trait.Owner;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -154,7 +154,7 @@ public class MerchantMethods {
 		NPC this_npc;
 		String npc_type = npctype;
 		int id = -1;
-		out.println(npc_type);
+		//out.println(npc_type);
 		if (npc_type == null){
 			npc_type = "PLAYER";
 		}

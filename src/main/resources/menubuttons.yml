@@ -1,0 +1,15 @@
+first_page:
+  material: STATIONARY_LAVA
+  data: 0
+back:
+  material: STATIONARY_WATER
+  data: 0
+help:
+  material: PAPER
+  data: 0
+forward:
+  material: STATIONARY_WATER
+  data: 0
+last_page:
+  material: STATIONARY_LAVA
+  data: 0

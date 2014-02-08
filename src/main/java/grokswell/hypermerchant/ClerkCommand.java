@@ -107,7 +107,7 @@ public class ClerkCommand {
 			//CLERK HIRE
 			} else if (args[0].equals("hire")) {
 				int clerkcount = merchmeth.GetClerkCount(player);
-				if (clerkcount >= HMP.settings.MAX_NPCS_PER_PLAYER) {
+				if (clerkcount >= HMP.settings.getMAX_NPCS_PER_PLAYER()) {
 					sender.sendMessage(ChatColor.YELLOW+"You already have the maximum number of clerks you may hire.");
 					return;
 				}
@@ -228,7 +228,7 @@ public class ClerkCommand {
 				//CLERK TP
 			    if (args[0].equals("tp")) {
 			    
-					if (!HMP.settings.NPC_IN_SHOP_ONLY)  {
+					if (!HMP.settings.getNPC_IN_SHOP_ONLY())  {
 						merchmeth.Teleport(this_npc.getId(), player.getLocation());
 					} else {
 						String player_in_shop = hyperAPI.getPlayerShop(player);

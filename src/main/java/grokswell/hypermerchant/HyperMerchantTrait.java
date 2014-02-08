@@ -2,6 +2,8 @@ package grokswell.hypermerchant;
 
 //import static java.lang.System.out;
 
+import grokswell.util.Utils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -60,14 +62,14 @@ public class HyperMerchantTrait extends Trait {
 		merchmeth = new MerchantMethods();
 		utils=new Utils();
 
-		farewellMsg = plugin.settings.FAREWELL;
-		welcomeMsg = plugin.settings.WELCOME;
-		denialMsg = plugin.settings.DENIAL;
-		closedMsg = plugin.settings.CLOSED;
-		forHireMsg = plugin.settings.FOR_HIRE_MSG;
-		rentalMsg = plugin.settings.RENTAL_MSG;
-		comission = plugin.settings.NPC_COMMISSION;
-		offduty = plugin.settings.OFFDUTY;
+		farewellMsg = plugin.settings.getFAREWELL();
+		welcomeMsg = plugin.settings.getWELCOME();
+		denialMsg = plugin.settings.getDENIAL();
+		closedMsg = plugin.settings.getCLOSED();
+		forHireMsg = plugin.settings.getFOR_HIRE_MSG();
+		rentalMsg = plugin.settings.getRENTAL_MSG();
+		comission = plugin.settings.getNPC_COMMISSION();
+		offduty = plugin.settings.getOFFDUTY();
 		location = null;
 		forhire = false;
 		rental = false;

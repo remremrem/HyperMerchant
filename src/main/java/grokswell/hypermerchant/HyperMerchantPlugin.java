@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +34,10 @@ import regalowl.hyperconomy.PlayerShop;
 
 import grokswell.hypermerchant.HyperMerchantTrait;
 import grokswell.hypermerchant.ShopMenu;
-import grokswell.hypermerchant.Settings;
+import grokswell.util.MenuButtonData;
+import grokswell.util.Players;
+import grokswell.util.Settings;
+import grokswell.util.Uniquifier;
 
 public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	HyperEconAPI economyAPI = new HyperEconAPI();
@@ -43,6 +46,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	Uniquifier uniquifier = new Uniquifier();
 	Settings settings;
 	Players playerData;
+	MenuButtonData menuButtonData;
 	ArrayList<String> customer_cooldowns = new ArrayList<String>();
 	HashMap<String,HyperMerchantTrait> hire_cooldowns = new HashMap<String,HyperMerchantTrait>();
 	Boolean citizens_is_loaded = false;
@@ -252,6 +256,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		
 		settings = new Settings(this);
 		playerData = new Players(this);
+		menuButtonData = new MenuButtonData(this);
 	}
 	
 	class RemoveCustomerCooldown extends BukkitRunnable {
@@ -266,7 +271,6 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
         }
     }
 	
-	@SuppressWarnings("static-access")
 	@EventHandler
 	public void onRightClick(PlayerInteractEntityEvent event) {
 		//out.println("onRightClick playerinteractentityevent");
@@ -302,7 +306,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
     	} 
 
 		//if shop owners are required to be in their shops to trade..
-		if (settings.ONDUTY_IN_SHOP_ONLY) {
+		if (settings.getONDUTY_IN_SHOP_ONLY()) {
 			//.. return, if the shop owner is not in shop
 			if (hyperAPI.getPlayerShop(owner) != shopname) return;
 		}

@@ -34,7 +34,6 @@ import regalowl.hyperconomy.EnchantmentClass;
 import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.HyperEnchant;
 import regalowl.hyperconomy.HyperItem;
-import regalowl.hyperconomy.HyperObject;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperPlayer;
 import regalowl.hyperconomy.PlayerShopEnchant;
@@ -139,15 +138,16 @@ public class ShopMenu implements Listener {
     	this.optionNames = new String[size];
     	
     	// Populate interface button inventory slots
-    	this.setOption(46, new ItemStack(Material.STATIONARY_WATER, 1), "Back 1", "Go back to the previous page.")
-	    .setOption(45, new ItemStack(Material.STATIONARY_LAVA, 1), "First Page", "Go to the first page.")
-	    .setOption(52, new ItemStack(Material.STATIONARY_WATER, 1), "Forward 1", "Go to the next page.")
-	    .setOption(53, new ItemStack(Material.STATIONARY_LAVA, 1), "Last page", "Go to the last page.")
-	    .setOption(47, new ItemStack(Material.PAPER, 1), "", "Left-Click:", "Purchase 1 item", "", "Shift+Left-Click:", "Purchase 8 items")
-	    .setOption(48, new ItemStack(Material.PAPER, 1), "", "Shift+Right-Click:", "Purchase 1 Stack", "", "To Sell Items:", "Drag items to shop inventory")
-	    .setOption(49, new ItemStack(Material.PAPER, 1), "To Buy enchantment:", "Be holding target item in your hand")
-	    .setOption(50, new ItemStack(Material.PAPER, 1), "To Sell Enchantment:", "Left-click enchanted item", "on matching store enchantment")
-	    .setOption(51, new ItemStack(Material.PAPER, 1), "","");
+    	
+    	this.setOption(46, plugin.menuButtonData.back.clone(), "Back 1", "Go back to the previous page.")
+	    .setOption(45, plugin.menuButtonData.first_page.clone(), "First Page", "Go to the first page.")
+	    .setOption(52, plugin.menuButtonData.forward.clone(), "Forward 1", "Go to the next page.")
+	    .setOption(53, plugin.menuButtonData.last_page.clone(), "Last page", "Go to the last page.")
+	    .setOption(47, plugin.menuButtonData.help.clone(), "", "Left-Click:", "Purchase 1 item", "", "Shift+Left-Click:", "Purchase 8 items")
+	    .setOption(48, plugin.menuButtonData.help.clone(), "", "Shift+Right-Click:", "Purchase 1 Stack", "", "To Sell Items:", "Drag items to shop inventory")
+	    .setOption(49, plugin.menuButtonData.help.clone(), "To Buy enchantment:", "Be holding target item in your hand")
+	    .setOption(50, plugin.menuButtonData.help.clone(), "To Sell Enchantment:", "Left-click enchanted item", "on matching store enchantment")
+	    .setOption(51, plugin.menuButtonData.help.clone(), "","");
     	int count = 0;
 		ArrayList<String> page=(ArrayList<String>) pages.get(this.page_number);
 		

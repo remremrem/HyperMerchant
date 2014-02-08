@@ -1,15 +1,45 @@
 first_page:
   material: STATIONARY_LAVA
   data: 0
+  name: First Page
+  lore: Go to the first page.
 back:
   material: STATIONARY_WATER
   data: 0
-help:
+  name: Back 1
+  lore: Go back to the previous page.
+help1:
   material: PAPER
   data: 0
+  name: 
+  lore: "Left-Click:, Purchase 1 item, ,Shift+Left-Click:, Purchase 8 items"
+help2:
+  material: PAPER
+  data: 0
+  name: 
+  lore: "Shift+Right-Click:,Purchase 1 Stack, ,To Sell Items:,Drag items to shop inventory"
+help3:
+  material: PAPER
+  data: 0
+  name: "To Buy enchantment:"
+  lore: Be holding target item in your hand
+help4:
+  material: PAPER
+  data: 0
+  name: "To Sell Enchantment:"
+  lore: Left-click enchanted item,on matching store enchantment
+help5:
+  material: PAPER
+  data: 0
+  name: 
+  lore: 
 forward:
   material: STATIONARY_WATER
   data: 0
+  name: Forward 1
+  lore: Go to the next page.
 last_page:
   material: STATIONARY_LAVA
   data: 0
+  name: Last page
+  lore: Go to the last page.

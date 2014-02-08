@@ -130,6 +130,17 @@ public class ShopMenu implements Listener {
         return this;
     }
     
+    //Set 1 menu button. Gets called for every menu button.
+    public ShopMenu setOption(int position, ItemStack icon) {
+    	this.optionNames[position] = icon.getItemMeta().getDisplayName();
+		try {
+			this.optionIcons[position] = icon;
+		}
+		catch (Exception e){	
+		}
+        return this;
+    }
+    
     
     public void loadPage() {
     	this.optionIcons = null;
@@ -139,15 +150,15 @@ public class ShopMenu implements Listener {
     	
     	// Populate interface button inventory slots
     	
-    	this.setOption(46, plugin.menuButtonData.back.clone(), "Back 1", "Go back to the previous page.")
-	    .setOption(45, plugin.menuButtonData.first_page.clone(), "First Page", "Go to the first page.")
-	    .setOption(52, plugin.menuButtonData.forward.clone(), "Forward 1", "Go to the next page.")
-	    .setOption(53, plugin.menuButtonData.last_page.clone(), "Last page", "Go to the last page.")
-	    .setOption(47, plugin.menuButtonData.help.clone(), "", "Left-Click:", "Purchase 1 item", "", "Shift+Left-Click:", "Purchase 8 items")
-	    .setOption(48, plugin.menuButtonData.help.clone(), "", "Shift+Right-Click:", "Purchase 1 Stack", "", "To Sell Items:", "Drag items to shop inventory")
-	    .setOption(49, plugin.menuButtonData.help.clone(), "To Buy enchantment:", "Be holding target item in your hand")
-	    .setOption(50, plugin.menuButtonData.help.clone(), "To Sell Enchantment:", "Left-click enchanted item", "on matching store enchantment")
-	    .setOption(51, plugin.menuButtonData.help.clone(), "","");
+    	this.setOption(46, plugin.menuButtonData.back)
+	    .setOption(45, plugin.menuButtonData.first_page)
+	    .setOption(52, plugin.menuButtonData.forward.clone())
+	    .setOption(53, plugin.menuButtonData.last_page.clone())
+	    .setOption(47, plugin.menuButtonData.help1)
+	    .setOption(48, plugin.menuButtonData.help2.clone())
+	    .setOption(49, plugin.menuButtonData.help3.clone())
+	    .setOption(50, plugin.menuButtonData.help4.clone())
+	    .setOption(51, plugin.menuButtonData.help5.clone());
     	int count = 0;
 		ArrayList<String> page=(ArrayList<String>) pages.get(this.page_number);
 		

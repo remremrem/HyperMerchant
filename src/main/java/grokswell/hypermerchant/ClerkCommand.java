@@ -130,6 +130,19 @@ public class ClerkCommand {
 					sender.sendMessage(ChatColor.YELLOW+"You must provide a name for your new clerk.");
 					return;
 				}
+				
+				//check if name is blacklisted
+				if (HMP.name_blacklist.contains(args[1])){
+					sender.sendMessage(ChatColor.YELLOW+"You may not use the name "+args[1]);
+					return;
+				}
+				
+				//check if npc type is blacklisted
+				if (HMP.type_blacklist.contains(npctype.toUpperCase())){
+					sender.sendMessage(ChatColor.YELLOW+"You may not use the npc type "+npctype);
+					return;
+				}
+				
 				int npcid = merchmeth.Hire(args[1], npctype, shopname, hyperAPI.getPlayerShop(shopname).getLocation1());
 				if ( npcid != -1 ) {
 					int clerk_count = HMP.playerData.getPlayerData().getInt(player.getName()+".clerkcount");
@@ -307,8 +320,16 @@ public class ClerkCommand {
 						
 				//CLERK TYPE
 				} else if (args[0].equals("type")) {
+					
 					if (args.length>1) {
+
+						//check if npc type is blacklisted
+						if (HMP.type_blacklist.contains(args[1].toUpperCase())){
+							sender.sendMessage(ChatColor.YELLOW+"You may not use the npc type "+args[1]);
+							return;
+						}
 						merchmeth.SetType(this_npc.getId(), args[1]);
+						
 					} else {
 						sender.sendMessage(ChatColor.YELLOW+"You must specify a valid npc type.");
 					}

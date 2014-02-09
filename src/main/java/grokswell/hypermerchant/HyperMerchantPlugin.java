@@ -34,6 +34,7 @@ import regalowl.hyperconomy.PlayerShop;
 
 import grokswell.hypermerchant.HyperMerchantTrait;
 import grokswell.hypermerchant.ShopMenu;
+import grokswell.util.Blacklist;
 import grokswell.util.MenuButtonData;
 import grokswell.util.Players;
 import grokswell.util.Settings;
@@ -46,6 +47,9 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	Uniquifier uniquifier = new Uniquifier();
 	Settings settings;
 	Players playerData;
+	Blacklist blacklist;
+	ArrayList<String> name_blacklist;
+	ArrayList<String> type_blacklist;
 	MenuButtonData menuButtonData;
 	ArrayList<String> customer_cooldowns = new ArrayList<String>();
 	HashMap<String,HyperMerchantTrait> hire_cooldowns = new HashMap<String,HyperMerchantTrait>();
@@ -256,6 +260,11 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		
 		settings = new Settings(this);
 		playerData = new Players(this);
+		blacklist = new Blacklist(this);
+		this.name_blacklist = blacklist.getNameBlacklist();
+		this.type_blacklist = blacklist.getTypesBlacklist();
+		//out.println("names: "+this.name_blacklist);
+		//out.println("types: "+this.type_blacklist);
 		menuButtonData = new MenuButtonData(this);
 	}
 	

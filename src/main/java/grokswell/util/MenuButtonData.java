@@ -1,13 +1,12 @@
 package grokswell.util;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 import grokswell.hypermerchant.HyperMerchantPlugin;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.HashMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

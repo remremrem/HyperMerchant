@@ -76,7 +76,6 @@ public class ShopTransactions {
 			TransactionResponse response = hoAPI.sell(player, ho, item_amount, hyperAPI.getShop(shopname));
 			response.sendMessages();
 			return true;
-			
 		}
 		
 		

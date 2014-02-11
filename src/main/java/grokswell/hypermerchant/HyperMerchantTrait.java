@@ -243,7 +243,7 @@ public class HyperMerchantTrait extends Trait {
 			//set player ownership of shop this merchant works for 
 			//if player has clicked on this hypermerchant npc in the last 8 seconds.
 			if (rental_cooldown.contains(player.getName())){
-				if (this.shop_name == "null") {
+				if (this.shop_name.equals("null")) {
 		            player.sendMessage(ChatColor.YELLOW+"This merchant isn't assigned to a shop.");
 		            return;
 				}

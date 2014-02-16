@@ -45,6 +45,7 @@ public class HyperMerchantTrait extends Trait {
 	String forHireMsg;
 	String rentalMsg;
 	double comission;
+	double rental_price;
 	boolean offduty;
 	boolean forhire;
 	boolean rental;
@@ -69,6 +70,7 @@ public class HyperMerchantTrait extends Trait {
 		forHireMsg = plugin.settings.getFOR_HIRE_MSG();
 		rentalMsg = plugin.settings.getRENTAL_MSG();
 		comission = plugin.settings.getNPC_COMMISSION();
+		rental_price = plugin.settings.getNPC_RENTAL_PRICE();
 		offduty = plugin.settings.getOFFDUTY();
 		location = null;
 		forhire = false;
@@ -99,6 +101,8 @@ public class HyperMerchantTrait extends Trait {
 			this.rentalMsg = key.getString("rentalMsg.default");
 		if (key.keyExists("comission.default"))
 			this.comission = key.getDouble("comission.default");
+		if (key.keyExists("rental_price.default"))
+			this.rental_price = key.getDouble("rental_price.default");
 		if (key.keyExists("offduty.default"))
 			this.offduty = key.getBoolean("offduty.default");
 		if (key.keyExists("forhire.default"))
@@ -181,6 +185,7 @@ public class HyperMerchantTrait extends Trait {
 		if(this.npc!=event.getNPC()) return;
 		
 		Player player = event.getClicker();
+		boolean shift_click = player.isSneaking();
 		
 		//return if player has clicked on a hypermerchant npc in the last second.
 		if (plugin.customer_cooldowns.contains(player.getName())){
@@ -243,12 +248,31 @@ public class HyperMerchantTrait extends Trait {
 			//set player ownership of shop this merchant works for 
 			//if player has clicked on this hypermerchant npc in the last 8 seconds.
 			if (rental_cooldown.contains(player.getName())){
-				if (this.shop_name.equals("null")) {
+				
+				if (!shift_click) {
+		            player.sendMessage(ChatColor.YELLOW+"You must hold shift and click "+npc.getName()+" to rent this shop.");
+		            return;
+				}
+				
+				if (this.shop_name.equals("null") || this.shop_name.equals("") || this.shop_name == null) {
 		            player.sendMessage(ChatColor.YELLOW+"This merchant isn't assigned to a shop.");
 		            return;
 				}
+				
+				if (!hyperAPI.getPlayerShopList().contains(shop_name)) {
+					player.sendMessage(ChatColor.YELLOW+"This merchant isn't assigned to a player shop.");
+		            return;
+				}
+
+				
 				hyperAPI.getPlayerShop(this.shop_name).setOwner(hoAPI.getHyperPlayer(player.getName()));
 	            rental_cooldown.remove(player.getName());
+	            
+	            if (rental_price>0){
+		            hoAPI.getHyperPlayer(player.getName()).withdraw(rental_price);
+		            heAPI.depositShop(rental_price);
+	            }
+	            
 	            player.sendMessage(ChatColor.YELLOW+"You are now renting the shop named "+this.shop_name+".");
 	            this.location = utils.LocToString(this.npc.getEntity().getLocation());
 	            this.rental = false;
@@ -266,7 +290,11 @@ public class HyperMerchantTrait extends Trait {
 				new SimpleSpeechController(this.npc).speak(message);
 			}
 			
-			player.sendMessage(ChatColor.YELLOW+"Click this clerk again within 8 seconds to rent this shop.");
+			player.sendMessage(ChatColor.YELLOW+"ShiftClick this clerk again within 8 seconds to rent this shop.");
+			
+			if (this.rental_price > 0.0) {
+				player.sendMessage(ChatColor.YELLOW+"It will cost you "+rental_price+" and");
+			}
 			if (this.comission > 0.0) {
 				player.sendMessage(ChatColor.YELLOW+"You will pay "+this.npc.getName()+" "+this.comission+" percent of all sales made by "+this.npc.getName()+".");
 			}
@@ -335,6 +363,7 @@ public class HyperMerchantTrait extends Trait {
 		key.setString("forHireMsg.default", this.forHireMsg);
 		key.setString("rentalMsg.default", this.rentalMsg);
 		key.setDouble("comission.default", this.comission);
+		key.setDouble("rental_price.default", this.rental_price);
 		key.setBoolean("offduty.default", this.offduty);
 		key.setBoolean("forhire.default", this.forhire);
 		key.setBoolean("rental.default", this.rental);

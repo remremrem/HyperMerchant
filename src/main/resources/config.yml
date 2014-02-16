@@ -10,6 +10,7 @@ Messages:
 PlayerShops:
   npc-for-hire: true
   npc-commission: 10.0
+  npc-rental-price: 100.0
   right-click-player-shop: true
   onduty-in-shop-only: true
   npc-in-shop-only: true

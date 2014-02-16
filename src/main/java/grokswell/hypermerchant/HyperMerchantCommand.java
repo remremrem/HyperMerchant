@@ -141,11 +141,27 @@ public class HyperMerchantCommand {
 
 						}
 					} else {
-						sender.sendMessage(ChatColor.YELLOW+"This merchant's commission is "+String.valueOf( this_npc.getTrait(HyperMerchantTrait.class).comission )+" precent.");
+						sender.sendMessage(ChatColor.YELLOW+"This merchant's commission is "+String.valueOf( this_npc.getTrait(HyperMerchantTrait.class).comission )+" percent.");
+					}
+					return;
+					
+					
+				//HMERCH RENTALPRICE
+				} else if (args[0].equals("rentalprice")) {
+					if (args.length>1) {
+						try {
+							String message = merchmeth.SetRentalPrice(this_npc.getId(), Double.valueOf(args[1]));
+							sender.sendMessage(message);
+						} catch (Exception e) {
+							sender.sendMessage(ChatColor.YELLOW+args[1]+" is not a valid rental price.");
+
+						}
+					} else {
+						sender.sendMessage(ChatColor.YELLOW+"This merchant's rental price is "+String.valueOf( this_npc.getTrait(HyperMerchantTrait.class).rental_price ));
 					}
 					return;
 				
-					
+
 				//HMERCH GREETING
 				} else if (args[0].equals("greeting")) {
 					String greeting = "";

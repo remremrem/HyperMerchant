@@ -9,6 +9,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.NPCSelector;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -255,6 +256,20 @@ public class MerchantMethods {
 		
 		return message;
 	}
+
+
+	public String SetRentalPrice(int id, double price) {
+		String message = "";
+		NPC this_npc = npcReg.getById(id);
+		this_npc.getTrait(HyperMerchantTrait.class).rental_price = price;
+		message=message+ChatColor.YELLOW+"It now costs "+price+" to rent a shop from "+this_npc.getName();
+		
+		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
+			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
+		}
+		
+		return message;
+	}
 	
 	
 	public String ToggleOffduty(int id) {
@@ -454,7 +469,10 @@ public class MerchantMethods {
 				npc.getTrait(HyperMerchantTrait.class).rental = true;
 				Teleport(npc.getId(), utils.StringToLoc(npc.getTrait(HyperMerchantTrait.class).location));
 				npc.getTrait(HyperMerchantTrait.class).location = null;
-				hyperAPI.getPlayerShop(shopname).setOwner(hoAPI.getHyperPlayer("hyperconomy"));
+				
+				HyperMerchantPlugin plugin = (HyperMerchantPlugin) Bukkit.getServer().getPluginManager().getPlugin("HyperMerchant");
+				hyperAPI.getPlayerShop(shopname).setOwner(hoAPI.getHyperPlayer(plugin.settings.getDEFAULT_RENTAL_OWNER()));
+				//hyperAPI.getPlayerShop(shopname).setOwner(hoAPI.getHyperPlayer("GREG"));
 				message = "The shop "+shopname+" is now closed.";
 				
 			} else {

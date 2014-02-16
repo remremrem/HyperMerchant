@@ -14,28 +14,50 @@ public class Settings {
 	static private HyperMerchantPlugin plugin;
     
     //Defaults
-	static   Boolean ENABLE_COMMAND = true;
-	static   Boolean ENABLE_NPCS = true;
-	static   Boolean OFFDUTY = false;
-	static   String WELCOME = "Welcome to my little shop.";
-	static   String FAREWELL = "I thank you for your continued patronage.";
-	static   String DENIAL = "I'm afraid you are not a shop member. " +
-    		"I am not authorized to do business with you.";
-	static   String CLOSED = "I am sorry, I am closed for business at this time.";
-	static   String FOR_HIRE_MSG = "I am ready to work!";
-	static   String RENTAL_MSG = "Rent this shop space, and I work as your clerk.";
-	static   Boolean NPC_FOR_HIRE = true;
-	static   Double NPC_COMMISSION = 10.0;
-	static   Boolean RIGHT_CLICK_PLAYER_SHOP = true;
-	static   Boolean ONDUTY_IN_SHOP_ONLY = true;
-	static   Boolean NPC_IN_SHOP_ONLY = true;
-	static   int MAX_NPCS_PER_PLAYER = 2;
+	static Boolean ENABLE_COMMAND;
+	static Boolean ENABLE_NPCS;
+	static Boolean OFFDUTY;
+	static String WELCOME;
+	static String FAREWELL;
+	static String DENIAL;
+	static String CLOSED;
+	static String FOR_HIRE_MSG;
+	static String RENTAL_MSG;
+	static String DEFAULT_RENTAL_OWNER;
+	static Boolean NPC_FOR_HIRE;
+	static Double NPC_COMMISSION;
+	static Double NPC_RENTAL_PRICE;
+	static Boolean RIGHT_CLICK_PLAYER_SHOP;
+	static Boolean ONDUTY_IN_SHOP_ONLY;
+	static Boolean NPC_IN_SHOP_ONLY;
+	static int MAX_NPCS_PER_PLAYER;
 
 
 	public Settings(HyperMerchantPlugin plgn) {
         plugin = plgn;
 		dataFolder = plugin.getDataFolder();
 		if (!dataFolder.isDirectory()) dataFolder.mkdir();
+		
+	    //Defaults
+		ENABLE_COMMAND = true;
+		ENABLE_NPCS = true;
+		OFFDUTY = false;
+		WELCOME = "Welcome to my little shop.";
+		FAREWELL = "I thank you for your continued patronage.";
+		DENIAL = "I'm afraid you are not a shop member. " +
+	    		"I am not authorized to do business with you.";
+		CLOSED = "I am sorry, I am closed for business at this time.";
+		FOR_HIRE_MSG = "I am ready to work!";
+		RENTAL_MSG = "Rent this shop space, and I work as your clerk.";
+		DEFAULT_RENTAL_OWNER = "server";
+		NPC_FOR_HIRE = true;
+		NPC_COMMISSION = 10.0;
+		NPC_RENTAL_PRICE = 100.0;
+		RIGHT_CLICK_PLAYER_SHOP = true;
+		ONDUTY_IN_SHOP_ONLY = true;
+		NPC_IN_SHOP_ONLY = true;
+		MAX_NPCS_PER_PLAYER = 2;
+		
         loadConfig();
         saveConfig();
     }
@@ -60,49 +82,55 @@ public class Settings {
 	    }
 
         if (config.contains("Messages.enable-command")){
-        ENABLE_COMMAND = config.getBoolean("Main.enable-command");
+        	ENABLE_COMMAND = config.getBoolean("Main.enable-command");
         }
         if (config.contains("Messages.enable-npcs")){
-        ENABLE_NPCS = config.getBoolean("Main.enable-npcs");
+        	ENABLE_NPCS = config.getBoolean("Main.enable-npcs");
         }
         if (config.contains("Messages.offduty")){
-        OFFDUTY = config.getBoolean("Main.offduty");
+        	OFFDUTY = config.getBoolean("Main.offduty");
         }
         if (config.contains("Messages.welcome")){
-        WELCOME = config.getString("Messages.welcome");
+        	WELCOME = config.getString("Messages.welcome");
         }
         if (config.contains("Messages.farewell")){
-        FAREWELL = config.getString("Messages.farewell");
+        	FAREWELL = config.getString("Messages.farewell");
         }
         if (config.contains("Messages.denial")){
-        DENIAL = config.getString("Messages.denial");
+        	DENIAL = config.getString("Messages.denial");
         }
         if (config.contains("Messages.closed")){
-        CLOSED = config.getString("Messages.closed");
+        	CLOSED = config.getString("Messages.closed");
         }
         if (config.contains("Messages.forHireMsg")){
         	FOR_HIRE_MSG = config.getString("Messages.forHireMsg");
         }
         if (config.contains("Messages.rentalMsg")){
-        RENTAL_MSG = config.getString("Messages.rentalMsg");
+        	RENTAL_MSG = config.getString("Messages.rentalMsg");
         }
-        if (config.contains("Messages.npc-for-hire")){
-        NPC_FOR_HIRE = config.getBoolean("PlayerShops.npc-for-hire");
+        if (config.contains("PlayerShops.rentalMsg")){
+        	DEFAULT_RENTAL_OWNER = config.getString("PlayerShops.default-rental-owner");
         }
-        if (config.contains("Messages.npc-commission")){
-        NPC_COMMISSION = config.getDouble("PlayerShops.npc-commission");
+        if (config.contains("PlayerShops.npc-for-hire")){
+        	NPC_FOR_HIRE = config.getBoolean("PlayerShops.npc-for-hire");
         }
-        if (config.contains("Messages.right-click-player-shop")){
-        RIGHT_CLICK_PLAYER_SHOP = config.getBoolean("PlayerShops.right-click-player-shop");
+        if (config.contains("PlayerShops.npc-commission")){
+        	NPC_COMMISSION = config.getDouble("PlayerShops.npc-commission");
         }
-        if (config.contains("Messages.onduty-in-shop-only")){
-        ONDUTY_IN_SHOP_ONLY = config.getBoolean("PlayerShops.onduty-in-shop-only");
+        if (config.contains("PlayerShops.npc-commission")){
+        	NPC_RENTAL_PRICE = config.getDouble("PlayerShops.npc-rental-price");
         }
-        if (config.contains("Messages.npc-in-shop-only")){
-        NPC_IN_SHOP_ONLY = config.getBoolean("PlayerShops.npc-in-shop-only");
+        if (config.contains("PlayerShops.right-click-player-shop")){
+        	RIGHT_CLICK_PLAYER_SHOP = config.getBoolean("PlayerShops.right-click-player-shop");
         }
-        if (config.contains("Messages.max-npcs-per-player")){
-        MAX_NPCS_PER_PLAYER = config.getInt("PlayerShops.max-npcs-per-player");
+        if (config.contains("PlayerShops.onduty-in-shop-only")){
+        	ONDUTY_IN_SHOP_ONLY = config.getBoolean("PlayerShops.onduty-in-shop-only");
+        }
+        if (config.contains("PlayerShops.npc-in-shop-only")){
+        	NPC_IN_SHOP_ONLY = config.getBoolean("PlayerShops.npc-in-shop-only");
+        }
+        if (config.contains("PlayerShops.max-npcs-per-player")){
+        	MAX_NPCS_PER_PLAYER = config.getInt("PlayerShops.max-npcs-per-player");
         }
     }
 	  
@@ -122,8 +150,10 @@ public class Settings {
 	    config.set("Messages.closed", CLOSED);
 	    config.set("Messages.forHireMsg", FOR_HIRE_MSG);
 	    config.set("Messages.rentalMsg", RENTAL_MSG);
+	    config.set("PlayerShops.default-rental-owner", DEFAULT_RENTAL_OWNER);
 	    config.set("PlayerShops.npc-for-hire", NPC_FOR_HIRE);
 	    config.set("PlayerShops.npc-commission", NPC_COMMISSION);
+	    config.set("PlayerShops.npc-rental-price", NPC_RENTAL_PRICE);
 	    config.set("PlayerShops.right-click-player-shop", RIGHT_CLICK_PLAYER_SHOP);
 	    config.set("PlayerShops.onduty-in-shop-only", ONDUTY_IN_SHOP_ONLY);
 	    config.set("PlayerShops.npc-in-shop-only", NPC_IN_SHOP_ONLY);
@@ -210,6 +240,14 @@ public class Settings {
 		RENTAL_MSG = rENTAL_MSG;
 	}
 
+	public String getDEFAULT_RENTAL_OWNER() {
+		return DEFAULT_RENTAL_OWNER;
+	}
+
+	public void setDEFAULT_RENTAL_OWNER(String dEFAULT_RENTAL_OWNER) {
+		DEFAULT_RENTAL_OWNER = dEFAULT_RENTAL_OWNER;
+	}
+
 	public Boolean getNPC_FOR_HIRE() {
 		return NPC_FOR_HIRE;
 	}
@@ -224,6 +262,14 @@ public class Settings {
 
 	public void setNPC_COMMISSION(Double nPC_COMMISSION) {
 		NPC_COMMISSION = nPC_COMMISSION;
+	}
+
+	public Double getNPC_RENTAL_PRICE() {
+		return NPC_RENTAL_PRICE;
+	}
+
+	public void setNPC_RENTAL_PRICE(Double nPC_RENTAL_PRICE) {
+		NPC_RENTAL_PRICE = nPC_RENTAL_PRICE;
 	}
 
 	public Boolean getRIGHT_CLICK_PLAYER_SHOP() {

@@ -160,7 +160,7 @@ public class HyperMerchantTrait extends Trait {
     
     public void Hire(String shopname, Player player){
 		if (hyperAPI.getPlayerShopList().contains(shopname)){
-			if (hyperAPI.getPlayerShop(shopname).getOwner().getPlayer() == player) {
+			if (hyperAPI.getPlayerShop(shopname).getOwner().getName() == player.getName()) {
 		    	if (!this.npc.isSpawned()){
 		    		this.npc.spawn(this.npc.getStoredLocation());
 		    	}
@@ -233,7 +233,7 @@ public class HyperMerchantTrait extends Trait {
 			}
 			player.sendMessage(ChatColor.YELLOW+"Within 10 seconds, enter the name of the shop you would like this clerk to work at:");
 			for (String shopname : hyperAPI.getPlayerShopList()) {
-				if (hyperAPI.getPlayerShop(shopname).getOwner().getPlayer() == player){
+				if (hyperAPI.getPlayerShop(shopname).getOwner().getName() == player.getName()){
 					player.sendMessage(ChatColor.YELLOW+shopname);
 				}
 			}

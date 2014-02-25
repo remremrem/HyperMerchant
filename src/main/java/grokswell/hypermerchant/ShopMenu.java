@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -175,37 +175,45 @@ public class ShopMenu implements Listener {
 				stock = ho.getStock();
 				stack = new ItemStack(ho.getMaterialEnum(), 1);
 				stack.setDurability((short)ho.getDurability());
+				
+				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
+				value = hoAPI.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1);
+				cost = hoAPI.getTruePurchasePrice(ho, EnchantmentClass.DIAMOND, 1);
 
-				//get price for player shop
-				if (hyperAPI.getPlayerShopList().contains(shopname)) {
-					PlayerShopObject pi = (PlayerShopObject) ho;
-					value = pi.getSellPrice();
-					cost = pi.getBuyPrice();
-					
-				//get price for server shop
-				} else {
-					//price for player to sell
-					value = hoAPI.getTrueSaleValue(stack.getType(), stack.getDurability(),1,player, economy_name);
-					//price for player to buy
-					cost = hoAPI.getTruePurchasePrice(stack.getType(), stack.getDurability(),1, economy_name);
-				}
+//				//get price for player shop
+//				if (hyperAPI.getPlayerShopList().contains(shopname)) {
+//					PlayerShopObject pi = (PlayerShopObject) ho;
+//					value = pi.getSellPrice();
+//					cost = pi.getBuyPrice();
+//					
+//				//get price for server shop
+//				} else {
+//					//price for player to sell
+//					value = hoAPI.getTrueSaleValue(stack.getType(), stack.getDurability(),1,player, economy_name);
+//					//price for player to buy
+//					cost = hoAPI.getTruePurchasePrice(stack.getType(), stack.getDurability(),1, economy_name);
+//				}
 
 				
 			} else if (hoAPI.getType(item_name, economy_name).name().equals("ENCHANTMENT")) {
 				HyperEnchant he = (HyperEnchant) hoAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
 				stock = he.getStock();
 				
-				//get price for player shop
-				if (hyperAPI.getPlayerShopList().contains(shopname)) {
-					PlayerShopEnchant pe = (PlayerShopEnchant) he;
-					value = pe.getSellPrice();
-					cost = pe.getBuyPrice();
-				//get price for server shop
-				} else {
-					cost = hoAPI.getTruePurchasePrice(he, EnchantmentClass.DIAMOND, 1);
-					value = hoAPI.getTrueSaleValue(he, hp, EnchantmentClass.DIAMOND, 1);
-					value = value-he.getSalesTaxEstimate(value);
-				}
+				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
+				value = hoAPI.getTrueSaleValue(he, hp, EnchantmentClass.DIAMOND, 1);
+				cost = hoAPI.getTruePurchasePrice(he, EnchantmentClass.DIAMOND, 1);
+				
+//				//get price for player shop
+//				if (hyperAPI.getPlayerShopList().contains(shopname)) {
+//					PlayerShopEnchant pe = (PlayerShopEnchant) he;
+//					value = pe.getSellPrice();
+//					cost = pe.getBuyPrice();
+//				//get price for server shop
+//				} else {
+//					cost = hoAPI.getTruePurchasePrice(he, EnchantmentClass.DIAMOND, 1);
+//					value = hoAPI.getTrueSaleValue(he, hp, EnchantmentClass.DIAMOND, 1);
+//					value = value-he.getSalesTaxEstimate(value);
+//				}
 				stack = new ItemStack(Material.STONE, 1, (short) 0);
 				
 			} else {
@@ -338,16 +346,12 @@ public class ShopMenu implements Listener {
 		        			enchants.put(ench.getName(),item_in_hand.getEnchantments().get(ench));
 		        		}
 	        		}
-            		out.println("Enchants: "+enchants);
 	        		
 	        		// SELLING ENCHANTS
 	        		if (!enchants.isEmpty()) {
 	                	String display_name = this.optionIcons[slot_num].getItemMeta().getDisplayName().replace("§6", "");
             			String enchant_name = display_name.replace(" ", "_");
-                		out.println("Enchant name: "+enchant_name);
-                		out.println("display name: "+display_name);
 	                	if (shopstock.items_in_stock.contains(enchant_name)) {
-	                		out.println("shop has: "+display_name);
 	                		ItemStack item_holding = player.getItemInHand().clone();
 	                		player.setItemInHand(player.getItemOnCursor().clone());
 	                		if (this.shop_trans.Sell(enchant_name)) {

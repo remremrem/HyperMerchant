@@ -4,6 +4,7 @@ package grokswell.hypermerchant;
 
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -95,7 +96,7 @@ public class ShopTransactions {
 		if (hyperAPI.getPlayerShopList().contains(shopname) && commission > 0.0) {
 		    PlayerShopObject pso = (PlayerShopObject) ho;
 		    double amount = pso.getBuyPrice()*commission;
-			heAPI.withdraw(amount, hyperAPI.getShop(shopname).getOwner().getPlayer());
+			heAPI.withdraw(amount, Bukkit.getPlayer(hyperAPI.getShop(shopname).getOwner().getName()));
 			heAPI.depositShop(amount);
 		}
 		

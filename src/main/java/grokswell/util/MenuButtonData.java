@@ -19,6 +19,8 @@ public class MenuButtonData {
 	private static File dataFolder;
 	private HyperMerchantPlugin plugin;
 	YamlConfiguration menuButtonData;
+	
+	//Shop menu buttons
 	public ItemStack first_page;
 	public ItemStack back;
 	public ItemStack help1;
@@ -28,6 +30,13 @@ public class MenuButtonData {
 	public ItemStack help5;
 	public ItemStack forward;
 	public ItemStack last_page;
+	
+	//Manage player shop buttons
+	public ItemStack buy_price;
+	public ItemStack sell_price;
+	public ItemStack status;
+	public ItemStack manage_help_1;
+	public ItemStack manage_help_2;
   
     public MenuButtonData(HyperMerchantPlugin plgn) {
         plugin = plgn;

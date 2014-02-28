@@ -150,13 +150,13 @@ public class ManageMenu implements Listener {
   	
   	this.setOption(46, plugin.menuButtonData.back)
 	    .setOption(45, plugin.menuButtonData.first_page)
-	    .setOption(52, plugin.menuButtonData.forward.clone())
-	    .setOption(53, plugin.menuButtonData.last_page.clone())
-	    .setOption(47, plugin.menuButtonData.help1)
-	    .setOption(48, plugin.menuButtonData.help2.clone())
-	    .setOption(49, plugin.menuButtonData.help3.clone())
-	    .setOption(50, plugin.menuButtonData.help4.clone())
-	    .setOption(51, plugin.menuButtonData.help5.clone());
+	    .setOption(52, plugin.menuButtonData.forward)
+	    .setOption(53, plugin.menuButtonData.last_page)
+	    .setOption(47, plugin.menuButtonData.buy_price)
+	    .setOption(48, plugin.menuButtonData.sell_price)
+	    .setOption(49, plugin.menuButtonData.status)
+	    .setOption(50, plugin.menuButtonData.manage_help_1)
+	    .setOption(51, plugin.menuButtonData.manage_help_2);
   	int count = 0;
 		ArrayList<String> page=(ArrayList<String>) pages.get(this.page_number);
 		

@@ -156,6 +156,27 @@ public class MenuButtonData {
     	last_page = new ItemStack(Material.getMaterial(menuButtonData.getString("last_page.material")));
     	last_page.setDurability(Short.parseShort(menuButtonData.getString("last_page.data")));
     	setItemNameAndLore(last_page, menuButtonData.getString("last_page.name"), ParseLore(menuButtonData.getString("last_page.lore")));
+
+    	buy_price = new ItemStack(Material.getMaterial(menuButtonData.getString("buy_price.material")));
+    	buy_price.setDurability(Short.parseShort(menuButtonData.getString("buy_price.data")));
+    	setItemNameAndLore(buy_price, menuButtonData.getString("buy_price.name"), ParseLore(menuButtonData.getString("buy_price.lore")));
+
+    	sell_price = new ItemStack(Material.getMaterial(menuButtonData.getString("sell_price.material")));
+    	sell_price.setDurability(Short.parseShort(menuButtonData.getString("sell_price.data")));
+    	setItemNameAndLore(sell_price, menuButtonData.getString("sell_price.name"), ParseLore(menuButtonData.getString("sell_price.lore")));
+
+    	status = new ItemStack(Material.getMaterial(menuButtonData.getString("status.material")));
+    	status.setDurability(Short.parseShort(menuButtonData.getString("status.data")));
+    	setItemNameAndLore(status, menuButtonData.getString("status.name"), ParseLore(menuButtonData.getString("status.lore")));
+
+    	manage_help_1 = new ItemStack(Material.getMaterial(menuButtonData.getString("manage_help_1.material")));
+    	manage_help_1.setDurability(Short.parseShort(menuButtonData.getString("manage_help_1.data")));
+    	setItemNameAndLore(manage_help_1, menuButtonData.getString("manage_help_1.name"), ParseLore(menuButtonData.getString("manage_help_1.lore")));
+
+    	manage_help_2 = new ItemStack(Material.getMaterial(menuButtonData.getString("manage_help_2.material")));
+    	manage_help_2.setDurability(Short.parseShort(menuButtonData.getString("manage_help_2.data")));
+    	setItemNameAndLore(manage_help_2, menuButtonData.getString("manage_help_2.name"), ParseLore(menuButtonData.getString("manage_help_2.lore")));
+
     }
 }
 

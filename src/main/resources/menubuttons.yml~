@@ -59,12 +59,12 @@ status:
   name: Set Status
   lore: "Click this button, then left click for *trade*, right click for *sell*, shift+left click for *buy*"
 manage_help_1:
-  material: STAINED_GLASS_PANE
+  material: STAINED_GLASS
   data: 0
   name: 
   lore: 
 manage_help_2:
-  material: STAINED_GLASS_PANE
+  material: STAINED_GLASS
   data: 0
   name: 
   lore: 

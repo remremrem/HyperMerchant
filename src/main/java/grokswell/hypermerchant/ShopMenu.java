@@ -36,6 +36,7 @@ import regalowl.hyperconomy.HyperEnchant;
 import regalowl.hyperconomy.HyperItem;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperPlayer;
+import regalowl.hyperconomy.HyperXP;
 import regalowl.hyperconomy.PlayerShopEnchant;
 import regalowl.hyperconomy.PlayerShopObject;
 import grokswell.hypermerchant.ShopTransactions;
@@ -215,6 +216,17 @@ public class ShopMenu implements Listener {
 //					value = value-he.getSalesTaxEstimate(value);
 //				}
 				stack = new ItemStack(Material.STONE, 1, (short) 0);
+
+				
+			} else if (hoAPI.getType(item_name, economy_name).name().equals("EXPERIENCE")) {
+				HyperXP hx = (HyperXP) hoAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
+				stock = hx.getStock();
+				
+				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
+				value = hoAPI.getTrueSaleValue(hx, hp, EnchantmentClass.DIAMOND, 1);
+				cost = hoAPI.getTruePurchasePrice(hx, EnchantmentClass.DIAMOND, 1);
+
+				stack = new ItemStack(Material.POTION, 1, (short) 0);
 				
 			} else {
 				stack = new ItemStack(Material.AIR, 1, (short) 0);

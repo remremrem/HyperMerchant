@@ -1,6 +1,6 @@
 name: HyperMerchant
 main: grokswell.hypermerchant.HyperMerchantPlugin
-version: 1.4-dev
+version: 1.41
 description: Inventory menu to be used with HyperConomy shops and NPC trait for Citizens2.
 author: Grokswell
 authors: [Grokswell] 
@@ -88,7 +88,6 @@ commands:
       permission: hypermerchant.clerk
       permission-message: You do not have permission to use command /clerk.
       aliases: [hclerk]
-    
 permissions:
    hypermerchant.*:
       description: Gives access to all HyperMerchant commands

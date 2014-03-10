@@ -36,9 +36,11 @@ import regalowl.hyperconomy.HyperEnchant;
 import regalowl.hyperconomy.HyperItem;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperPlayer;
+import regalowl.hyperconomy.HyperXP;
 import regalowl.hyperconomy.PlayerShopEnchant;
 import regalowl.hyperconomy.PlayerShopObject;
 import grokswell.hypermerchant.ShopTransactions;
+import grokswell.util.EnchantIcons;
  
 public class ShopMenu implements Listener {
  
@@ -179,21 +181,6 @@ public class ShopMenu implements Listener {
 				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
 				value = hoAPI.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1);
 				cost = hoAPI.getTruePurchasePrice(ho, EnchantmentClass.DIAMOND, 1);
-
-//				//get price for player shop
-//				if (hyperAPI.getPlayerShopList().contains(shopname)) {
-//					PlayerShopObject pi = (PlayerShopObject) ho;
-//					value = pi.getSellPrice();
-//					cost = pi.getBuyPrice();
-//					
-//				//get price for server shop
-//				} else {
-//					//price for player to sell
-//					value = hoAPI.getTrueSaleValue(stack.getType(), stack.getDurability(),1,player, economy_name);
-//					//price for player to buy
-//					cost = hoAPI.getTruePurchasePrice(stack.getType(), stack.getDurability(),1, economy_name);
-//				}
-
 				
 			} else if (hoAPI.getType(item_name, economy_name).name().equals("ENCHANTMENT")) {
 				HyperEnchant he = (HyperEnchant) hoAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
@@ -202,19 +189,22 @@ public class ShopMenu implements Listener {
 				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
 				value = hoAPI.getTrueSaleValue(he, hp, EnchantmentClass.DIAMOND, 1);
 				cost = hoAPI.getTruePurchasePrice(he, EnchantmentClass.DIAMOND, 1);
+
+				//stack = new ItemStack(Material.STONE, 1, (short) 0);
+
+				stack = (new EnchantIcons()).getIcon(he.getDisplayName());
+
 				
-//				//get price for player shop
-//				if (hyperAPI.getPlayerShopList().contains(shopname)) {
-//					PlayerShopEnchant pe = (PlayerShopEnchant) he;
-//					value = pe.getSellPrice();
-//					cost = pe.getBuyPrice();
-//				//get price for server shop
-//				} else {
-//					cost = hoAPI.getTruePurchasePrice(he, EnchantmentClass.DIAMOND, 1);
-//					value = hoAPI.getTrueSaleValue(he, hp, EnchantmentClass.DIAMOND, 1);
-//					value = value-he.getSalesTaxEstimate(value);
-//				}
-				stack = new ItemStack(Material.STONE, 1, (short) 0);
+			} else if (hoAPI.getType(item_name, economy_name).name().equals("EXPERIENCE")) {
+				HyperXP hx = (HyperXP) hoAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
+				stock = hx.getStock();
+				
+				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
+				value = hoAPI.getTrueSaleValue(hx, hp, EnchantmentClass.DIAMOND, 1);
+				cost = hoAPI.getTruePurchasePrice(hx, EnchantmentClass.DIAMOND, 1);
+
+				stack = new ItemStack(Material.POTION, 1, (short) 0);
+				
 				
 			} else {
 				stack = new ItemStack(Material.AIR, 1, (short) 0);

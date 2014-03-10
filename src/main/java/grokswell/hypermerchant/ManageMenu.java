@@ -2,6 +2,8 @@ package grokswell.hypermerchant;
 
 //import static java.lang.System.out;
 
+import grokswell.util.EnchantIcons;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -189,7 +191,8 @@ public class ManageMenu implements Listener {
 				value = hoAPI.getTrueSaleValue(he, hp, EnchantmentClass.DIAMOND, 1);
 				cost = hoAPI.getTruePurchasePrice(he, EnchantmentClass.DIAMOND, 1);
 
-				stack = new ItemStack(Material.STONE, 1, (short) 0);
+				//stack = new ItemStack(Material.STONE, 1, (short) 0);
+				stack = (new EnchantIcons()).getIcon(he.getDisplayName());
 				
 			} else {
 				stack = new ItemStack(Material.AIR, 1, (short) 0);
@@ -203,7 +206,8 @@ public class ManageMenu implements Listener {
 		
 		ItemStack stack;
 	    while (count < size-9) {
-			stack = new ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.SILVER.getData());
+			stack = new ItemStack(Material.STAINED_GLASS_PANE, 1);
+			stack.setDurability((short) 8);
 	    	this.setOption(count, stack, " ", " ");
 	    	count++;
 	    }
@@ -291,14 +295,9 @@ public class ManageMenu implements Listener {
       		if (this.optionNames[slot_num] != null && this.optionNames[slot_num] != " ") {
                   if (event.isLeftClick()){
                   	if (event.isShiftClick()){
-                  		this.shop_trans.Buy(this.optionNames[slot_num], 8, commission);
-                  	}
-                  	else {
-                  		this.shop_trans.Buy(this.optionNames[slot_num], 1, commission);
                   	}
                   }
                   else if (event.isRightClick() && event.isShiftClick()) {
-                  	this.shop_trans.Buy(this.optionNames[slot_num], this.optionIcons[slot_num].getMaxStackSize(), commission);
                   	//return;
                   }        
       		}
@@ -309,57 +308,7 @@ public class ManageMenu implements Listener {
       		if (!(hp.hasSellPermission(hyperAPI.getShop(this.shopname)))) {
       			player.sendMessage("You cannot sell to this shop.");
       		}
-      		else {
-	        		HashMap<String, Integer> enchants = new HashMap<String, Integer>();
-	        		if (item_in_hand.getType()==Material.ENCHANTED_BOOK) {
-	        			EnchantmentStorageMeta em = (EnchantmentStorageMeta) item_in_hand.getItemMeta();
-	        			for (Enchantment ench : em.getStoredEnchants().keySet()){
-	        				enchants.put(ench.getName(),item_in_hand.getEnchantments().get(ench));
-	        			}
-	        		} else {
-		        		for (Enchantment ench : item_in_hand.getEnchantments().keySet()) {
-		        			enchants.put(ench.getName(),item_in_hand.getEnchantments().get(ench));
-		        		}
-	        		}
-	        		
-	        		// SELLING ENCHANTS
-	        		if (!enchants.isEmpty()) {
-	                	String display_name = this.optionIcons[slot_num].getItemMeta().getDisplayName().replace("§6", "");
-          			String enchant_name = display_name.replace(" ", "_");
-	                	if (shopstock.items_in_stock.contains(enchant_name)) {
-	                		ItemStack item_holding = player.getItemInHand().clone();
-	                		player.setItemInHand(player.getItemOnCursor().clone());
-	                		if (this.shop_trans.Sell(enchant_name)) {
-	            				player.setItemOnCursor(player.getItemInHand());
-	            				player.setItemInHand(item_holding);
-	                		} else {
-	                			player.sendMessage(ChatColor.YELLOW+"Your "+player.getItemInHand().getItemMeta().getDisplayName()+ 
-	                					" does not possess enchantment "+display_name+".");
-	
-	                    		player.setItemInHand(item_holding);
-	                		}
-	                	} else {
-	                		player.sendMessage(ChatColor.YELLOW+"This shop doesn't want your enchanted item");
-	                	}
-	                }
-	                
-	                // SELLING ITEMS
-	                else if (this.shop_trans.Sell(item_in_hand)) {
-	        			this.inventory_view.setCursor(new ItemStack(Material.AIR));
-	        			
-	        		} else if (item_in_hand.getDurability() < item_in_hand.getType().getMaxDurability()){
-	        			player.sendMessage(ChatColor.YELLOW+"This shop will not purchase a damaged "+
-								item_in_hand.getType().name().toLowerCase()+".");
-	        			player.getInventory().addItem(item_in_hand);
-	        			this.inventory_view.setCursor(new ItemStack(Material.AIR));
-	        			
-	        		} else {
-	        			player.sendMessage(ChatColor.YELLOW+"This shop does not deal in "+
-								item_in_hand.getType().name().toLowerCase()+".");
-	        			player.getInventory().addItem(item_in_hand);
-	        			this.inventory_view.setCursor(new ItemStack(Material.AIR));
-	        		}
-      		}
+
       	}
           else if (slot_num == 46){
 	            this.previousPage();

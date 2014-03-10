@@ -64,19 +64,45 @@ public class MenuButtonData {
   	  }
     }
   
+    public void initPath(String path, YamlConfiguration yc) {
+	  if (!menuButtonData.contains(path)) {
+		  menuButtonData.createSection(path);
+		  menuButtonData.set(path, yc.get(path));
+	  }
+    }
+  
     private void loadMenuButtonData() {
 		File menuButtonFile = null;
 		menuButtonFile = new File(dataFolder, "menubuttons.yml");
+		InputStream defConfigStream = plugin.getResource("menubuttons.yml");
+		YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
 	
 		try {
 			if (!menuButtonFile.exists()) {
 				menuButtonFile.setWritable(true);
-				InputStream defConfigStream = plugin.getResource("menubuttons.yml");
-				YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
 				defConfig.save(menuButtonFile);
+				menuButtonData.load(menuButtonFile);
+			} else {
+				menuButtonData.load(menuButtonFile);
+				menuButtonFile.setWritable(true);
+				initPath("first_page",defConfig);
+				initPath("back",defConfig);
+				initPath("help1",defConfig);
+				initPath("help2",defConfig);
+				initPath("help3",defConfig);
+				initPath("help4",defConfig);
+				initPath("help5",defConfig);
+				initPath("forward",defConfig);
+				initPath("last_page",defConfig);
+				initPath("buy_price",defConfig);
+				initPath("sell_price",defConfig);
+				initPath("status",defConfig);
+				initPath("manage_help_1",defConfig);
+				initPath("manage_help_2",defConfig);
+				menuButtonData.save(menuButtonFile);
 			}
 			
-			menuButtonData.load(menuButtonFile);
+			
 		}
 		
 		catch (InvalidConfigurationException e) {

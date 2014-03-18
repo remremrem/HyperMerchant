@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import regalowl.hyperconomy.HyperObject;
 import regalowl.hyperconomy.HyperObjectAPI;
+import regalowl.hyperconomy.HyperObjectType;
 
 
 public class ShopStock {
@@ -48,17 +49,21 @@ public class ShopStock {
 			while(i < object_names.size()) {
 				String cname = object_names.get(i);
 				items_in_stock.add(cname);
-				String t=hoAPI.getType(cname, "default").name();
-				if (t.toLowerCase().equals("item")) {
-					item_types_sorted.add(String.valueOf(hoAPI.getMaterial(cname, "default").toLowerCase()+cname));
-					items_by_type.put(hoAPI.getMaterial(cname, "default").toLowerCase()+cname,cname);
+				HyperObject ho=hoAPI.getHyperObject(cname, "default");
+				if (ho.getType() == HyperObjectType.ITEM) {
+					String mtrl = ho.getMaterial().toLowerCase();
+					item_types_sorted.add(mtrl+cname);
+					items_by_type.put(mtrl+cname,cname);
+					
+				} else if (ho.getType() == HyperObjectType.ITEM) {
+					item_types_sorted.add(String.valueOf("enchantment"+cname));
+					items_by_type.put("enchantment"+cname, cname);	
 					
 				} else {
-					item_types_sorted.add(String.valueOf("enchantment"+cname));
-					items_by_type.put("enchantment"+cname, cname);
-					
-					
+					item_types_sorted.add(String.valueOf("xp"+cname));
+					items_by_type.put("xp"+cname, cname);	
 				}
+				
 				i++;
 			}			
 			

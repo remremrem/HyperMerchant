@@ -6,17 +6,14 @@ import grokswell.util.EnchantIcons;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 import net.citizensnpcs.api.npc.NPC;
 
 import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -29,14 +26,13 @@ import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import regalowl.hyperconomy.EnchantmentClass;
 import regalowl.hyperconomy.HyperAPI;
-import regalowl.hyperconomy.HyperEnchant;
-import regalowl.hyperconomy.HyperItem;
+import regalowl.hyperconomy.HyperObject;
 import regalowl.hyperconomy.HyperObjectAPI;
+import regalowl.hyperconomy.HyperObjectType;
 import regalowl.hyperconomy.HyperPlayer;
 
 public class ManageMenu implements Listener {
@@ -170,9 +166,10 @@ public class ManageMenu implements Listener {
 	        double stock = 0.0;
 	        ItemStack stack;
 	        
-	        if (hoAPI.getType(item_name, economy_name).name().equals("ITEM")) {
-	        	HyperItem ho = (HyperItem) hoAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
-				stock = ho.getStock();
+	        HyperObject ho = hoAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
+	        
+	        if (ho.getType() == HyperObjectType.ITEM) {
+	        	stock = ho.getStock();
 				stack = new ItemStack(ho.getMaterialEnum(), 1);
 				stack.setDurability((short)ho.getDurability());
 				
@@ -183,16 +180,15 @@ public class ManageMenu implements Listener {
 
 
 				
-			} else if (hoAPI.getType(item_name, economy_name).name().equals("ENCHANTMENT")) {
-				HyperEnchant he = (HyperEnchant) hoAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
-				stock = he.getStock();
+			} else if (ho.getType() == HyperObjectType.ENCHANTMENT) {
+				stock = ho.getStock();
 				
 				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
-				value = hoAPI.getTrueSaleValue(he, hp, EnchantmentClass.DIAMOND, 1);
-				cost = hoAPI.getTruePurchasePrice(he, EnchantmentClass.DIAMOND, 1);
+				value = hoAPI.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1);
+				cost = hoAPI.getTruePurchasePrice(ho, EnchantmentClass.DIAMOND, 1);
 
 				//stack = new ItemStack(Material.STONE, 1, (short) 0);
-				stack = (new EnchantIcons()).getIcon(he.getDisplayName());
+				stack = (new EnchantIcons()).getIcon(ho.getDisplayName());
 				
 			} else {
 				stack = new ItemStack(Material.AIR, 1, (short) 0);

@@ -16,7 +16,6 @@ import regalowl.hyperconomy.HyperObject;
 import regalowl.hyperconomy.HyperObjectAPI;
 import regalowl.hyperconomy.HyperPlayer;
 import regalowl.hyperconomy.LanguageFile;
-import regalowl.hyperconomy.PlayerShopObject;
 import regalowl.hyperconomy.TransactionResponse;
 
 public class ShopTransactions {
@@ -94,10 +93,11 @@ public class ShopTransactions {
 		TransactionResponse response = hoAPI.buy(player, ho, qty, hyperAPI.getShop(shopname));
 		
 		if (hyperAPI.getPlayerShopList().contains(shopname) && commission > 0.0) {
-		    PlayerShopObject pso = (PlayerShopObject) ho;
-		    double amount = pso.getBuyPrice()*commission;
-			heAPI.withdraw(amount, Bukkit.getPlayer(hyperAPI.getShop(shopname).getOwner().getName()));
-			heAPI.depositShop(amount);
+		    if (ho.isShopObject()){
+			    double amount = ho.getBuyPrice()*commission;
+				heAPI.withdraw(amount, Bukkit.getPlayer(hyperAPI.getShop(shopname).getOwner().getName()));
+				heAPI.depositShop(amount);
+		    }
 		}
 		
 		response.sendMessages();

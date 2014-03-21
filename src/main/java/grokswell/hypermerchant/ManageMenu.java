@@ -171,7 +171,7 @@ public class ManageMenu implements Listener {
 	        if (ho.getType() == HyperObjectType.ITEM) {
 	        	stock = ho.getStock();
 				stack = new ItemStack(ho.getMaterialEnum(), 1);
-				stack.setDurability((short)ho.getDurability());
+				stack.setDurability((short)ho.getData());
 				
 				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
 				value = hoAPI.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1);

@@ -9,14 +9,14 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import regalowl.hyperconomy.HyperAPI;
+import regalowl.hyperconomy.api.HyperAPI;
 import regalowl.hyperconomy.HyperConomy;
-import regalowl.hyperconomy.HyperEconAPI;
-import regalowl.hyperconomy.HyperObject;
-import regalowl.hyperconomy.HyperObjectAPI;
-import regalowl.hyperconomy.HyperPlayer;
-import regalowl.hyperconomy.LanguageFile;
-import regalowl.hyperconomy.TransactionResponse;
+import regalowl.hyperconomy.api.HyperEconAPI;
+import regalowl.hyperconomy.hyperobject.HyperObject;
+import regalowl.hyperconomy.api.HyperObjectAPI;
+import regalowl.hyperconomy.account.HyperPlayer;
+import regalowl.hyperconomy.util.LanguageFile;
+import regalowl.hyperconomy.transaction.TransactionResponse;
 
 public class ShopTransactions {
 	ArrayList<ArrayList<String>> pages = new ArrayList<ArrayList<String>>();
@@ -95,8 +95,9 @@ public class ShopTransactions {
 		if (hyperAPI.getPlayerShopList().contains(shopname) && commission > 0.0) {
 		    if (ho.isShopObject()){
 			    double amount = ho.getBuyPrice()*commission;
-				heAPI.withdraw(amount, Bukkit.getPlayer(hyperAPI.getShop(shopname).getOwner().getName()));
-				heAPI.depositShop(amount);
+			    String owner_name = hyperAPI.getShop(shopname).getOwner().getName();
+				heAPI.withdraw(amount, Bukkit.getPlayer(owner_name));
+				heAPI.depositAccount(amount, owner_name);
 		    }
 		}
 		

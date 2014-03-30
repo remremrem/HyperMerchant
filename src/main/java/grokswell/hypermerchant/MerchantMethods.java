@@ -18,9 +18,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.plugin.Plugin;
 
-import regalowl.hyperconomy.HyperAPI;
-import regalowl.hyperconomy.HyperEconAPI;
-import regalowl.hyperconomy.HyperObjectAPI;
+import regalowl.hyperconomy.api.HyperAPI;
+import regalowl.hyperconomy.api.HyperEconAPI;
+import regalowl.hyperconomy.api.HyperObjectAPI;
 
 
 public class MerchantMethods {

@@ -18,10 +18,10 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.speech.SimpleSpeechController;
-import regalowl.hyperconomy.HyperAPI;
-import regalowl.hyperconomy.HyperEconAPI;
-import regalowl.hyperconomy.HyperObjectAPI;
-import regalowl.hyperconomy.HyperPlayer;
+import regalowl.hyperconomy.api.HyperAPI;
+import regalowl.hyperconomy.api.HyperEconAPI;
+import regalowl.hyperconomy.api.HyperObjectAPI;
+import regalowl.hyperconomy.account.HyperPlayer;
 
 
 public class HyperMerchantTrait extends Trait {
@@ -270,7 +270,11 @@ public class HyperMerchantTrait extends Trait {
 	            
 	            if (rental_price>0){
 		            hoAPI.getHyperPlayer(player.getName()).withdraw(rental_price);
-		            heAPI.depositShop(rental_price);
+		            if (plugin.settings.getDEFAULT_RENTAL_OWNER().equals("server")) {
+		            	heAPI.depositAccount(rental_price, "hyperconomy");
+		            } else {
+		            	heAPI.depositAccount(rental_price, plugin.settings.getDEFAULT_RENTAL_OWNER());
+		            }
 	            }
 	            
 	            player.sendMessage(ChatColor.YELLOW+"You are now renting the shop named "+this.shop_name+".");

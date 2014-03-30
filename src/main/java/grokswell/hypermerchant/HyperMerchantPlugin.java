@@ -24,13 +24,13 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 
-import regalowl.hyperconomy.EconomyManager;
+import regalowl.hyperconomy.DataManager;
 import regalowl.hyperconomy.HyperConomy;
-import regalowl.hyperconomy.HyperEconAPI;
-import regalowl.hyperconomy.HyperObjectAPI;
-import regalowl.hyperconomy.HyperAPI;
-import regalowl.hyperconomy.HyperPlayer;
-import regalowl.hyperconomy.PlayerShop;
+import regalowl.hyperconomy.api.HyperEconAPI;
+import regalowl.hyperconomy.api.HyperObjectAPI;
+import regalowl.hyperconomy.api.HyperAPI;
+import regalowl.hyperconomy.account.HyperPlayer;
+import regalowl.hyperconomy.shop.PlayerShop;
 
 import grokswell.hypermerchant.HyperMerchantTrait;
 import grokswell.hypermerchant.ShopMenu;
@@ -75,7 +75,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			} 
 			
 			HyperConomy hc = HyperConomy.hc;
-			EconomyManager ecoMan = hc.getEconomyManager();
+			DataManager ecoMan = hc.getDataManager();
 			ArrayList<String> shoplist = ecoMan.listShops();
 			
 			if (args.length != 1) {

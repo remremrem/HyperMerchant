@@ -9,9 +9,9 @@ import java.util.HashMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import regalowl.hyperconomy.HyperObject;
-import regalowl.hyperconomy.HyperObjectAPI;
-import regalowl.hyperconomy.HyperObjectType;
+import regalowl.hyperconomy.hyperobject.HyperObject;
+import regalowl.hyperconomy.api.HyperObjectAPI;
+import regalowl.hyperconomy.hyperobject.HyperObjectType;
 
 
 public class ShopStock {

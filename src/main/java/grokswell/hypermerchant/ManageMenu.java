@@ -28,12 +28,12 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import regalowl.hyperconomy.EnchantmentClass;
-import regalowl.hyperconomy.HyperAPI;
-import regalowl.hyperconomy.HyperObject;
-import regalowl.hyperconomy.HyperObjectAPI;
-import regalowl.hyperconomy.HyperObjectType;
-import regalowl.hyperconomy.HyperPlayer;
+import regalowl.hyperconomy.hyperobject.EnchantmentClass;
+import regalowl.hyperconomy.api.HyperAPI;
+import regalowl.hyperconomy.hyperobject.HyperObject;
+import regalowl.hyperconomy.api.HyperObjectAPI;
+import regalowl.hyperconomy.hyperobject.HyperObjectType;
+import regalowl.hyperconomy.account.HyperPlayer;
 
 public class ManageMenu implements Listener {
 

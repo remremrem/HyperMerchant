@@ -15,10 +15,6 @@
             <id>my-repo</id>
             <url>http://doyle.is-a-geek.net:8000/repo/</url>
         </repository>
-        <repository>
-			<id>regalowl-repo</id>
-			<url>http://www.regalowl.net:8080/archiva/repository/snapshots/</url>
-		</repository>
 	</repositories>
 	<scm>
 		<developerConnection>scm:git:git@github.com:remremrem/HyperMerchant.git</developerConnection>
@@ -35,7 +31,7 @@
 		<dependency>
 			<groupId>regalowl.hyperconomy</groupId>
 			<artifactId>hyperconomy</artifactId>
-			<version>0.974.53-SNAPSHOT</version>
+			<version>0.974.51-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>                
 		<dependency>

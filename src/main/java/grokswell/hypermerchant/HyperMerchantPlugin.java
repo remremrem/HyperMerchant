@@ -27,7 +27,6 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import regalowl.hyperconomy.DataManager;
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.api.HyperEconAPI;
-import regalowl.hyperconomy.api.HyperObjectAPI;
 import regalowl.hyperconomy.api.HyperAPI;
 import regalowl.hyperconomy.account.HyperPlayer;
 import regalowl.hyperconomy.shop.PlayerShop;
@@ -42,7 +41,6 @@ import grokswell.util.Uniquifier;
 
 public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	HyperEconAPI economyAPI = new HyperEconAPI();
-	HyperObjectAPI hoAPI = new HyperObjectAPI();
 	HyperAPI hyperAPI = new HyperAPI();
 	Uniquifier uniquifier = new Uniquifier();
 	Settings settings;
@@ -132,7 +130,15 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		//REMOTESHOPLIST
 		else if (cmd.getName().equalsIgnoreCase("remoteshoplist")) {
 			sender.sendMessage(ChatColor.YELLOW+"Valid shop names to use with command /remotemenu:");
-			sender.sendMessage(hyperAPI.listShops());
+			String shopList = "";
+			for (String shop:hyperAPI.getPlayerShopList()) {
+				shopList += shop + ",";
+			}
+			for (String shop:hyperAPI.getServerShopList()) {
+				shopList += shop + ",";
+			}
+			shopList = shopList.substring(0, shopList.length() - 1);
+			sender.sendMessage(shopList);
 			return true;
 		}
 		
@@ -321,7 +327,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		}
 		
 		PlayerShop shop = hyperAPI.getPlayerShop(shopname);
-		HyperPlayer hp = hoAPI.getHyperPlayer(player.getName());
+		HyperPlayer hp = hyperAPI.getHyperPlayer(player.getName());
 		
 		//return if the player who clicked does not have permission to trade with this shop
 		if (!hp.hasBuyPermission(shop)) return;

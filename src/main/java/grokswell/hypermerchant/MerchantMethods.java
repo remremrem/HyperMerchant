@@ -20,7 +20,6 @@ import org.bukkit.plugin.Plugin;
 
 import regalowl.hyperconomy.api.HyperAPI;
 import regalowl.hyperconomy.api.HyperEconAPI;
-import regalowl.hyperconomy.api.HyperObjectAPI;
 
 
 public class MerchantMethods {
@@ -28,7 +27,6 @@ public class MerchantMethods {
 	NPCSelector npcSel = CitizensAPI.getDefaultNPCSelector();
 	HyperAPI hyperAPI = new HyperAPI();
 	HyperEconAPI heAPI = new HyperEconAPI();
-	HyperObjectAPI hoAPI = new HyperObjectAPI();
 	Utils utils = new Utils();
 
 	public String ListMerchants(Player player) {
@@ -471,7 +469,7 @@ public class MerchantMethods {
 				npc.getTrait(HyperMerchantTrait.class).location = null;
 				
 				HyperMerchantPlugin plugin = (HyperMerchantPlugin) Bukkit.getServer().getPluginManager().getPlugin("HyperMerchant");
-				hyperAPI.getPlayerShop(shopname).setOwner(hoAPI.getHyperPlayer(plugin.settings.getDEFAULT_RENTAL_OWNER()));
+				hyperAPI.getPlayerShop(shopname).setOwner(hyperAPI.getHyperPlayer(plugin.settings.getDEFAULT_RENTAL_OWNER()));
 				//hyperAPI.getPlayerShop(shopname).setOwner(hoAPI.getHyperPlayer("GREG"));
 				message = "The shop "+shopname+" is now closed.";
 				

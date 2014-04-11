@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import regalowl.hyperconomy.hyperobject.HyperObject;
-import regalowl.hyperconomy.api.HyperObjectAPI;
+import regalowl.hyperconomy.api.HyperAPI;
 import regalowl.hyperconomy.hyperobject.HyperObjectType;
 
 
@@ -26,17 +26,17 @@ public class ShopStock {
 	private String shopname;
 	private CommandSender sender;
 
-	private HyperObjectAPI hoAPI;
+	HyperAPI hyperAPI;
 	
 	ShopStock(CommandSender snder, Player player, String sname, HyperMerchantPlugin hmp) {
-		hoAPI = new HyperObjectAPI();
+		hyperAPI = new HyperAPI();
 		
 		shopname = sname;
 		sender = snder;
 		object_names = new ArrayList<String>();
 
 		try {
-    		ArrayList<HyperObject> available_objects = hoAPI.getAvailableObjects(shopname);
+    		ArrayList<HyperObject> available_objects = hyperAPI.getAvailableObjects(shopname);
 			for (HyperObject ho:available_objects) {
 				object_names.add(ho.getDisplayName().toLowerCase());
 			}
@@ -49,9 +49,9 @@ public class ShopStock {
 			while(i < object_names.size()) {
 				String cname = object_names.get(i);
 				items_in_stock.add(cname);
-				HyperObject ho=hoAPI.getHyperObject(cname, "default");
+				HyperObject ho=hyperAPI.getHyperObject(cname, "default");
 				if (ho.getType() == HyperObjectType.ITEM) {
-					String mtrl = ho.getMaterial().toLowerCase();
+					String mtrl = ho.getItemStack().getType().toString().toLowerCase();
 					item_types_sorted.add(mtrl+cname);
 					items_by_type.put(mtrl+cname,cname);
 					

@@ -20,13 +20,11 @@ import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.speech.SimpleSpeechController;
 import regalowl.hyperconomy.api.HyperAPI;
 import regalowl.hyperconomy.api.HyperEconAPI;
-import regalowl.hyperconomy.api.HyperObjectAPI;
 import regalowl.hyperconomy.account.HyperPlayer;
 
 
 public class HyperMerchantTrait extends Trait {
 	HyperAPI hyperAPI = new HyperAPI();
-	HyperObjectAPI hoAPI = new HyperObjectAPI();
 	HyperEconAPI heAPI = new HyperEconAPI();
 	static ArrayList<String> shoplist;
 	HashMap<String,ShopMenu> customer_menus = new HashMap<String,ShopMenu>();
@@ -77,7 +75,7 @@ public class HyperMerchantTrait extends Trait {
 		rental = false;
 		hired = false;
 		rented = false;
-		shop_name = hyperAPI.getGlobalShopAccount();
+		shop_name = hyperAPI.getDefaultServerShopAccount();
 	}
 
 	@Override
@@ -219,7 +217,7 @@ public class HyperMerchantTrait extends Trait {
 		}
 		
 		
-		HyperPlayer hp = hoAPI.getHyperPlayer(player.getName());
+		HyperPlayer hp = hyperAPI.getHyperPlayer(player.getName());
 		
 		
 		//Check if this merchant is "for hire"
@@ -265,11 +263,11 @@ public class HyperMerchantTrait extends Trait {
 				}
 
 				
-				hyperAPI.getPlayerShop(this.shop_name).setOwner(hoAPI.getHyperPlayer(player.getName()));
+				hyperAPI.getPlayerShop(this.shop_name).setOwner(hyperAPI.getHyperPlayer(player.getName()));
 	            rental_cooldown.remove(player.getName());
 	            
 	            if (rental_price>0){
-		            hoAPI.getHyperPlayer(player.getName()).withdraw(rental_price);
+	            	hyperAPI.getHyperPlayer(player.getName()).withdraw(rental_price);
 		            if (plugin.settings.getDEFAULT_RENTAL_OWNER().equals("server")) {
 		            	heAPI.depositAccount(rental_price, "hyperconomy");
 		            } else {

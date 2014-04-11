@@ -30,10 +30,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import regalowl.hyperconomy.hyperobject.EnchantmentClass;
 import regalowl.hyperconomy.api.HyperAPI;
 import regalowl.hyperconomy.hyperobject.HyperObject;
-import regalowl.hyperconomy.api.HyperObjectAPI;
 import regalowl.hyperconomy.hyperobject.HyperObjectType;
 import regalowl.hyperconomy.account.HyperPlayer;
 import grokswell.hypermerchant.ShopTransactions;
@@ -60,7 +58,6 @@ public class ShopMenu implements Listener {
 	double commission;
 	ArrayList<ArrayList<String>> pages;
 	HyperAPI hyperAPI = new HyperAPI();
-	HyperObjectAPI hoAPI = new HyperObjectAPI();
 
 	HyperPlayer hp;
 	
@@ -92,9 +89,9 @@ public class ShopMenu implements Listener {
 	    //out.println("inventory name: "+ this.inventory_name);
         this.inventory = Bukkit.createInventory(player, size, this.inventory_name);
 
-    	hp = hoAPI.getHyperPlayer(player.getName());
+    	hp = hyperAPI.getHyperPlayer(player.getName());
     	
-        economy_name = hyperAPI.getShopEconomy(this.shopname);
+        economy_name = hyperAPI.getShop(this.shopname).getEconomy();
         
 		shopstock = new ShopStock(sender, this.player, this.shopname, this.plugin);
         shopstock.SortStock(2);
@@ -169,23 +166,22 @@ public class ShopMenu implements Listener {
 	        double stock = 0.0;
 	        ItemStack stack;
 	        
-        	HyperObject ho = hoAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
+        	HyperObject ho = hyperAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
 	        
 	        if (ho.getType()==HyperObjectType.ITEM) {
 	        	stock = ho.getStock();
-				stack = new ItemStack(ho.getMaterialEnum(), 1);
-				stack.setDurability((short)ho.getData());
+				stack = ho.getItemStack();
 				
 				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
-				value = hoAPI.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1);
-				cost = hoAPI.getTruePurchasePrice(ho, EnchantmentClass.DIAMOND, 1);
+				value = ho.getSellPriceWithTax(1, hp);
+				cost = ho.getBuyPriceWithTax(1);
 				
 			} else if (ho.getType()==HyperObjectType.ENCHANTMENT) {
 				stock = ho.getStock();
 				
 				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
-				value = hoAPI.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1);
-				cost = hoAPI.getTruePurchasePrice(ho, EnchantmentClass.DIAMOND, 1);
+				value = ho.getSellPriceWithTax(1, hp);
+				cost = ho.getBuyPriceWithTax(1);
 
 				//stack = new ItemStack(Material.STONE, 1, (short) 0);
 
@@ -196,8 +192,8 @@ public class ShopMenu implements Listener {
 				stock = ho.getStock();
 				
 				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
-				value = hoAPI.getTrueSaleValue(ho, hp, EnchantmentClass.DIAMOND, 1);
-				cost = hoAPI.getTruePurchasePrice(ho, EnchantmentClass.DIAMOND, 1);
+				value = ho.getSellPriceWithTax(1, hp);
+				cost = ho.getBuyPriceWithTax(1);
 
 				stack = new ItemStack(Material.POTION, 1, (short) 0);
 				

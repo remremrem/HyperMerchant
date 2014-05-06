@@ -1,10 +1,9 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 import net.citizensnpcs.api.npc.NPC;
 
@@ -14,7 +13,6 @@ import org.bukkit.GameMode;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -27,7 +25,6 @@ import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import regalowl.hyperconomy.api.HyperAPI;
@@ -183,8 +180,6 @@ public class ShopMenu implements Listener {
 				value = ho.getSellPriceWithTax(1, hp);
 				cost = ho.getBuyPriceWithTax(1);
 
-				//stack = new ItemStack(Material.STONE, 1, (short) 0);
-
 				stack = (new EnchantIcons()).getIcon(ho.getDisplayName());
 
 				
@@ -319,7 +314,6 @@ public class ShopMenu implements Listener {
         			player.sendMessage("You cannot sell to this shop.");
         		}
         		else {
-	        		//HashMap<String, Integer> enchants = new HashMap<String, Integer>();
         			ArrayList<String> enchants = new ArrayList<String>();
 	        		
 	        		//SELLING ENCHANTED BOOK
@@ -332,7 +326,6 @@ public class ShopMenu implements Listener {
 	        			
 	        			if (!enchants.isEmpty()) {
 	        				for (String e : enchants) {
-	        					out.println(e);
 	        					if (shopstock.items_in_stock.contains(e)) {
 	    	                		ItemStack item_holding = player.getItemInHand().clone();
 	    	                		player.setItemInHand(player.getItemOnCursor().clone());
@@ -356,31 +349,20 @@ public class ShopMenu implements Listener {
 	        			for (HyperObject hob : hyperAPI.getEnchantmentHyperObjects(item_in_hand, player.getName())) {
 	        				enchants.add(hob.getDisplayName());
 	        			}
-	        			
-		        		//for (Enchantment ench : item_in_hand.getEnchantments().keySet()) {
-	        			//	enchants.add(ench.getName().toLowerCase()+"_"+item_in_hand.getEnchantments().get(ench));
-		        		//}
 	        		}
 	        		
 	        		// SELLING ENCHANTS
 	        		if (!enchants.isEmpty()) {
 	                	String display_name = this.optionIcons[slot_num].getItemMeta().getDisplayName().replace("§6", "");
             			String enchant_name = display_name.replace(" ", "_");
-            			out.println(enchants);
-            			out.println(enchant_name);
-            			//out.println(hyperAPI.getHyperObject(item_in_hand, economy_name));
 	                	if (enchants.contains(enchant_name)) {
 	                		
-	                	
-            			//if (shopstock.items_in_stock.contains(enchant_name)) {
 	                		ItemStack item_holding = player.getItemInHand().clone();
 	                		player.setItemInHand(player.getItemOnCursor().clone());
 	                		if (this.shop_trans.Sell(enchant_name)) {
 	            				player.setItemOnCursor(player.getItemInHand());
 	            				player.setItemInHand(item_holding);
 	                		} else {
-	                			//player.sendMessage(ChatColor.YELLOW+"Your "+player.getItemInHand().getItemMeta().getDisplayName()+ 
-	                			//		" does not possess enchantment "+display_name+".");
 	
 	                    		player.setItemInHand(item_holding);
 	                		}

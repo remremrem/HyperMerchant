@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,7 +73,6 @@ public class ShopStock {
 		} 
 		catch (Exception e) {
 			sender.sendMessage("Error, cannot open shop inventory");
-			out.println(e.toString());
 		}
 	}
 

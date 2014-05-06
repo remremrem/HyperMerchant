@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 
 import java.util.ArrayList;
 
@@ -50,7 +50,7 @@ public class ShopTransactions {
 		if ((hyperAPI.getShop(shopname).isTradeable(ho))) {
 			TransactionResponse response = hyperAPI.sell(player, ho, 1, hyperAPI.getShop(shopname));
 			response.sendMessages();
-			return true;
+			return response.successful();
 		}
 		
 		
@@ -66,6 +66,9 @@ public class ShopTransactions {
 			
 		int item_amount = item_stack.getAmount();
 		HyperObject ho = hyperAPI.getHyperObject(item_stack, hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
+		if (ho==null) {
+			return false;
+		}
 		String item_name = ho.getDisplayName().toLowerCase();
 		ho = hyperAPI.getHyperObject(item_name, hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		

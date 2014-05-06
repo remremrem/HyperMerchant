@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -294,6 +294,8 @@ public class ShopMenu implements Listener {
             }
             
             ItemStack item_in_hand = event.getCursor();
+            
+            //IF CLICKING WITH EMPTY CURSOR
             if (slot_num < size-9 && slot_num >= 0 && (item_in_hand.getType() == Material.AIR)) {
         		if (this.optionNames[slot_num] != null && this.optionNames[slot_num] != " ") {
                     if (event.isLeftClick()){
@@ -311,40 +313,82 @@ public class ShopMenu implements Listener {
         		}
             }
             
-            
+            // IF CLICKING WITH ITEM IN CURSOR
         	else if (slot_num < size && slot_num >= 0 && (item_in_hand.getType() != Material.AIR)){
         		if (!(hp.hasSellPermission(hyperAPI.getShop(this.shopname)))) {
         			player.sendMessage("You cannot sell to this shop.");
         		}
         		else {
-	        		HashMap<String, Integer> enchants = new HashMap<String, Integer>();
+	        		//HashMap<String, Integer> enchants = new HashMap<String, Integer>();
+        			ArrayList<String> enchants = new ArrayList<String>();
+	        		
+	        		//SELLING ENCHANTED BOOK
 	        		if (item_in_hand.getType()==Material.ENCHANTED_BOOK) {
-	        			EnchantmentStorageMeta em = (EnchantmentStorageMeta) item_in_hand.getItemMeta();
-	        			for (Enchantment ench : em.getStoredEnchants().keySet()){
-	        				enchants.put(ench.getName(),item_in_hand.getEnchantments().get(ench));
+	        			
+	        			//make list of hyperconomy enchantment names from book enchants
+	        			for (HyperObject hob : hyperAPI.getEnchantmentHyperObjects(item_in_hand, player.getName())) {
+	        				enchants.add(hob.getDisplayName());
 	        			}
+	        			
+	        			if (!enchants.isEmpty()) {
+	        				for (String e : enchants) {
+	        					out.println(e);
+	        					if (shopstock.items_in_stock.contains(e)) {
+	    	                		ItemStack item_holding = player.getItemInHand().clone();
+	    	                		player.setItemInHand(player.getItemOnCursor().clone());
+	    	                		
+	    	                		if (this.shop_trans.Sell(e)) {
+	    	            				player.setItemOnCursor(player.getItemInHand());
+	    	            				player.setItemInHand(item_holding);		
+	    	                		} else {
+	    	                    		player.setItemInHand(item_holding);
+	    	                		}
+
+	    	                	} else {
+	    	                		player.sendMessage(ChatColor.YELLOW+"This shop doesn't want your enchantments");
+	    	                	}
+	        				}
+	        			}
+
+	        		//MAKE LISTS OF ITEM ON CURSOR ENCHANMENTS	
 	        		} else {
-		        		for (Enchantment ench : item_in_hand.getEnchantments().keySet()) {
-		        			enchants.put(ench.getName(),item_in_hand.getEnchantments().get(ench));
-		        		}
+	        			//make list of hyperconomy enchantment names from book enchants
+	        			for (HyperObject hob : hyperAPI.getEnchantmentHyperObjects(item_in_hand, player.getName())) {
+	        				enchants.add(hob.getDisplayName());
+	        			}
+	        			
+		        		//for (Enchantment ench : item_in_hand.getEnchantments().keySet()) {
+	        			//	enchants.add(ench.getName().toLowerCase()+"_"+item_in_hand.getEnchantments().get(ench));
+		        		//}
 	        		}
 	        		
 	        		// SELLING ENCHANTS
 	        		if (!enchants.isEmpty()) {
 	                	String display_name = this.optionIcons[slot_num].getItemMeta().getDisplayName().replace("§6", "");
             			String enchant_name = display_name.replace(" ", "_");
-	                	if (shopstock.items_in_stock.contains(enchant_name)) {
+            			out.println(enchants);
+            			out.println(enchant_name);
+            			//out.println(hyperAPI.getHyperObject(item_in_hand, economy_name));
+	                	if (enchants.contains(enchant_name)) {
+	                		
+	                	
+            			//if (shopstock.items_in_stock.contains(enchant_name)) {
 	                		ItemStack item_holding = player.getItemInHand().clone();
 	                		player.setItemInHand(player.getItemOnCursor().clone());
 	                		if (this.shop_trans.Sell(enchant_name)) {
 	            				player.setItemOnCursor(player.getItemInHand());
 	            				player.setItemInHand(item_holding);
 	                		} else {
-	                			player.sendMessage(ChatColor.YELLOW+"Your "+player.getItemInHand().getItemMeta().getDisplayName()+ 
-	                					" does not possess enchantment "+display_name+".");
+	                			//player.sendMessage(ChatColor.YELLOW+"Your "+player.getItemInHand().getItemMeta().getDisplayName()+ 
+	                			//		" does not possess enchantment "+display_name+".");
 	
 	                    		player.setItemInHand(item_holding);
 	                		}
+	                		
+	                	// TRY SELLING ENCHANTED ITEM
+	                	} else if (this.shop_trans.Sell(item_in_hand)) {
+	    	        		this.inventory_view.setCursor(new ItemStack(Material.AIR));
+	    	        			
 	                	} else {
 	                		player.sendMessage(ChatColor.YELLOW+"This shop doesn't want your enchanted item");
 	                	}
@@ -354,12 +398,7 @@ public class ShopMenu implements Listener {
 	                else if (this.shop_trans.Sell(item_in_hand)) {
 	        			this.inventory_view.setCursor(new ItemStack(Material.AIR));
 	        			
-	        		} else if (item_in_hand.getDurability() < item_in_hand.getType().getMaxDurability()){
-	        			player.sendMessage(ChatColor.YELLOW+"This shop will not purchase a damaged "+
-								item_in_hand.getType().name().toLowerCase()+".");
-	        			player.getInventory().addItem(item_in_hand);
-	        			this.inventory_view.setCursor(new ItemStack(Material.AIR));
-	        			
+	        		//THE SHOP WONT BUY IT	
 	        		} else {
 	        			player.sendMessage(ChatColor.YELLOW+"This shop does not deal in "+
 								item_in_hand.getType().name().toLowerCase()+".");

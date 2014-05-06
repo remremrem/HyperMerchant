@@ -75,7 +75,7 @@ public class HyperMerchantTrait extends Trait {
 		rental = false;
 		hired = false;
 		rented = false;
-		shop_name = hyperAPI.getDefaultServerShopAccount();
+		shop_name = hyperAPI.getDefaultServerShopAccountName();
 	}
 
 	@Override

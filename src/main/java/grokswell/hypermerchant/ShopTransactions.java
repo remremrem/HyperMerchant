@@ -72,7 +72,7 @@ public class ShopTransactions {
 		String item_name = ho.getDisplayName().toLowerCase();
 		ho = hyperAPI.getHyperObject(item_name, hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		
-		if (shopmenu.shopstock.items_in_stock.contains(item_name) && (hyperAPI.getShop(shopname).isTradeable(ho))) {
+		if (shopmenu.shopstock.display_names.contains(item_name) && (hyperAPI.getShop(shopname).isTradeable(ho))) {
 			player.getInventory().addItem(item_stack);
 			TransactionResponse response = hyperAPI.sell(player, ho, item_amount, hyperAPI.getShop(shopname));
 			response.sendMessages();

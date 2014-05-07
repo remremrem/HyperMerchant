@@ -91,7 +91,7 @@ public class ManageMenu implements Listener {
       economy_name = hyperAPI.getShop(this.shopname).getEconomy();
       
 		shopstock = new ShopStock(sender, this.player, this.shopname, this.plugin);
-      shopstock.SortStock(2);
+      //shopstock.SortStock(2);
 		this.item_count=shopstock.items_count;
       pages = shopstock.pages;
       double maxpages = this.item_count/45;

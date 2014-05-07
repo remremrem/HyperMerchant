@@ -4,6 +4,7 @@ package grokswell.hypermerchant;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import net.citizensnpcs.api.npc.NPC;
 
@@ -41,6 +42,8 @@ public class ShopMenu implements Listener {
     int page_number; //the current page the player is viewing
     int item_count; //number of items in this shop
     int last_page; //the last_page number in the menu
+    int sort_by; //sort-by 0=item name, 1=item type, 2=item price, 3=item quantity
+    int display_zero_stock; //toggle displaying items with zero stock
     private HyperMerchantPlugin plugin;
     private Player player;
     private String inventory_name;
@@ -49,17 +52,21 @@ public class ShopMenu implements Listener {
     private String[] optionNames;
     private ItemStack[] optionIcons;
 	private ShopTransactions shop_trans;
+	private ItemStack sorting_icon;
 	String economy_name;
+	
 	ShopStock shopstock;
+	
 	NPC npc;
 	double commission;
-	ArrayList<ArrayList<String>> pages;
 	HyperAPI hyperAPI = new HyperAPI();
 
 	HyperPlayer hp;
 	
 	
     public ShopMenu(String name, int size, HyperMerchantPlugin plgn,CommandSender sender, Player plyr, NPC npc) {
+    	this.sort_by=0;
+    	this.display_zero_stock=1;
     	this.shopname = name;
         this.size = size;
         this.plugin = plgn;
@@ -76,6 +83,9 @@ public class ShopMenu implements Listener {
     	this.shop_trans = new ShopTransactions(player, this.shopname, this.plugin, this);
     	this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
     	
+    	this.sorting_icon = plugin.menuButtonData.help5.clone();
+    	UpdateSortingIcon();
+    	
         String iname = (this.shopname+"<>"+player.getName());
         if (iname.length()>32) {
         	this.inventory_name = iname.substring(0, 27)+this.plugin.uniquifier.uniquify();
@@ -90,10 +100,9 @@ public class ShopMenu implements Listener {
     	
         economy_name = hyperAPI.getShop(this.shopname).getEconomy();
         
-		shopstock = new ShopStock(sender, this.player, this.shopname, this.plugin);
-        shopstock.SortStock(2);
+		this.shopstock = new ShopStock(sender, this.player, this.shopname, this.plugin);
+        //shopstock.SortStock(1);
 		this.item_count=shopstock.items_count;
-        pages = shopstock.pages;
         double maxpages = this.item_count/45;
         this.last_page = (int) maxpages;
 		this.loadPage();
@@ -142,7 +151,6 @@ public class ShopMenu implements Listener {
     	this.optionNames = new String[size];
     	
     	// Populate interface button inventory slots
-    	
     	this.setOption(46, plugin.menuButtonData.back)
 	    .setOption(45, plugin.menuButtonData.first_page)
 	    .setOption(52, plugin.menuButtonData.forward.clone())
@@ -151,9 +159,9 @@ public class ShopMenu implements Listener {
 	    .setOption(48, plugin.menuButtonData.help2.clone())
 	    .setOption(49, plugin.menuButtonData.help3.clone())
 	    .setOption(50, plugin.menuButtonData.help4.clone())
-	    .setOption(51, plugin.menuButtonData.help5.clone());
+	    .setOption(51, sorting_icon);
     	int count = 0;
-		ArrayList<String> page=(ArrayList<String>) pages.get(this.page_number);
+		ArrayList<String> page=(ArrayList<String>) shopstock.pages.get(this.page_number);
 		
 		//Populate the shop stock slots for current page
 		for (String item_name : page) {
@@ -196,8 +204,8 @@ public class ShopMenu implements Listener {
 			} else {
 				stack = new ItemStack(Material.AIR, 1, (short) 0);
 			}
-
-			this.setOption(count, stack, item_name.replaceAll("_", " "), ChatColor.WHITE+"Price: "+ChatColor.DARK_PURPLE+String.format("%.2f", cost),
+	        
+			this.setOption(count, stack, ho.getDisplayName().replaceAll("_", " "), ChatColor.WHITE+"Price: "+ChatColor.DARK_PURPLE+String.format("%.2f", cost),
 					ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", value), 
 					ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) stock) );
 	        count++;
@@ -246,6 +254,62 @@ public class ShopMenu implements Listener {
 		this.inventory.clear();
 		this.loadPage();
     	this.menuRefresh();
+    }
+    
+    private void UpdateSortingIcon() {
+    	sorting_icon = plugin.menuButtonData.help5.clone();
+    	ItemMeta im = sorting_icon.getItemMeta();
+    	List<String> lore = im.getLore();
+    	lore.add(" ");
+    	
+    	if (sort_by == 0){
+    		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Item Name");
+    	} else if (sort_by == 1){
+    		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Material Name");
+    	} else if (sort_by == 2){
+    		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Purchase Price");
+    	} else if (sort_by == 3){
+    		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Sell Price");
+    	} else if (sort_by == 4){
+    		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Stock Amount");
+    	}
+    	
+    	lore.add(" ");
+    	
+    	if (display_zero_stock == 0){
+    		lore.add(ChatColor.DARK_PURPLE+"show zero stock: "+ChatColor.RED+"No");
+    	} else {
+    		lore.add(ChatColor.DARK_PURPLE+"show zero stock: "+ChatColor.RED+"Yes");
+    	}
+    	
+    	im.setLore(lore);
+    	sorting_icon.setItemMeta(im);
+    }
+    
+    public void ToggleZeroStock() {
+		if (display_zero_stock==0){
+			display_zero_stock=1;
+		} else display_zero_stock=0;
+		
+		UpdateSortingIcon();
+		shopstock.Refresh(sort_by, display_zero_stock);
+		this.item_count=shopstock.items_count;
+        double maxpages = this.item_count/45;
+        this.last_page = (int) maxpages;
+		firstPage();	
+    }
+    
+    public void Sort() {
+		if (sort_by < 4){
+			sort_by = sort_by+1;
+		} else sort_by = 0;
+		
+		UpdateSortingIcon();
+		shopstock.Refresh(sort_by, display_zero_stock);
+		this.item_count=shopstock.items_count;
+        double maxpages = this.item_count/45;
+        this.last_page = (int) maxpages;
+		firstPage();	
     }
 
     
@@ -326,7 +390,7 @@ public class ShopMenu implements Listener {
 	        			
 	        			if (!enchants.isEmpty()) {
 	        				for (String e : enchants) {
-	        					if (shopstock.items_in_stock.contains(e)) {
+	        					if (shopstock.display_names.contains(e.toLowerCase())) {
 	    	                		ItemStack item_holding = player.getItemInHand().clone();
 	    	                		player.setItemInHand(player.getItemOnCursor().clone());
 	    	                		
@@ -400,6 +464,11 @@ public class ShopMenu implements Listener {
             }
             else if (slot_num == 53){
             	this.lastPage();
+            }
+            else if (slot_num == 51){
+            	if (event.isRightClick()) {
+            		this.ToggleZeroStock();
+            	} else this.Sort();
             }
             else if ((event.getRawSlot() >= 54) && (event.getRawSlot() <= 89)){
             	if (event.isShiftClick()) {

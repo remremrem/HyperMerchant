@@ -29,10 +29,10 @@ help4:
   name: "To Sell Enchantment:"
   lore: Left-click enchanted item,on matching store enchantment
 help5:
-  material: PAPER
+  material: BOOK
   data: 0
-  name: 
-  lore: 
+  name: "Switch Sorting Mode"
+  lore: Left-click switch sorting mode, Right-click toggle zero stock
 forward:
   material: STATIONARY_WATER
   data: 0

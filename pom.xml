@@ -13,7 +13,7 @@
 		</repository>
 		<repository>
             <id>my-repo</id>
-            <url>http://doyle.is-a-geek.net:8000/repo/</url>
+            <url>http://www.grokswell.com:8000/repo/</url>
         </repository>
 	</repositories>
 	<scm>

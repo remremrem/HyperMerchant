@@ -83,7 +83,7 @@ public class ShopMenu implements Listener {
     	this.shop_trans = new ShopTransactions(player, this.shopname, this.plugin, this);
     	this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
     	
-    	this.sorting_icon = plugin.menuButtonData.help5.clone();
+    	//this.sorting_icon = plugin.menuButtonData.help5.clone();
     	UpdateSortingIcon();
     	
         String iname = (this.shopname+"<>"+player.getName());
@@ -257,9 +257,23 @@ public class ShopMenu implements Listener {
     }
     
     private void UpdateSortingIcon() {
-    	sorting_icon = plugin.menuButtonData.help5.clone();
-    	ItemMeta im = sorting_icon.getItemMeta();
-    	List<String> lore = im.getLore();
+    	this.sorting_icon = plugin.menuButtonData.help5.clone();
+    	ItemMeta im;
+    	List<String> lore;
+    	
+    	if (sorting_icon.hasItemMeta()){
+    		im = sorting_icon.getItemMeta();
+    	} else {
+    	    im=Bukkit.getItemFactory().getItemMeta(sorting_icon.getType());
+    		
+    	}
+    	
+	    if (im.hasLore()){
+	    	lore=im.getLore();
+	    } else {
+	    	lore = new ArrayList<String>();
+	    }
+	    
     	lore.add(" ");
     	
     	if (sort_by == 0){

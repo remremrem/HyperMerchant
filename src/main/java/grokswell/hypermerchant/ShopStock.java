@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,7 +71,7 @@ public class ShopStock {
 		Collections.sort(object_names, String.CASE_INSENSITIVE_ORDER);
 		//Collections.sort(non_zero_names, String.CASE_INSENSITIVE_ORDER);
 		ArrayList<String> sorted_items = Sort(sort_by);
-		out.println("sorted_items: "+sorted_items);
+		//out.println("sorted_items: "+sorted_items);
 		if (sorted_items!=null){
 			LayoutPages(sorted_items);
 		}
@@ -81,7 +81,7 @@ public class ShopStock {
 	public ArrayList<String> Sort(Integer sort_by) {		
 		//sort-by 0=item name, 1=item type, 2=item price, 3=item quantity
 		ArrayList<String> sorted_items = new ArrayList<String>();
-		out.println("sort_by: "+sort_by);
+		//out.println("sort_by: "+sort_by);
 		try {
 			int i = 0;
 

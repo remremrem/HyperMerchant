@@ -230,11 +230,18 @@ public class HyperMerchantTrait extends Trait {
 				player.sendMessage(ChatColor.YELLOW+"If you hire "+this.npc.getName()+", you will pay "+this.npc.getName()+" "+this.comission+" percent of all sales made by "+this.npc.getName()+".");
 			}
 			player.sendMessage(ChatColor.YELLOW+"Within 10 seconds, enter the name of the shop you would like this clerk to work at:");
-			for (String shopname : hyperAPI.getPlayerShopList()) {
+			
+			int x=0;
+			for (String shopname : hyperAPI.getPlayerShopList()) { //List shops owned by clicking player
 				if (hyperAPI.getPlayerShop(shopname).getOwner().getName().equals(player.getName())){
 					player.sendMessage(ChatColor.YELLOW+shopname);
+					x=1;
 				}
 			}
+			if (x==0){
+				player.sendMessage(ChatColor.YELLOW+"It seems you do not own any shops.");
+			}
+			
 			new RemoveHireCooldown(player.getName()).runTaskLater(this.plugin, 200);
 			return;
 		}

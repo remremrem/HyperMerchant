@@ -125,6 +125,10 @@ public class ClerkCommand {
 					npctype="PLAYER";
 					shopname = hyperAPI.getPlayerShop(player);
 				}
+				if (shopname.equals(null)){
+					sender.sendMessage(ChatColor.YELLOW+"It seems you may not own any shops.");
+					return;
+				}
 				//out.println("shopname: "+shopname);
 				if (args.length < 2) {
 					sender.sendMessage(ChatColor.YELLOW+"You must provide a name for your new clerk.");
@@ -153,7 +157,6 @@ public class ClerkCommand {
 					npc.getTrait(LookClose.class).lookClose(true);
 				}
 
-				//sender.sendMessage(ChatColor.YELLOW+"You are now off duty. Other players cannot click on you to trade with your shop.");
 				return;
 			//END CLERK HIRE
 

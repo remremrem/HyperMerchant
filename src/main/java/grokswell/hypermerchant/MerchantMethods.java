@@ -424,7 +424,7 @@ public class MerchantMethods {
 		String shopname = npc.getTrait(HyperMerchantTrait.class).shop_name;
 		
 		if (npc.getTrait(HyperMerchantTrait.class).hired) {
-			if (hyperAPI.getPlayerShop(shopname).getOwner().getName() == player.getName()) {
+			if (hyperAPI.getPlayerShop(shopname).getOwner().getName().equals(player.getName())) {
 				npc.getTrait(HyperMerchantTrait.class).hired = false;
 				npc.getTrait(HyperMerchantTrait.class).forhire = true;
 				Teleport(npc.getId(), utils.StringToLoc(npc.getTrait(HyperMerchantTrait.class).location));
@@ -462,7 +462,7 @@ public class MerchantMethods {
 		
 		
 		if (npc.getTrait(HyperMerchantTrait.class).rented) {
-			if (hyperAPI.getPlayerShop(shopname).getOwner().getName() == player.getName()) {
+			if (hyperAPI.getPlayerShop(shopname).getOwner().getName().equals(player.getName())) {
 				npc.getTrait(HyperMerchantTrait.class).rented = false;
 				npc.getTrait(HyperMerchantTrait.class).rental = true;
 				Teleport(npc.getId(), utils.StringToLoc(npc.getTrait(HyperMerchantTrait.class).location));

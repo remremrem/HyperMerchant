@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 
 import grokswell.util.Utils;
 
@@ -158,7 +158,7 @@ public class HyperMerchantTrait extends Trait {
     
     public void Hire(String shopname, Player player){
 		if (hyperAPI.getPlayerShopList().contains(shopname)){
-			if (hyperAPI.getPlayerShop(shopname).getOwner().getName() == player.getName()) {
+			if (hyperAPI.getPlayerShop(shopname).getOwner().getName().equals(player.getName())) {
 		    	if (!this.npc.isSpawned()){
 		    		this.npc.spawn(this.npc.getStoredLocation());
 		    	}
@@ -231,7 +231,7 @@ public class HyperMerchantTrait extends Trait {
 			}
 			player.sendMessage(ChatColor.YELLOW+"Within 10 seconds, enter the name of the shop you would like this clerk to work at:");
 			for (String shopname : hyperAPI.getPlayerShopList()) {
-				if (hyperAPI.getPlayerShop(shopname).getOwner().getName() == player.getName()){
+				if (hyperAPI.getPlayerShop(shopname).getOwner().getName().equals(player.getName())){
 					player.sendMessage(ChatColor.YELLOW+shopname);
 				}
 			}

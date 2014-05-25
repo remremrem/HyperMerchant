@@ -12,6 +12,7 @@ import net.citizensnpcs.api.npc.NPCSelector;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -152,17 +153,22 @@ public class MerchantMethods {
 	public int Hire(String npcname, String npctype, String shopname, Location location) {
 		NPC this_npc;
 		String npc_type = npctype;
+		Location l = location;
 		int id = -1;
 		//out.println(npc_type);
 		if (npc_type == null){
 			npc_type = "PLAYER";
+		}
+		
+		if (l.getBlock().getType() != Material.AIR) {
+			l = utils.getFirstBlockAboveGround(l);
 		}
 
 		this_npc = npcReg.createNPC(EntityType.valueOf(npc_type.toUpperCase()), npcname); 
 		this_npc.addTrait(HyperMerchantTrait.class);
 
 		this_npc.getTrait(HyperMerchantTrait.class).shop_name = shopname;
-		this_npc.spawn(location);
+		this_npc.spawn(l);
 
 		id = this_npc.getId();
 		

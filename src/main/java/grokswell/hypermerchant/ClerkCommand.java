@@ -4,6 +4,7 @@ package grokswell.hypermerchant;
 
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import regalowl.hyperconomy.account.HyperPlayer;
 import regalowl.hyperconomy.api.HyperAPI;
 import regalowl.hyperconomy.shop.PlayerShop;
 
@@ -107,32 +109,51 @@ public class ClerkCommand {
 				
 			//CLERK HIRE
 			} else if (args[0].equals("hire")) {
+				
 				int clerkcount = merchmeth.GetClerkCount(player);
 				if (clerkcount >= HMP.settings.getMAX_NPCS_PER_PLAYER()) {
 					sender.sendMessage(ChatColor.YELLOW+"You already have the maximum number of clerks you may hire.");
 					return;
 				}
-				//for (String ps : hyperAPI.getPlayerShopList()) {
-				//	if hyperAPI.getPlayerShop(name)ps.getOwner()
-				//}
+				ArrayList<String> shopnames = ListPlayersShops(player.getName());
+				if (shopnames.size() == 0) {
+					sender.sendMessage(ChatColor.YELLOW+"It seems you may not own any shops.");
+					return;
+				}
+				
 				String npctype;
 				if (args.length > 3 && args[2] == "-s") {
 					shopname = args[3];
+					if (!shopnames.contains(shopname)) {
+						sender.sendMessage(ChatColor.YELLOW+"You do not seem to own a shop named "+shopname);
+						return;
+					}
 					npctype="PLAYER";
 				} else if (args.length > 4 && args[3] == "-s") {
 					shopname = args[4];
+					if (!shopnames.contains(shopname)) {
+						sender.sendMessage(ChatColor.YELLOW+"You do not seem to own a shop named "+shopname);
+						return;
+					}
 					npctype=args[2].toUpperCase();
 				} else if (args.length == 3) {
 					npctype=args[2].toUpperCase();
 					shopname = hyperAPI.getPlayerShop(player);
+					if (!shopnames.contains(shopname)) {
+						shopname = shopnames.get(0);
+					}
 				} else {
 					npctype="PLAYER";
 					shopname = hyperAPI.getPlayerShop(player);
+					if (!shopnames.contains(shopname)) {
+						shopname = shopnames.get(0);
+					}
 				}
-				if (shopname.equals("")){
-					sender.sendMessage(ChatColor.YELLOW+"It seems you may not own any shops.");
-					return;
-				}
+				
+				//if (shopname.equals("")){
+				//	sender.sendMessage(ChatColor.YELLOW+"It seems you may not own any shops.");
+				//	return;
+				//}
 				//out.println("shopname: "+shopname);
 				if (args.length < 2) {
 					sender.sendMessage(ChatColor.YELLOW+"You must provide a name for your new clerk.");
@@ -370,5 +391,15 @@ public class ClerkCommand {
 		//						"selected to use the command "+ChatColor.RED+"/hmerchant.");
 		//	return;
 		//}					
+	}
+	
+	private ArrayList<String> ListPlayersShops(String playername){
+		ArrayList<String> shopnames = new ArrayList<String>();
+		for (String sname : hyperAPI.getPlayerShopList()) {
+			if (hyperAPI.getPlayerShop(sname).getOwner().getName().equals(playername)){
+				shopnames.add(sname);
+			}
+		}
+		return shopnames;
 	}
 }

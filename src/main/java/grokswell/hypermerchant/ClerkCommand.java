@@ -19,6 +19,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import regalowl.hyperconomy.api.HyperAPI;
+import regalowl.hyperconomy.shop.PlayerShop;
 
 public class ClerkCommand {
 	CommandSender sender;
@@ -111,6 +112,9 @@ public class ClerkCommand {
 					sender.sendMessage(ChatColor.YELLOW+"You already have the maximum number of clerks you may hire.");
 					return;
 				}
+				//for (String ps : hyperAPI.getPlayerShopList()) {
+				//	if hyperAPI.getPlayerShop(name)ps.getOwner()
+				//}
 				String npctype;
 				if (args.length > 3 && args[2] == "-s") {
 					shopname = args[3];
@@ -125,7 +129,7 @@ public class ClerkCommand {
 					npctype="PLAYER";
 					shopname = hyperAPI.getPlayerShop(player);
 				}
-				if (shopname.equals(null)){
+				if (shopname.equals("")){
 					sender.sendMessage(ChatColor.YELLOW+"It seems you may not own any shops.");
 					return;
 				}
@@ -146,7 +150,7 @@ public class ClerkCommand {
 					sender.sendMessage(ChatColor.YELLOW+"You may not use the npc type "+npctype);
 					return;
 				}
-				
+
 				int npcid = merchmeth.Hire(args[1], npctype, shopname, hyperAPI.getPlayerShop(shopname).getLocation1());
 				if ( npcid != -1 ) {
 					int clerk_count = HMP.playerData.getPlayerData().getInt(player.getName()+".clerkcount");

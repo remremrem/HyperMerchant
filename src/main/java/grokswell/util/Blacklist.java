@@ -29,19 +29,7 @@ public class Blacklist {
   	return this.blacklistData;
   }
   
-//  public void savePlayerData(String path, Object value) {
-//		File playerFile = null;
-//  	blacklistData.set(path, value);
-//		playerFile = new File(dataFolder, "npcblacklist.yml");
-//		try {
-//				blacklistData.save(playerFile);
-//		}
-//  	catch(IOException ex) {
-//			plugin.getLogger().severe("Cannot save to npcblacklist.yml");
-//  	}
-//  }
-  
-  
+
   private void loadBlacklist() {
 		File blacklistFile = null;
 		blacklistFile = new File(dataFolder, "npcblacklist.yml");

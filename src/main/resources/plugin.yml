@@ -1,6 +1,6 @@
 name: HyperMerchant
 main: grokswell.hypermerchant.HyperMerchantPlugin
-version: 1.52-dev
+version: 1.53-dev
 description: Inventory menu to be used with HyperConomy shops and NPC trait for Citizens2.
 author: Grokswell
 authors: [Grokswell] 
@@ -14,6 +14,12 @@ commands:
       permission: hypermerchant.menu
       permission-message: You do not have permission to use command /shopmenu.
       aliases: [smenu,storemenu]
+   managemenu:
+      description: Must be standing in shop, or specify shop name. Edit your player shop inventory with ease.
+      usage: /managemenu (shopname)
+      permission: hypermerchant.menu
+      permission-message: You do not have permission to use command /managemenu.
+      aliases: [mmenu,manmen]
    remotemenu:
       description: Browse a HyperConomy shop's inventory. Buy and sell with ease.
       usage: /remotemenu [shopname]
@@ -124,5 +130,5 @@ permissions:
       description: Allow use of the /clerk command.
       default: op
    creative.hypermerchant:
-      description: Allow player to purchase and sell while in creative mode. Be extremely careful with this permission.
+      description: Allow player to purchase,sell, and manage their shop while in creative mode. Be extremely careful with this permission.
       default: false

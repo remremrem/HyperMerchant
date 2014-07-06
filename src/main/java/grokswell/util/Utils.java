@@ -33,4 +33,8 @@ public class Utils {
 		}
 		return ag;
 	}
+	
+	public String getPlayerInput(String input) {
+		return "INPUT";
+	}
 }

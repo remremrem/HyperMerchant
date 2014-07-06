@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,6 +65,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			}
 			
 			Player player = (Player) sender;
+			out.println("PLAYER: "+player);
 			
 			if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 
 				(!player.hasPermission("creative.hypermerchant"))) {
@@ -125,6 +126,37 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 				return true;
 			}
 		}
+		
+		
+			// MANAGEMENU 
+				else if (cmd.getName().equalsIgnoreCase("managemenu")) {
+					if (!(sender instanceof Player)) {
+						sender.sendMessage("Only players can use the command "+ChatColor.RED+"/managemenu");
+						return true;
+					}
+					
+					Player player = (Player) sender;
+					
+					if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 
+							(!player.hasPermission("creative.hypermerchant"))) {
+								player.sendMessage(ChatColor.YELLOW+"You may not interact with shops while in creative mode.");
+								return true;
+						} 
+					
+					String name=hyperAPI.getPlayerShop(player);
+					if (args.length>0) {
+						name=args[0];
+					}
+					if (name.isEmpty()) {
+						sender.sendMessage(ChatColor.YELLOW+"You must be standing inside " +
+											"of a shop, or specify a shop name, to use the command "+ChatColor.RED+"/managemenu.");
+						return true;
+						
+					} else {
+						new ManageMenu(name, 54, this, sender, player, null);
+						return true;
+					}
+				}
 		
 		
 		//REMOTESHOPLIST

@@ -31,6 +31,7 @@ public class Settings {
 	static Boolean ONDUTY_IN_SHOP_ONLY;
 	static Boolean NPC_IN_SHOP_ONLY;
 	static int MAX_NPCS_PER_PLAYER;
+	static Boolean MANAGE_IN_SHOP_ONLY;
 
 
 	public Settings(HyperMerchantPlugin plgn) {
@@ -56,6 +57,7 @@ public class Settings {
 		RIGHT_CLICK_PLAYER_SHOP = true;
 		ONDUTY_IN_SHOP_ONLY = true;
 		NPC_IN_SHOP_ONLY = true;
+		MANAGE_IN_SHOP_ONLY = false;
 		MAX_NPCS_PER_PLAYER = 2;
 		
         loadConfig();
@@ -129,6 +131,9 @@ public class Settings {
         if (config.contains("PlayerShops.npc-in-shop-only")){
         	NPC_IN_SHOP_ONLY = config.getBoolean("PlayerShops.npc-in-shop-only");
         }
+        if (config.contains("PlayerShops.manage-in-shop-only")){
+        	MANAGE_IN_SHOP_ONLY = config.getBoolean("PlayerShops.manage-in-shop-only");
+        }
         if (config.contains("PlayerShops.max-npcs-per-player")){
         	MAX_NPCS_PER_PLAYER = config.getInt("PlayerShops.max-npcs-per-player");
         }
@@ -157,6 +162,7 @@ public class Settings {
 	    config.set("PlayerShops.right-click-player-shop", RIGHT_CLICK_PLAYER_SHOP);
 	    config.set("PlayerShops.onduty-in-shop-only", ONDUTY_IN_SHOP_ONLY);
 	    config.set("PlayerShops.npc-in-shop-only", NPC_IN_SHOP_ONLY);
+	    config.set("PlayerShops.manage-in-shop-only", MANAGE_IN_SHOP_ONLY);
 	    config.set("PlayerShops.max-npcs-per-player", MAX_NPCS_PER_PLAYER);
 	    
 		try {
@@ -302,5 +308,13 @@ public class Settings {
 
 	public void setMAX_NPCS_PER_PLAYER(int mAX_NPCS_PER_PLAYER) {
 		MAX_NPCS_PER_PLAYER = mAX_NPCS_PER_PLAYER;
+	}
+
+	public static Boolean getMANAGE_IN_SHOP_ONLY() {
+		return MANAGE_IN_SHOP_ONLY;
+	}
+
+	public static void setMANAGE_IN_SHOP_ONLY(Boolean mANAGE_IN_SHOP_ONLY) {
+		MANAGE_IN_SHOP_ONLY = mANAGE_IN_SHOP_ONLY;
 	}
 }

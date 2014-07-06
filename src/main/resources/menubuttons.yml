@@ -47,24 +47,24 @@ buy_price:
   material: GOLD_NUGGET
   data: 0
   name: Purchase Price
-  lore: "To set purchase price first click this button, Then click the item to set price on."
+  lore: "How much others pay you:, Click this button and then, Click items to change price., Click something else when finished., Right click items for dynamic pricing"
 sell_price:
-  material: GOLD_NUGGET
+  material: GOLD_INGOT
   data: 0
   name: Sale Price
-  lore: "To set sale price first click this button, Then click the item set price on."
+  lore: "How much you pay others:, Click this button and then, Click items to change price., Click something else when finished., Right click items for dynamic pricing"
 status:
-  material: IRON_FENCE
+  material: REDSTONE_COMPARATOR
   data: 0
   name: Set Status
-  lore: "Click this button, then left click for *trade*, right click for *sell*, shift+left click for *buy*"
+  lore: "Click this button and then, Click items to change their status., When you are done, click something else."
 manage_help_1:
-  material: STAINED_GLASS_PANE
+  material: PAPER
   data: 0
   name: 
   lore: 
 manage_help_2:
-  material: STAINED_GLASS_PANE
+  material: PAPER
   data: 0
   name: 
   lore: 

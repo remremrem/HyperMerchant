@@ -14,13 +14,13 @@ import regalowl.hyperconomy.hyperobject.HyperObject;
 import regalowl.hyperconomy.account.HyperPlayer;
 import regalowl.hyperconomy.api.HyperAPI;
 import regalowl.hyperconomy.hyperobject.HyperObjectType;
+import regalowl.hyperconomy.shop.PlayerShop;
 
 
 public class ShopStock {
 	ArrayList<ArrayList<String>> pages = new ArrayList<ArrayList<String>>();
 	ArrayList<String> object_names;
 	ArrayList<String> display_names;
-	//ArrayList<String> non_zero_names;
 	
 	
 	//Pair<Integer,String> pair1= Pair.with(42, "lalala"); <-- example of Pair usage
@@ -30,19 +30,20 @@ public class ShopStock {
 	private String economy_name;
 	private CommandSender sender;
 	private HyperPlayer hp;
+	private String menu_type;
 	
 
 	HyperAPI hyperAPI;
 	
-	ShopStock(CommandSender snder, Player plyer, String sname, HyperMerchantPlugin hmp) {
+	ShopStock(CommandSender snder, Player plyer, String sname, HyperMerchantPlugin hmp, String menutype) {
 		hyperAPI = new HyperAPI();
+		menu_type = menutype;
 		hp = hyperAPI.getHyperPlayer(plyer.getName());
 		shopname = sname;
 		economy_name = hyperAPI.getShop(this.shopname).getEconomy();
 		sender = snder;
 		object_names = new ArrayList<String>();
 		display_names = new ArrayList<String>();
-		//non_zero_names = new ArrayList<String>();
 		
 		display_zero_stock=1;
 		Refresh(0,1);
@@ -52,13 +53,20 @@ public class ShopStock {
 		display_zero_stock=dzs;
 		object_names.clear();
 		display_names.clear();
-		//non_zero_names.clear();
-		ArrayList<HyperObject> available_objects = hyperAPI.getAvailableObjects(shopname);
+		ArrayList<HyperObject> available_objects = new ArrayList<HyperObject>();
+		if (menu_type == "trade") {
+			available_objects = hyperAPI.getAvailableObjects(shopname);
+		}
+		else if (menu_type == "manage") {
+			try {
+				available_objects = hyperAPI.getPlayerShop(this.shopname).getShopObjects();
+			} catch (Exception e) {
+				return;
+			}
+		}
 		for (HyperObject ho:available_objects) {
-			//object_names.add(ho.getName());
 			if (display_zero_stock==0) {
 				if (ho.getStock()>=1) {
-					//non_zero_names.add(ho.getName());
 					object_names.add(ho.getName());
 					display_names.add(ho.getDisplayName().toLowerCase());
 				}
@@ -69,9 +77,7 @@ public class ShopStock {
 		}
 		
 		Collections.sort(object_names, String.CASE_INSENSITIVE_ORDER);
-		//Collections.sort(non_zero_names, String.CASE_INSENSITIVE_ORDER);
 		ArrayList<String> sorted_items = Sort(sort_by);
-		//out.println("sorted_items: "+sorted_items);
 		if (sorted_items!=null){
 			LayoutPages(sorted_items);
 		}
@@ -79,9 +85,7 @@ public class ShopStock {
 	
 	
 	public ArrayList<String> Sort(Integer sort_by) {		
-		//sort-by 0=item name, 1=item type, 2=item price, 3=item quantity
 		ArrayList<String> sorted_items = new ArrayList<String>();
-		//out.println("sort_by: "+sort_by);
 		try {
 			int i = 0;
 
@@ -188,7 +192,6 @@ public class ShopStock {
 			while (count < number_per_page) {
 				if (item_index < items_count) {
 					String item_name = sorted_items.get(item_index);
-					//out.println(item_name);
 					pages.get(page).add(item_name);
 				}
 				count++;

@@ -46,13 +46,13 @@ last_page:
 buy_price:
   material: GOLD_NUGGET
   data: 0
-  name: Purchase Price
-  lore: "How much others pay you:, Click this button and then, Click items to change price., Click something else when finished., Right click items for dynamic pricing"
+  name: Buy Price
+  lore: "How much you pay others:, Click this button and then, Click items to change price., Click something else when finished., Right click items for dynamic pricing"
 sell_price:
   material: GOLD_INGOT
   data: 0
-  name: Sale Price
-  lore: "How much you pay others:, Click this button and then, Click items to change price., Click something else when finished., Right click items for dynamic pricing"
+  name: Sell Price
+  lore: "How much others pay you:, Click this button and then, Click items to change price., Click something else when finished., Right click items for dynamic pricing"
 status:
   material: REDSTONE_COMPARATOR
   data: 0

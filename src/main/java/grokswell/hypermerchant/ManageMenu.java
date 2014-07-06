@@ -223,8 +223,8 @@ public class ManageMenu implements Listener, MerchantMenu {
 			}
 	        
 			this.setOption(count, stack, ho.getDisplayName().replaceAll("_", " "), 
-					ChatColor.WHITE+"Price: "+ChatColor.DARK_PURPLE+String.format("%.2f", cost),
-					ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", value), 
+					ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", cost),
+					ChatColor.WHITE+"Buy: "+ChatColor.DARK_PURPLE+String.format("%.2f", value), 
 					ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) stock),
 	    			ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+ho.getStatus().name().toLowerCase() );
 	        count++;
@@ -362,8 +362,8 @@ public class ManageMenu implements Listener, MerchantMenu {
     public void itemRefresh(int slot, HyperObject ho) {
     	hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
     	this.setOption(slot, ho.getItemStack(), ho.getDisplayName().replaceAll("_", " "), 
-    			ChatColor.WHITE+"Price: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getBuyPriceWithTax(1)),
-    			ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getSellPriceWithTax(1, hp)), 
+    			ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getBuyPriceWithTax(1)),
+    			ChatColor.WHITE+"Buy: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getSellPriceWithTax(1, hp)), 
     			ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) ho.getStock()),
     			ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+ho.getStatus().name().toLowerCase() );
     	this.inventory.setItem(slot, this.optionIcons[slot]);
@@ -417,7 +417,7 @@ public class ManageMenu implements Listener, MerchantMenu {
 		ho.setStatus(newstatus);
 		player.sendMessage(" ");
 		player.sendMessage(ChatColor.YELLOW+ho.getDisplayName());
-		player.sendMessage(ChatColor.YELLOW+"status: "+status);
+		player.sendMessage(ChatColor.YELLOW+"status: "+newstatus);
 		this.itemRefresh(slot_num, ho);
     	return;
     }

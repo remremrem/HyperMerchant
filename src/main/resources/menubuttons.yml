@@ -57,7 +57,7 @@ status:
   material: REDSTONE_COMPARATOR
   data: 0
   name: Set Status
-  lore: "Click this button and then, Click items to change their status., When you are done, click something else."
+  lore: "Click this button and then, Click items to change their status., Click something else when finished."
 manage_help_1:
   material: PAPER
   data: 0

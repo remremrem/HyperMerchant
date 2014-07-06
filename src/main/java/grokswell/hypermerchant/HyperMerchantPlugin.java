@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,7 +65,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			}
 			
 			Player player = (Player) sender;
-			out.println("PLAYER: "+player);
+			//out.println("PLAYER: "+player);
 			
 			if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 
 				(!player.hasPermission("creative.hypermerchant"))) {
@@ -153,8 +153,6 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 						return true;
 						
 					} else {
-						out.println("is allowed: "+hyperAPI.getPlayerShop(name).getAllowed());
-						out.println("is allowed: "+hyperAPI.getPlayerShop(name).isAllowed(hyperAPI.getHyperPlayer(player.getName())));
 						if (hyperAPI.getPlayerShop(name).isAllowed(hyperAPI.getHyperPlayer(player.getName()))) {
 							new ManageMenu(name, 54, this, sender, player, null);
 							return true;

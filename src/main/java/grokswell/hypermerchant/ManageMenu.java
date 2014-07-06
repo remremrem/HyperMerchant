@@ -435,7 +435,7 @@ public class ManageMenu implements Listener, MerchantMenu {
     							hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		ho.setSellPrice(price);
 		this.editcooldown.cancel();
-		player.sendMessage(ChatColor.YELLOW+"The sale price for "+ho.getDisplayName()+" is now "+price.toString());
+		player.sendMessage(ChatColor.YELLOW+"The buy price for "+ho.getDisplayName()+" is now "+price.toString());
 		this.inventory_view=this.player.openInventory(this.inventory);
 		this.itemRefresh(slot_num, ho);
 		player.setItemOnCursor(this.inventory.getItem(48));
@@ -468,7 +468,7 @@ public class ManageMenu implements Listener, MerchantMenu {
     	HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
     	ho.setBuyPrice(price);
 		this.editcooldown.cancel();
-		player.sendMessage(ChatColor.YELLOW+"The purchase price for "+ho.getDisplayName()+" is now "+price.toString());
+		player.sendMessage(ChatColor.YELLOW+"The sell price for "+ho.getDisplayName()+" is now "+price.toString());
 		this.inventory_view=this.player.openInventory(this.inventory);
 		this.itemRefresh(slot_num, ho);
 		player.setItemOnCursor(this.inventory.getItem(47));

@@ -14,7 +14,6 @@ import regalowl.hyperconomy.hyperobject.HyperObject;
 import regalowl.hyperconomy.account.HyperPlayer;
 import regalowl.hyperconomy.api.HyperAPI;
 import regalowl.hyperconomy.hyperobject.HyperObjectType;
-import regalowl.hyperconomy.shop.PlayerShop;
 
 
 public class ShopStock {

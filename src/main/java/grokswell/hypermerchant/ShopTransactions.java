@@ -1,11 +1,10 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -16,7 +15,6 @@ import regalowl.hyperconomy.api.HyperEconAPI;
 import regalowl.hyperconomy.hyperobject.HyperObject;
 import regalowl.hyperconomy.hyperobject.HyperObjectType;
 import regalowl.hyperconomy.account.HyperPlayer;
-import regalowl.hyperconomy.util.LanguageFile;
 import regalowl.hyperconomy.shop.PlayerShop;
 import regalowl.hyperconomy.transaction.TransactionResponse;
 
@@ -26,7 +24,7 @@ public class ShopTransactions {
 	String shopname;
 	private Player player;
 	private HyperConomy hc;
-	private LanguageFile hc_lang;
+	//private LanguageFile hc_lang;
     MerchantMenu shopmenu;
     HyperPlayer hp;
 	HyperAPI hyperAPI = new HyperAPI();
@@ -38,7 +36,7 @@ public class ShopTransactions {
 		shopmenu = sm;
 		hc = HyperConomy.hc;
 		hp = hyperAPI.getHyperPlayer(player.getName());
-		hc_lang = hc.getLanguageFile();
+		//hc_lang = hc.getLanguageFile();
 
 	}
 	

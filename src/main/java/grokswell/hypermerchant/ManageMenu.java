@@ -560,7 +560,10 @@ public class ManageMenu implements Listener, MerchantMenu {
         	this.toggleEditMode(null, slot_num);
         	return;
         }
-        
+        if (event.getCursor().getType()!=Material.AIR) {
+        	event.setCancelled(true);
+        	return;
+        }
         if (slot_num == 46){
             this.previousPage();
         }

@@ -14,18 +14,24 @@ commands:
       permission: hypermerchant.menu
       permission-message: You do not have permission to use command /shopmenu.
       aliases: [smenu,storemenu]
-   managemenu:
-      description: Must be standing in shop, or specify shop name. Edit your player shop inventory with ease.
-      usage: /managemenu (shopname)
-      permission: hypermerchant.menu
-      permission-message: You do not have permission to use command /managemenu.
-      aliases: [mmenu,manmen]
    remotemenu:
       description: Browse a HyperConomy shop's inventory. Buy and sell with ease.
       usage: /remotemenu [shopname]
       permission: hypermerchant.remote
       permission-message: You do not have permission to use command /remotemenu.
       aliases: [rmenu]
+   managemenu:
+      description: Must be standing in shop to use. Edit your player shop inventory with ease.
+      usage: /managemenu (shopname)
+      permission: hypermerchant.menu
+      permission-message: You do not have permission to use command /managemenu.
+      aliases: [mmenu,manmen]
+   rmanage:
+      description: Must specify a shop name. Edit your player shop inventory with ease.
+      usage: /managemenu (shopname)
+      permission: hypermerchant.rmanage
+      permission-message: You do not have permission to use command /rmanage.
+      aliases: [rman]
    remoteshoplist:
       description: List shop names in a format that can be used with /remotemenu.
       usage: /remoteshoplist
@@ -122,6 +128,9 @@ permissions:
       default: true
    hypermerchant.remote:
       description: Allow use of the /remotemenu command.
+      default: op
+   hypermerchant.rmanage:
+      description: Allow use of the /rmanage command.
       default: op
    hypermerchant.manage:
       description: Allow use of the /hmerchant command.

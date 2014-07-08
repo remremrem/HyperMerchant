@@ -149,12 +149,10 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 						} 
 					
 					String name=hyperAPI.getPlayerShop(player);
-					if (args.length>0) {
-						name=args[0];
-					}
+					
 					if (name.isEmpty()) {
 						sender.sendMessage(ChatColor.YELLOW+"You must be standing inside " +
-											"of a shop, or specify a shop name, to use the command "+ChatColor.RED+"/managemenu.");
+											"of a shop to use the command "+ChatColor.RED+"/managemenu.");
 						return true;
 						
 					} else {
@@ -168,6 +166,42 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 						}
 					}
 				}
+		
+		
+		// RMANAGE 
+			else if (cmd.getName().equalsIgnoreCase("rmanage")) {
+				if (!(sender instanceof Player)) {
+					sender.sendMessage("Only players can use the command "+ChatColor.RED+"/rmanage");
+					return true;
+				}
+				
+				Player player = (Player) sender;
+				
+				if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 
+						(!player.hasPermission("creative.hypermerchant"))) {
+							player.sendMessage(ChatColor.YELLOW+"You may not interact with shops while in creative mode.");
+							return true;
+					} 
+				
+				String name="";
+				if (args.length>0) {
+					name=args[0];
+				}
+				if (name.isEmpty()) {
+					sender.sendMessage(ChatColor.YELLOW+"You must specify a shop name, to use the command "+ChatColor.RED+"/rmanage.");
+					return true;
+					
+				} else {
+					if (hyperAPI.getPlayerShop(name).isAllowed(hyperAPI.getHyperPlayer(player.getName()))) {
+						new ManageMenu(name, 54, this, sender, player, null);
+						return true;
+					}
+					else {
+						sender.sendMessage(ChatColor.YELLOW+"You are not allowed to manage the shop known as "+name);
+						return true;
+					}
+				}
+			}
 		
 		
 		//REMOTESHOPLIST

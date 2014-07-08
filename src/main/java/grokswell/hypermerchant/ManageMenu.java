@@ -69,14 +69,14 @@ public class ManageMenu implements Listener, MerchantMenu {
 	
 	int edit_slot;
 	String edit_value;
-	String edit_type;
+	String edit_mode;
 	boolean edit_in_progress;
 	EditCooldown editcooldown;
 	
 	
     public ManageMenu(String name, int size, HyperMerchantPlugin plgn,CommandSender sender, Player plyr, NPC npc) {
     	edit_value=null;
-    	edit_type=null;
+    	edit_mode=null;
     	edit_slot=-1;
     	edit_in_progress = false;
     	status_list = new ArrayList<String>();
@@ -172,9 +172,9 @@ public class ManageMenu implements Listener, MerchantMenu {
 	    .setOption(45, plugin.menuButtonData.first_page)
 	    .setOption(52, plugin.menuButtonData.forward.clone())
 	    .setOption(53, plugin.menuButtonData.last_page.clone())
-	    .setOption(47, plugin.menuButtonData.sell_price)
-	    .setOption(48, plugin.menuButtonData.buy_price)
-	    .setOption(49, plugin.menuButtonData.status)
+	    .setOption(47, plugin.menuButtonData.sell_price.clone())
+	    .setOption(48, plugin.menuButtonData.buy_price.clone())
+	    .setOption(49, plugin.menuButtonData.status.clone())
 	    .setOption(50, plugin.menuButtonData.manage_help_1)
 	    .setOption(51, sorting_icon);
     	int count = 0;
@@ -221,10 +221,17 @@ public class ManageMenu implements Listener, MerchantMenu {
 			} else {
 				stack = new ItemStack(Material.AIR, 1, (short) 0);
 			}
-	        
+	        String buy_dynamic = ChatColor.GRAY+" <dynamic>";
+	        if (ho.getBuyPrice() > 0.0) {
+	        	buy_dynamic = ChatColor.GRAY+" <static>";
+	        }
+	        String sell_dynamic = ChatColor.GRAY+" <dynamic>";
+	        if (ho.getSellPrice() > 0.0) {
+	        	sell_dynamic = ChatColor.GRAY+" <static>";
+	        }
 			this.setOption(count, stack, ho.getDisplayName().replaceAll("_", " "), 
-					ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", cost),
-					ChatColor.WHITE+"Buy: "+ChatColor.DARK_PURPLE+String.format("%.2f", value), 
+					ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", cost)+buy_dynamic,
+					ChatColor.WHITE+"Buy: "+ChatColor.DARK_PURPLE+String.format("%.2f", value)+sell_dynamic, 
 					ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) stock),
 	    			ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+ho.getStatus().name().toLowerCase() );
 	        count++;
@@ -361,9 +368,18 @@ public class ManageMenu implements Listener, MerchantMenu {
     
     public void itemRefresh(int slot, HyperObject ho) {
     	hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
+
+        String buy_dynamic = ChatColor.GRAY+" <dynamic>";
+        if (ho.getBuyPrice() > 0.0) {
+        	buy_dynamic = ChatColor.GRAY+" <static>";
+        }
+        String sell_dynamic = ChatColor.GRAY+" <dynamic>";
+        if (ho.getSellPrice() > 0.0) {
+        	sell_dynamic = ChatColor.GRAY+" <static>";
+        }
     	this.setOption(slot, ho.getItemStack(), ho.getDisplayName().replaceAll("_", " "), 
-    			ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getBuyPriceWithTax(1)),
-    			ChatColor.WHITE+"Buy: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getSellPriceWithTax(1, hp)), 
+    			ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getBuyPriceWithTax(1))+buy_dynamic,
+    			ChatColor.WHITE+"Buy: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getSellPriceWithTax(1, hp))+sell_dynamic, 
     			ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) ho.getStock()),
     			ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+ho.getStatus().name().toLowerCase() );
     	this.inventory.setItem(slot, this.optionIcons[slot]);
@@ -393,6 +409,62 @@ public class ManageMenu implements Listener, MerchantMenu {
     public ShopStock getShopStock() {
         return this.shopstock;
     }
+    
+    ItemStack setActiveMeta(ItemStack item) {
+    	ItemMeta im = item.getItemMeta();
+    	List<String> lore = im.getLore();
+    	lore.add(0, ChatColor.RED+"<Activated>");
+    	im.setLore(lore);
+    	item.setItemMeta(im);
+    	item.addUnsafeEnchantment(plugin.active_enchant, 1);
+    	return item;
+    }
+    
+    void toggleEditMode(String mode, int slot_num){
+    	if (mode==null) {
+    		if (this.edit_mode=="SellPrice") {
+    			this.inventory.setItem(47, plugin.menuButtonData.sell_price.clone());
+    		}
+    		else if (this.edit_mode=="BuyPrice") {
+    			this.inventory.setItem(48, plugin.menuButtonData.buy_price.clone());
+    		} 
+    		else if (this.edit_mode=="Status") {
+    			this.inventory.setItem(49, plugin.menuButtonData.status.clone());
+    		}
+    		this.edit_mode=null;
+    	}
+    	else if (mode.equals("BuyPrice")) {
+    		this.edit_mode="BuyPrice";
+			ItemStack im = setActiveMeta(plugin.menuButtonData.buy_price.clone());
+			this.inventory.setItem(slot_num, im);
+    	}
+    	else if (mode.equals("SellPrice")) {
+    		this.edit_mode="SellPrice";
+			ItemStack im = setActiveMeta(plugin.menuButtonData.sell_price.clone());
+			this.inventory.setItem(slot_num, im);
+    	}
+    	else if (mode.equals("Status")) {
+    		this.edit_mode="Status";
+			ItemStack im = setActiveMeta(plugin.menuButtonData.status.clone());
+			this.inventory.setItem(slot_num, im);
+    	}
+    }
+    
+    void setPriceCancel() {
+		this.editcooldown.cancel();
+		if (this.edit_mode=="SellPrice"){
+			this.optionIcons[47].removeEnchantment(plugin.active_enchant);
+			this.inventory.setItem(47, this.optionIcons[47]);
+    		this.edit_in_progress=false;
+		}
+		else if (this.edit_mode=="BuyPrice"){
+			this.optionIcons[48].removeEnchantment(plugin.active_enchant);
+			this.inventory.setItem(48, this.optionIcons[48]);
+    		this.edit_in_progress=false;
+		}
+		this.inventory_view=this.player.openInventory(this.inventory);
+    	return;
+    }
 
     String changeStatus(int click_type, String status) {
     	int max=status_list.size()-1;
@@ -415,14 +487,11 @@ public class ManageMenu implements Listener, MerchantMenu {
     	String status = ho.getStatus().name();
 		HyperObjectStatus newstatus = HyperObjectStatus.fromString(this.changeStatus(click_type, status));
 		ho.setStatus(newstatus);
-		player.sendMessage(" ");
-		player.sendMessage(ChatColor.YELLOW+ho.getDisplayName());
-		player.sendMessage(ChatColor.YELLOW+"status: "+newstatus);
 		this.itemRefresh(slot_num, ho);
     	return;
     }
     
-    void setSellDynamic(int slot_num){
+    void setBuyDynamic(int slot_num){
     	HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
     							hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		ho.setSellPrice(0.0);
@@ -430,7 +499,7 @@ public class ManageMenu implements Listener, MerchantMenu {
     	return;
     }
     
-    void setSellPrice(int slot_num, Double price){
+    void setBuyPrice(int slot_num, Double price){
     	HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
     							hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		ho.setSellPrice(price);
@@ -438,24 +507,24 @@ public class ManageMenu implements Listener, MerchantMenu {
 		player.sendMessage(ChatColor.YELLOW+"The buy price for "+ho.getDisplayName()+" is now "+price.toString());
 		this.inventory_view=this.player.openInventory(this.inventory);
 		this.itemRefresh(slot_num, ho);
-		player.setItemOnCursor(this.inventory.getItem(48));
+		this.edit_in_progress=false;
     	return;
     }
     
-    void askSellPrice(int slot_num) {
+    void askBuyPrice(int slot_num) {
     	this.player.setItemOnCursor(new ItemStack(Material.AIR));
-		this.edit_type = "SellPrice";
+		this.edit_in_progress=true;
 		this.edit_slot = slot_num;
 		this.inventory_view.close();
 		hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
 		HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
 								hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		player.sendMessage(ChatColor.YELLOW+"Currently you pay other players "+ho.getSellPriceWithTax(1, hp)+" for "+ho.getDisplayName());
-		player.sendMessage(ChatColor.YELLOW+"You have 8 seconds to enter the new price you will pay.");
+		player.sendMessage(ChatColor.YELLOW+"You have 8 seconds to say the new price you will pay. Say 'c' to cancel.");
 		return;
     }
     
-    void setBuyDynamic(int slot_num){
+    void setSellDynamic(int slot_num){
     	HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
     							hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		ho.setBuyPrice(0.0);
@@ -463,69 +532,32 @@ public class ManageMenu implements Listener, MerchantMenu {
     	return;
     }
     
-    void setBuyPrice(int slot_num, Double price){
-    	//out.println("NEW PRICE: "+price);
+    void setSellPrice(int slot_num, Double price){
     	HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
     	ho.setBuyPrice(price);
 		this.editcooldown.cancel();
 		player.sendMessage(ChatColor.YELLOW+"The sell price for "+ho.getDisplayName()+" is now "+price.toString());
 		this.inventory_view=this.player.openInventory(this.inventory);
 		this.itemRefresh(slot_num, ho);
-		player.setItemOnCursor(this.inventory.getItem(47));
+		this.edit_in_progress=false;
     	return;
     }
     
-    void askBuyPrice(int slot_num) {
+    void askSellPrice(int slot_num) {
     	this.player.setItemOnCursor(new ItemStack(Material.AIR));
-		this.edit_type = "BuyPrice";
+		this.edit_in_progress=true;
 		this.edit_slot = slot_num;
 		this.inventory_view.close();
 		HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		player.sendMessage(ChatColor.YELLOW+"Currently other players pay you "+ho.getBuyPriceWithTax(1)+" for "+ho.getDisplayName());
-		player.sendMessage(ChatColor.YELLOW+"You have 8 seconds to enter the new price you will be paid.");
+		player.sendMessage(ChatColor.YELLOW+"You have 8 seconds to say the new price you will be paid. Say 'c' to cancel.");
 		return;
     }
     
-    @EventHandler(priority=EventPriority.HIGHEST)
-	void onPlayerChat(AsyncPlayerChatEvent event) {
-    	if (event.getPlayer().getName().equals(this.player.getName())){
-    		this.edit_value = event.getMessage();
-			if (this.edit_in_progress) {
-				event.setCancelled(true);
-				try {
-					if (this.edit_type.equals("BuyPrice")) {
-						this.setBuyPrice(this.edit_slot, Double.valueOf(edit_value));
-						this.edit_slot = -1;
-						this.edit_value = null;
-						return;
-					} 
-					else if (this.edit_type.equals("SellPrice")) {
-						this.setSellPrice(this.edit_slot, Double.valueOf(edit_value));
-						this.edit_slot = -1;
-						this.edit_value = null;
-						return;
-					} 
-				} catch (Exception e) {
-					player.sendMessage(ChatColor.YELLOW+"Couldn't change price..");
-					this.edit_slot = -1;
-					this.edit_type = null;
-					this.edit_value = null;
-					return;
-				} finally {
-					this.edit_slot = -1;
-					//this.edit_type = null;
-					this.edit_value = null;
-				}
-			}
-		}
-	}
-    
-    
     void handleMenuCommand(int slot_num, InventoryClickEvent event){
-        if (this.edit_in_progress) {
+        if (this.edit_mode!=null) {
         	event.setCancelled(true);
-        	this.edit_in_progress = false;
-        	player.setItemOnCursor(new ItemStack(Material.AIR));
+        	this.toggleEditMode(null, slot_num);
         	return;
         }
         
@@ -550,27 +582,21 @@ public class ManageMenu implements Listener, MerchantMenu {
         	if (event.isRightClick()) {
         		return;
         	} else {
-        		this.edit_in_progress=true;
-        		this.edit_type="BuyPrice";
-        		player.setItemOnCursor(this.inventory.getItem(slot_num));
+        		this.toggleEditMode("SellPrice", slot_num);
         	}
         }
         else if (slot_num == 48){
         	if (event.isRightClick()) {
         		return;
         	} else {
-        		this.edit_in_progress=true;
-        		this.edit_type="SellPrice";
-        		player.setItemOnCursor(this.inventory.getItem(slot_num));
+        		this.toggleEditMode("BuyPrice", slot_num);
         	}
         }
         else if (slot_num == 49){
         	if (event.isRightClick()) {
         		return;
         	} else {
-        		this.edit_in_progress=true;
-        		this.edit_type="Status";
-        		player.setItemOnCursor(this.inventory.getItem(slot_num));
+        		this.toggleEditMode("Status", slot_num);
         	}
         }
     }
@@ -578,14 +604,12 @@ public class ManageMenu implements Listener, MerchantMenu {
     
     
     void handlePlayerInventory(int slot_num, InventoryClickEvent event){
-        if (this.edit_in_progress) {
+        if (this.edit_mode!=null) {
         	event.setCancelled(true);
-        	this.edit_in_progress = false;
-        	player.setItemOnCursor(new ItemStack(Material.AIR));
+        	this.toggleEditMode(null, slot_num);
         	return;
         }
         
-        //ItemStack item_in_hand = event.getCursor();
         
         if (event.isShiftClick()) {
         	event.setCancelled(true);
@@ -595,16 +619,13 @@ public class ManageMenu implements Listener, MerchantMenu {
     
     
     void handleMenuItem(int slot_num, InventoryClickEvent event){
-        if (this.edit_in_progress) {
-			if (this.edit_type == "BuyPrice") {
-				if (event.getClick().isLeftClick()) {
-					this.askBuyPrice(slot_num);
-				}
-				else if (event.getClick().isRightClick()) {
-					this.setBuyDynamic(slot_num);
-				}
+        if (this.edit_mode!=null) {
+			if (hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
+						hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname)) == null) {
+				return;
 			}
-			else if (this.edit_type == "SellPrice") {
+
+        	if (this.edit_mode == "SellPrice") {
 				if (event.getClick().isLeftClick()) {
 					this.askSellPrice(slot_num);
 				}
@@ -612,7 +633,15 @@ public class ManageMenu implements Listener, MerchantMenu {
 					this.setSellDynamic(slot_num);
 				}
 			}
-			else if (this.edit_type == "Status") {
+			else if (this.edit_mode == "BuyPrice") {
+				if (event.getClick().isLeftClick()) {
+					this.askBuyPrice(slot_num);
+				}
+				else if (event.getClick().isRightClick()) {
+					this.setBuyDynamic(slot_num);
+				}
+			}
+			else if (this.edit_mode == "Status") {
 				if (event.getClick().isLeftClick()) {
 					this.setStatus(slot_num, -1);
 				}
@@ -752,6 +781,48 @@ public class ManageMenu implements Listener, MerchantMenu {
     
     
     @EventHandler(priority=EventPriority.HIGHEST)
+	void onPlayerChat(AsyncPlayerChatEvent event) {
+		if (event.getPlayer().getName().equals(this.player.getName())){
+			this.edit_value = event.getMessage();
+			if (this.edit_in_progress) {
+				event.setCancelled(true);
+				try {
+					if (edit_value.toLowerCase().equals("c")) {
+						this.setPriceCancel();
+						this.edit_slot = -1;
+						this.edit_value = null;
+						return;
+					} 
+					else if (this.edit_mode.equals("SellPrice")) {
+						this.setSellPrice(this.edit_slot, Double.valueOf(edit_value));
+						this.edit_slot = -1;
+						this.edit_value = null;
+						return;
+					} 
+					else if (this.edit_mode.equals("BuyPrice")) {
+						this.setBuyPrice(this.edit_slot, Double.valueOf(edit_value));
+						this.edit_slot = -1;
+						this.edit_value = null;
+						return;
+					} 
+				} catch (Exception e) {
+					e.printStackTrace();
+					player.sendMessage(ChatColor.YELLOW+"Couldn't change price..");
+					this.edit_slot = -1;
+					this.edit_mode = null;
+					this.edit_value = null;
+					return;
+				} finally {
+					this.edit_slot = -1;
+					//this.edit_type = null;
+					this.edit_value = null;
+				}
+			}
+		}
+	}
+
+
+	@EventHandler(priority=EventPriority.HIGHEST)
     void onInventoryClick(InventoryClickEvent event) {
     	if (player.getGameMode().compareTo(GameMode.CREATIVE) != 0) {
     		onInventoryClickOrCreative(event);
@@ -793,7 +864,7 @@ public class ManageMenu implements Listener, MerchantMenu {
 	    		this.npc.getTrait(HyperMerchantTrait.class).onFarewell(player);
 	    	}
 	    	if (this.edit_in_progress){
-	    		if (this.edit_slot == -1 || this.edit_type==null){
+	    		if (this.edit_slot == -1 || this.edit_mode==null){
 	    			player.setItemOnCursor(new ItemStack(Material.AIR));
 	    			this.edit_in_progress=false;
 	    			this.destroy();

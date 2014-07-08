@@ -2,6 +2,7 @@ package grokswell.hypermerchant;
 
 //import static java.lang.System.out;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,6 +17,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,6 +36,7 @@ import regalowl.hyperconomy.shop.PlayerShop;
 
 import grokswell.hypermerchant.HyperMerchantTrait;
 import grokswell.hypermerchant.ShopMenu;
+import grokswell.util.ActiveEnchant;
 import grokswell.util.Blacklist;
 import grokswell.util.MenuButtonData;
 import grokswell.util.Players;
@@ -53,6 +57,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	HashMap<String,HyperMerchantTrait> hire_cooldowns = new HashMap<String,HyperMerchantTrait>();
 	Boolean citizens_is_loaded = false;
 	MerchantMethods merchmeth;
+	ActiveEnchant active_enchant;
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args) {
@@ -309,6 +314,27 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		this.type_blacklist = blacklist.getTypesBlacklist();
 		//out.println("names: "+this.name_blacklist);
 		//out.println("types: "+this.type_blacklist);
+		
+		//Thanks to Captain Bern for the ActiveEnchant wrapper
+		try{
+    		try {
+	    		Field f = Enchantment.class.getDeclaredField("acceptingNew");
+	    		f.setAccessible(true);
+	    		f.set(null, true);
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		}
+    		
+    		try {
+	    		active_enchant = new ActiveEnchant(111); //< this is your custom wrapper (a class that extends an EnchantmentWrapper with the needed stuff and returns, 69 is the id I choosed (lawl)
+	    		EnchantmentWrapper.registerEnchantment(active_enchant); //<this is used to register the enchantment.
+	    	} catch (IllegalArgumentException e){
+    		 
+    		}
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+		
 		menuButtonData = new MenuButtonData(this);
 	}
 	

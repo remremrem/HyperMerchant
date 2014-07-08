@@ -282,6 +282,13 @@ public class ManageMenu implements Listener, MerchantMenu {
     	this.menuRefresh();
     }
     
+    public void refreshPage() {
+		shopstock.Refresh(sort_by, display_zero_stock);
+		this.inventory.clear();
+		this.loadPage();
+    	this.menuRefresh();
+    }
+    
     
     public int itemOnCurrentPage(HyperObject ho) {
 		int count = 0;
@@ -504,7 +511,8 @@ public class ManageMenu implements Listener, MerchantMenu {
     							hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		ho.setSellPrice(price);
 		this.editcooldown.cancel();
-		player.sendMessage(ChatColor.YELLOW+"The buy price for "+ho.getDisplayName()+" is now "+price.toString());
+		player.sendMessage(ChatColor.YELLOW+"The buy price for "+ho.getDisplayName());
+		player.sendMessage(ChatColor.YELLOW+"is now: "+price.toString());
 		this.inventory_view=this.player.openInventory(this.inventory);
 		this.itemRefresh(slot_num, ho);
 		this.edit_in_progress=false;
@@ -520,7 +528,8 @@ public class ManageMenu implements Listener, MerchantMenu {
 		HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
 								hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		player.sendMessage(ChatColor.YELLOW+"Currently you pay other players "+ho.getSellPriceWithTax(1, hp)+" for "+ho.getDisplayName());
-		player.sendMessage(ChatColor.YELLOW+"You have 8 seconds to say the new price you will pay. Say 'c' to cancel.");
+		player.sendMessage(ChatColor.YELLOW+"You have 8 seconds to say a new price.");
+		player.sendMessage(ChatColor.YELLOW+"Say 'c' to cancel.");
 		return;
     }
     
@@ -536,7 +545,8 @@ public class ManageMenu implements Listener, MerchantMenu {
     	HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
     	ho.setBuyPrice(price);
 		this.editcooldown.cancel();
-		player.sendMessage(ChatColor.YELLOW+"The sell price for "+ho.getDisplayName()+" is now "+price.toString());
+		player.sendMessage(ChatColor.YELLOW+"The sell price for "+ho.getDisplayName());
+		player.sendMessage(ChatColor.YELLOW+"is now: "+price.toString());
 		this.inventory_view=this.player.openInventory(this.inventory);
 		this.itemRefresh(slot_num, ho);
 		this.edit_in_progress=false;
@@ -550,7 +560,8 @@ public class ManageMenu implements Listener, MerchantMenu {
 		this.inventory_view.close();
 		HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		player.sendMessage(ChatColor.YELLOW+"Currently other players pay you "+ho.getBuyPriceWithTax(1)+" for "+ho.getDisplayName());
-		player.sendMessage(ChatColor.YELLOW+"You have 8 seconds to say the new price you will be paid. Say 'c' to cancel.");
+		player.sendMessage(ChatColor.YELLOW+"You have 8 seconds to say a new price.");
+		player.sendMessage(ChatColor.YELLOW+"Say 'c' to cancel.");
 		return;
     }
     
@@ -662,20 +673,32 @@ public class ManageMenu implements Listener, MerchantMenu {
                 	if (event.isShiftClick()){
                 		HyperObject ho2 = this.shop_trans.Remove(this.optionNames[slot_num], 8);
                         if (ho2 != null) {
-                        	this.itemRefresh(slot_num, ho2);
+                        	if (ho2.getStock()<1){
+                        		this.refreshPage();
+                        	} else {
+                        		this.itemRefresh(slot_num, ho2);
+                        	}
                         }
                 	}
                 	else {
                 		HyperObject ho2 = this.shop_trans.Remove(this.optionNames[slot_num], 1);
                         if (ho2 != null) {
-                        	this.itemRefresh(slot_num, ho2);
+                        	if (ho2.getStock()<1){
+                        		this.refreshPage();
+                        	} else {
+                        		this.itemRefresh(slot_num, ho2);
+                        	}
                         }
                 	}
                 }
                 else if (event.isRightClick() && event.isShiftClick()) {
             		HyperObject ho2 = this.shop_trans.Remove(this.optionNames[slot_num], this.optionIcons[slot_num].getMaxStackSize());
                     if (ho2 != null) {
-                    	this.itemRefresh(slot_num, ho2);
+                    	if (ho2.getStock()<1){
+                    		this.refreshPage();
+                    	} else {
+                    		this.itemRefresh(slot_num, ho2);
+                    	}
                     }
                 }        
     		}
@@ -701,11 +724,15 @@ public class ManageMenu implements Listener, MerchantMenu {
 	                    	HyperObject ho2 = this.shop_trans.Add(e);
 	                        if (ho2 != null) {
 	            				player.setItemOnCursor(player.getItemInHand());
-	            				player.setItemInHand(item_holding);		
-	                			int slot = this.itemOnCurrentPage(ho2);
-	                			if (slot > -1) {
-	                				this.itemRefresh(slot, ho2);
-	                			}
+	            				player.setItemInHand(item_holding);
+	            				if (ho2.getStock()<2) {
+	            					this.refreshPage();
+	            				} else {
+		                			int slot = this.itemOnCurrentPage(ho2);
+		                			if (slot > -1) {
+		                				this.itemRefresh(slot, ho2);
+		                			}
+	            				}
 	                		} else {
 	                    		player.setItemInHand(item_holding);
 	                		}
@@ -737,11 +764,15 @@ public class ManageMenu implements Listener, MerchantMenu {
                     if (ho2 != null) {
         				player.setItemOnCursor(player.getItemInHand());
         				player.setItemInHand(item_holding);
-            			int slot = this.itemOnCurrentPage(ho2);
-            			if (slot > -1) {
-            				this.itemRefresh(slot, ho2);
-            			}
-        				return;
+        				if (ho2.getStock()<2) {
+        					this.refreshPage();
+        				} else {
+	            			int slot = this.itemOnCurrentPage(ho2);
+	            			if (slot > -1) {
+	            				this.itemRefresh(slot, ho2);
+	            			}
+	        				return;
+        				}
             		} else {
 
                 		player.setItemInHand(item_holding);
@@ -753,11 +784,14 @@ public class ManageMenu implements Listener, MerchantMenu {
             	HyperObject ho2 = this.shop_trans.Add(item_in_hand);
                 if (ho2 != null) {
 	        		this.inventory_view.setCursor(new ItemStack(Material.AIR));
-        			int slot = this.itemOnCurrentPage(ho2);
-        			if (slot > -1) {
-        				this.itemRefresh(slot, ho2);
-        			}
-	        			
+    				if ((int) ho2.getStock()==item_in_hand.getAmount()) {
+    					this.refreshPage();
+    				} else {
+		        		int slot = this.itemOnCurrentPage(ho2);
+	        			if (slot > -1) {
+	        				this.itemRefresh(slot, ho2);
+	        			}
+    				}
             	} else {
             		player.sendMessage(ChatColor.YELLOW+"This shop doesn't want your enchanted item");
             	}
@@ -767,11 +801,14 @@ public class ManageMenu implements Listener, MerchantMenu {
     		HyperObject ho2 = this.shop_trans.Add(item_in_hand);
             if (ho2 != null) {
     			this.inventory_view.setCursor(new ItemStack(Material.AIR));
-    			int slot = this.itemOnCurrentPage(ho2);
-    			if (slot > -1) {
-    				this.itemRefresh(slot, ho2);
-    			}
-    			
+				if ((int) ho2.getStock()==item_in_hand.getAmount()) {
+					this.refreshPage();
+				} else {
+	    			int slot = this.itemOnCurrentPage(ho2);
+	    			if (slot > -1) {
+	    				this.itemRefresh(slot, ho2);
+	    			}
+				}
     		//THE SHOP WONT TAKE IT	
     		} else {
     			player.sendMessage(ChatColor.YELLOW+"This shop does not deal in "+

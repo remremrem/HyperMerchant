@@ -188,7 +188,7 @@ public class ShopMenu implements Listener, MerchantMenu {
 				value = ho.getSellPriceWithTax(1, hp);
 				cost = ho.getBuyPriceWithTax(1);
 
-				stack = (new EnchantIcons()).getIcon(ho.getDisplayName());
+				stack = (new EnchantIcons()).getIcon(ho.getDisplayName(), ho.getEnchantmentLevel());
 
 				
 			} else if (ho.getType()==HyperObjectType.EXPERIENCE) {

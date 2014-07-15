@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -117,13 +117,13 @@ public class ShopTransactions {
 				im.addStoredEnchant(ho.getEnchantment(), ho.getEnchantmentLevel(), true);
 				ebook.setItemMeta(im);
 				HashMap<Integer, ItemStack> excess = player.getInventory().addItem(ebook);
-				out.println("EXCESS: "+excess);
+				//out.println("EXCESS: "+excess);
 				if (excess.size() > 0) {
 					player.sendMessage(ChatColor.YELLOW+"Your inventory is full.");
 					return null;
 				} else {
 					ho.setStock(ho.getStock() - 1);
-					out.println("ho stock: "+ho.getStock());
+					//out.println("ho stock: "+ho.getStock());
 					int index = player.getInventory().first(Material.BOOK);
 					ItemStack book = player.getInventory().getItem(index);
 					if (book.getAmount()==1){
@@ -164,7 +164,7 @@ public class ShopTransactions {
 	
 	//PLAYER-MANAGER ADDS SOMETHING TO SHOP
 	public ItemStack AddItemStack(ItemStack item_stack) {
-		out.println("AddItemStack: "+item_stack);
+		//out.println("AddItemStack: "+item_stack);
 		PlayerShop pshop=hyperAPI.getPlayerShop(this.shopname);
 		HyperEconomy he = hc.getDataManager().getEconomy(pshop.getEconomy());
 		HyperObject ho = hp.getHyperEconomy().getHyperObject(item_stack);
@@ -176,28 +176,28 @@ public class ShopTransactions {
 		
 		ItemStack item = AddEnchantedItem(item_stack);
 		if (item==null) {
-			out.println("item==null");
+			//out.println("item==null");
 			item = AddItem(item_stack);
 			if (item != null) {
-				out.println("item!=null");
+				//out.println("item!=null");
 				return item;
 			}
 		}
 		
 		HyperObject ho2 = hp.getHyperEconomy().getHyperObject(item);
 		if (ho2 == null){
-			out.println("ho2==null");
+			//out.println("ho2==null");
 			return item_stack;
 		}
 		else {
-			out.println("else");
+			//out.println("else");
 			return item;
 		}
 	}	
 	
 	//PLAYER-MANAGER ADDS ITEMS TO SHOP
 	public ItemStack AddItem(ItemStack item_stack) {
-		out.println("AddItem: "+item_stack);
+		//out.println("AddItem: "+item_stack);
 		PlayerShop pshop=hyperAPI.getPlayerShop(this.shopname);
 		HyperEconomy he = hc.getDataManager().getEconomy(pshop.getEconomy());
 		HyperObject ho = hp.getHyperEconomy().getHyperObject(item_stack);
@@ -220,13 +220,13 @@ public class ShopTransactions {
 	
 	//PLAYER-MANAGER ADDS ITEMS TO SHOP
 	public ItemStack AddEnchantedItem(ItemStack item_stack) {
-		out.println("AddEcnhantedItem: "+item_stack);
+		//out.println("AddEcnhantedItem: "+item_stack);
 		//make list of hyperconomy enchantment names from item's enchants
 		ArrayList<HyperObject> enchants = new ArrayList<HyperObject>();
 		for (HyperObject hob : hyperAPI.getEnchantmentHyperObjects(item_stack, player.getName())) {
 			if (!hyperAPI.getShop(shopname).isBanned(hob)){
 				enchants.add(hob);
-				out.println("enchant: "+hob.getDisplayName());
+				//out.println("enchant: "+hob.getDisplayName());
 			}
 		}
 		
@@ -239,7 +239,7 @@ public class ShopTransactions {
 		for (HyperObject e : enchants) {
         	String ename = this.AddEnchant(e.getDisplayName());
             if (ename.equals(e)) {
-    			out.println("ELSE");
+    			//out.println("ELSE");
         		keep_enchant.add(e);
     		}
         }
@@ -256,13 +256,13 @@ public class ShopTransactions {
 	}
 	
 	public ItemStack addEnchantedBook(ItemStack ebook) {
-		out.println("AddEnchantedBook: "+ebook);
+		//out.println("AddEnchantedBook: "+ebook);
 		//make list of hyperconomy enchantment names from item's enchants
 		ArrayList<HyperObject> enchants = new ArrayList<HyperObject>();
 		for (HyperObject hob : hyperAPI.getEnchantmentHyperObjects(ebook, player.getName())) {
 			if (!hyperAPI.getShop(shopname).isBanned(hob)){
 				enchants.add(hob);
-				out.println("enchant: "+hob.getDisplayName());
+				//out.println("enchant: "+hob.getDisplayName());
 			}
 		}
 		
@@ -271,7 +271,7 @@ public class ShopTransactions {
 		for (HyperObject e : enchants) {
         	String ename = this.AddEnchant(e.getDisplayName());
             if (ename.equals(e)) {
-    			out.println("ELSE");
+    			//out.println("ELSE");
         		keep_enchant.add(e);
     		}
         }
@@ -292,12 +292,12 @@ public class ShopTransactions {
 	
 	//PLAYER-MANAGER ADDS ENCHANT TO SHOP
 	public String AddEnchant(String enchant) {
-		out.println("AddEnchant: "+enchant);
+		//out.println("AddEnchant: "+enchant);
 		PlayerShop pshop=hyperAPI.getPlayerShop(this.shopname);
 		HyperEconomy he = hc.getDataManager().getEconomy(pshop.getEconomy());
 		HyperObject ho = hyperAPI.getHyperObject(enchant,hyperAPI.getShop(shopname).getEconomy());
 		if (ho == null) {
-			out.println("ENCHANT NOT IN DB: "+enchant);
+			//out.println("ENCHANT NOT IN DB: "+enchant);
 			return enchant;
 		}
 		int globalMaxStock = hc.getConf().getInt("shop.max-stock-per-item-in-playershops");

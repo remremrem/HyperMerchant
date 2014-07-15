@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.grokswell.hypermerchant</groupId>
 	<artifactId>hypermerchant</artifactId>
-	<version>1.53-dev</version>
+	<version>1.55</version>
 	<name>HyperMerchant</name>
 	<description>HyperMerchant is an Inventory based GUI and Citizen NPC trait for use with HyperConomy</description>
 	<repositories>
@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>regalowl.hyperconomy</groupId>
 			<artifactId>hyperconomy</artifactId>
-			<version>0.974.54b-SNAPSHOT</version>
+			<version>0.974.55-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>                
 		<dependency>

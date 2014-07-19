@@ -242,7 +242,7 @@ public class MerchantMethods {
         	this_npc.setBukkitEntityType(EntityType.valueOf(npctype.toUpperCase()));
     		return true;
         } catch (Exception e) {
-			out.println("EXCEPTION: "+e);
+			//out.println("EXCEPTION: "+e);
         	return false;
         }
 	}

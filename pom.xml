@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>regalowl.hyperconomy</groupId>
 			<artifactId>hyperconomy</artifactId>
-			<version>0.974.55-SNAPSHOT</version>
+			<version>0.974.55b-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>                
 		<dependency>

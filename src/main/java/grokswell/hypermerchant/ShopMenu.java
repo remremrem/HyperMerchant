@@ -352,7 +352,16 @@ public class ShopMenu implements Listener, MerchantMenu {
         if (ho.getStatus()!=null){
         	status = ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+ho.getStatus().name().toLowerCase();
         }
-    	this.setOption(slot, ho.getItemStack(), ho.getDisplayName().replaceAll("_", " "), 
+        
+        ItemStack stack = ho.getItemStack();
+        if (ho.getType()==HyperObjectType.ENCHANTMENT) {
+        	stack = (new EnchantIcons()).getIcon(ho.getDisplayName(), ho.getEnchantmentLevel());
+        }
+        else if (ho.getType()==HyperObjectType.EXPERIENCE) {
+			stack = new ItemStack(Material.POTION, 1, (short) 0);
+        }
+        
+    	this.setOption(slot, stack, ho.getDisplayName().replaceAll("_", " "), 
     			ChatColor.WHITE+"Price: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getBuyPriceWithTax(1.0)),
     			ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getSellPriceWithTax(1.0, hp)), 
     			ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) ho.getStock()),

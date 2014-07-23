@@ -179,15 +179,15 @@ public class ShopMenu implements Listener, MerchantMenu {
 				stack = ho.getItemStack();
 				
 				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
-				value = ho.getSellPriceWithTax(1.0, hp);
-				cost = ho.getBuyPriceWithTax(1.0);
+				value = ho.getSellPriceWithTax(1, hp);
+				cost = ho.getBuyPriceWithTax(1);
 				
 			} else if (ho.getType()==HyperObjectType.ENCHANTMENT) {
 				stock = ho.getStock();
 				
 				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
-				value = ho.getSellPriceWithTax(1.0, hp);
-				cost = ho.getBuyPriceWithTax(1.0);
+				value = ho.getSellPriceWithTax(1, hp);
+				cost = ho.getBuyPriceWithTax(1);
 
 				stack = (new EnchantIcons()).getIcon(ho.getDisplayName(), ho.getEnchantmentLevel());
 
@@ -196,8 +196,8 @@ public class ShopMenu implements Listener, MerchantMenu {
 				stock = ho.getStock();
 				
 				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
-				value = ho.getSellPriceWithTax(1.0, hp);
-				cost = ho.getBuyPriceWithTax(1.0);
+				value = ho.getSellPriceWithTax(1, hp);
+				cost = ho.getBuyPriceWithTax(1);
 
 				stack = new ItemStack(Material.POTION, 1, (short) 0);
 				
@@ -370,8 +370,8 @@ public class ShopMenu implements Listener, MerchantMenu {
         }
         
     	this.setOption(slot, stack, ho.getDisplayName().replaceAll("_", " "), 
-    			ChatColor.WHITE+"Price: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getBuyPriceWithTax(1.0)),
-    			ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getSellPriceWithTax(1.0, hp)), 
+    			ChatColor.WHITE+"Price: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getBuyPriceWithTax(1)),
+    			ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getSellPriceWithTax(1, hp)), 
     			ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) ho.getStock()),
     			status );
     	this.inventory.setItem(slot, this.optionIcons[slot]);

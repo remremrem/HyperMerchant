@@ -200,15 +200,15 @@ public class ManageMenu implements Listener, MerchantMenu {
 				stack = ho.getItemStack();
 				
 				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
-				value = ho.getSellPriceWithTax(1.0, hp);
-				cost = ho.getBuyPriceWithTax(1.0);
+				value = ho.getSellPriceWithTax(1, hp);
+				cost = ho.getBuyPriceWithTax(1);
 				
 			} else if (ho.getType()==HyperObjectType.ENCHANTMENT) {
 				stock = ho.getStock();
 				
 				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
-				value = ho.getSellPriceWithTax(1.0, hp);
-				cost = ho.getBuyPriceWithTax(1.0);
+				value = ho.getSellPriceWithTax(1, hp);
+				cost = ho.getBuyPriceWithTax(1);
 
 				stack = (new EnchantIcons()).getIcon(ho.getDisplayName(), ho.getEnchantmentLevel());
 
@@ -217,8 +217,8 @@ public class ManageMenu implements Listener, MerchantMenu {
 				stock = ho.getStock();
 				
 				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
-				value = ho.getSellPriceWithTax(1.0, hp);
-				cost = ho.getBuyPriceWithTax(1.0);
+				value = ho.getSellPriceWithTax(1, hp);
+				cost = ho.getBuyPriceWithTax(1);
 
 				stack = new ItemStack(Material.POTION, 1, (short) 0);
 				
@@ -401,8 +401,8 @@ public class ManageMenu implements Listener, MerchantMenu {
         }
 
     	this.setOption(slot, stack, ho.getDisplayName().replaceAll("_", " "), 
-    			ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getBuyPriceWithTax(1.0))+buy_dynamic,
-    			ChatColor.WHITE+"Buy: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getSellPriceWithTax(1.0, hp))+sell_dynamic, 
+    			ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getBuyPriceWithTax(1))+buy_dynamic,
+    			ChatColor.WHITE+"Buy: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getSellPriceWithTax(1, hp))+sell_dynamic, 
     			ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) ho.getStock()),
     			ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+status);
     	this.inventory.setItem(slot, this.optionIcons[slot]);
@@ -543,7 +543,7 @@ public class ManageMenu implements Listener, MerchantMenu {
 		hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
 		HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
 								hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
-		player.sendMessage(ChatColor.YELLOW+"Currently you pay other players "+ho.getSellPriceWithTax(1.0, hp)+" for "+ho.getDisplayName());
+		player.sendMessage(ChatColor.YELLOW+"Currently you pay other players "+ho.getSellPriceWithTax(1, hp)+" for "+ho.getDisplayName());
 		player.sendMessage(ChatColor.YELLOW+"You have 8 seconds to say a new price.");
 		player.sendMessage(ChatColor.YELLOW+"Say 'c' to cancel.");
 		return;
@@ -575,7 +575,7 @@ public class ManageMenu implements Listener, MerchantMenu {
 		this.edit_slot = slot_num;
 		this.inventory_view.close();
 		HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
-		player.sendMessage(ChatColor.YELLOW+"Currently other players pay you "+ho.getBuyPriceWithTax(1.0)+" for "+ho.getDisplayName());
+		player.sendMessage(ChatColor.YELLOW+"Currently other players pay you "+ho.getBuyPriceWithTax(1)+" for "+ho.getDisplayName());
 		player.sendMessage(ChatColor.YELLOW+"You have 8 seconds to say a new price.");
 		player.sendMessage(ChatColor.YELLOW+"Say 'c' to cancel.");
 		return;

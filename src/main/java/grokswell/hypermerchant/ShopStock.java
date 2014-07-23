@@ -125,7 +125,7 @@ public class ShopStock {
 				while(i < object_names.size()) {
 					String cname = object_names.get(i);
 					HyperObject ho = hyperAPI.getHyperObject(cname, economy_name, hyperAPI.getShop(shopname));
-					items_by_price.add(Pair.with(ho.getBuyPriceWithTax(1.0),cname));
+					items_by_price.add(Pair.with(ho.getBuyPriceWithTax(1),cname));
 					i++;
 				}
 				
@@ -140,7 +140,7 @@ public class ShopStock {
 					String cname = object_names.get(i);
 					HyperObject ho = hyperAPI.getHyperObject(cname, economy_name, hyperAPI.getShop(shopname));
 					hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
-					items_by_price.add(Pair.with(ho.getSellPriceWithTax(1.0, hp),cname));
+					items_by_price.add(Pair.with(ho.getSellPriceWithTax(1, hp),cname));
 					i++;
 				}
 				

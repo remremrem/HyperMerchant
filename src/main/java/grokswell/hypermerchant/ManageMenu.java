@@ -734,7 +734,6 @@ public class ManageMenu implements Listener, MerchantMenu {
 				return;
             }
 			player.setItemOnCursor(new ItemStack(Material.AIR));
-			//player.setItemInHand(new ItemStack(Material.AIR));
 			player.getInventory().addItem(stack);
 			return;
 

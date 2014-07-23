@@ -31,6 +31,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import regalowl.hyperconomy.api.HyperAPI;
 import regalowl.hyperconomy.hyperobject.HyperObject;
 import regalowl.hyperconomy.hyperobject.HyperObjectType;
+import regalowl.hyperconomy.shop.PlayerShop;
 import regalowl.hyperconomy.account.HyperPlayer;
 import grokswell.hypermerchant.ShopTransactions;
 import grokswell.util.EnchantIcons;
@@ -262,6 +263,13 @@ public class ShopMenu implements Listener, MerchantMenu {
     	this.menuRefresh();
     }
     
+    public void refreshPage() {
+		shopstock.Refresh(sort_by, display_zero_stock);
+		this.inventory.clear();
+		this.loadPage();
+    	this.menuRefresh();
+    }
+    
     
     public int itemOnCurrentPage(HyperObject ho) {
 		int count = 0;
@@ -395,6 +403,100 @@ public class ShopMenu implements Listener, MerchantMenu {
     }
     
     
+    void handleMenuCommand(int slot_num, InventoryClickEvent event){
+        if (event.getCursor().getType()!=Material.AIR) {
+        	event.setCancelled(true);
+        	return;
+        }
+        if (slot_num == 46){
+            this.previousPage();
+        }
+        else if (slot_num == 45){
+        	this.firstPage();
+        }
+        else if (slot_num == 52){
+        	this.nextPage();
+        }
+        else if (slot_num == 53){
+        	this.lastPage();
+        }
+        else if (slot_num == 51){
+        	if (event.isRightClick()) {
+        		this.ToggleZeroStock();
+        	} else this.Sort();
+        }
+    }
+    
+    
+    
+    void handlePlayerInventory(int slot_num, InventoryClickEvent event){
+        
+        if (event.isShiftClick()) {
+        	event.setCancelled(true);
+        	return;
+        }
+    }
+    
+    
+    void handleMenuItem(int slot_num, InventoryClickEvent event){
+        ItemStack item_in_hand = event.getCursor();
+        //IF THE PLAYER IS BUYING SOMETHING FROM THE SHOP
+        if (item_in_hand.getType() == Material.AIR) {
+    		int qty = 1;
+    		if (this.optionNames[slot_num] != null && this.optionNames[slot_num] != " ") {
+                if (event.isLeftClick()){
+                	if (event.isShiftClick()){
+                		qty=8;
+                	}
+                	else {
+                		qty=1;
+                	}
+                }
+                else if (event.isRightClick() && event.isShiftClick()) {
+            		qty=this.optionIcons[slot_num].getMaxStackSize();
+                    }
+        		HyperObject ho2 = this.shop_trans.Buy(this.optionNames[slot_num], qty, commission);
+	            if (ho2 != null) {
+	            	if (ho2.getStock()<1){
+	            		this.refreshPage();
+	            	} else {
+	            		this.itemRefresh(slot_num, ho2);
+	            	}
+	            }
+			}
+        }
+        
+        //IF THE PLAYER IS SELLING SOMETHING TO THE SHOP
+        else if (item_in_hand.getType() != Material.AIR) {
+    		
+            // SELLING ITEMS
+    		//Shop pshop=hyperAPI.getPlayerShop(this.shopname);
+    		HyperObject ho = hp.getHyperEconomy().getHyperObject(item_in_hand);
+    		//if (ho != null) {
+    		//	ho = pshop.getPlayerShopObject(ho);
+    		//}
+    		ItemStack stack = this.shop_trans.Sell(item_in_hand);
+            if (ho != null && stack != null) {
+    			this.inventory_view.setCursor(new ItemStack(ho.getItemStack().getType()));
+				if ((int) ho.getStock()==item_in_hand.getAmount()) {
+					this.refreshPage();
+				} else {
+	    			int slot = this.itemOnCurrentPage(ho);
+	    			if (slot > -1) {
+	    				this.itemRefresh(slot, ho);
+	    			}
+				}
+				player.setItemOnCursor(new ItemStack(Material.AIR));
+				player.getInventory().addItem(stack);
+				return;
+            }
+			player.setItemOnCursor(new ItemStack(Material.AIR));
+			player.getInventory().addItem(stack);
+			return;
+
+    	}
+    }    
+    
     @EventHandler(priority=EventPriority.HIGHEST)
     void onInventoryClick(InventoryClickEvent event) {
     	if (player.getGameMode().compareTo(GameMode.CREATIVE) != 0) {
@@ -409,174 +511,21 @@ public class ShopMenu implements Listener, MerchantMenu {
     
     
     void onInventoryClickOrCreative(InventoryClickEvent event) {
+
         if (event.getInventory().getTitle().equals(this.inventory_name)) {
     		int slot_num = event.getRawSlot();
             if (slot_num < size) {
             	event.setCancelled(true);
             }
             
-            ItemStack item_in_hand = event.getCursor();
-            
-            //IF CLICKING WITH EMPTY CURSOR
-            if (slot_num < size-9 && slot_num >= 0 && (item_in_hand.getType() == Material.AIR)) {
-        		if (this.optionNames[slot_num] != null && this.optionNames[slot_num] != " ") {
-                    if (event.isLeftClick()){
-                    	if (event.isShiftClick()){
-                    		HyperObject ho2 = this.shop_trans.Buy(this.optionNames[slot_num], 8, commission);
-	                        if (ho2 != null) {
-	                        	this.itemRefresh(slot_num, ho2);
-	                        }
-                    	}
-                    	else {
-                    		HyperObject ho2 = this.shop_trans.Buy(this.optionNames[slot_num], 1, commission);
-	                        if (ho2 != null) {
-	                        	this.itemRefresh(slot_num, ho2);
-	                        }
-                    	}
-                    }
-                    else if (event.isRightClick() && event.isShiftClick()) {
-                		HyperObject ho2 = this.shop_trans.Buy(this.optionNames[slot_num], this.optionIcons[slot_num].getMaxStackSize(), commission);
-	        			int slot = this.itemOnCurrentPage(ho2);
-                		if (ho2 != null) {
-                        	this.itemRefresh(slot_num, ho2);
-                        }
-                    }        
-        		}
+            if (slot_num < size-9 && slot_num >= 0){
+            	this.handleMenuItem(slot_num, event);
             }
-            
-            // IF CLICKING WITH ITEM IN CURSOR
-        	else if (slot_num < size && slot_num >= 0 && (item_in_hand.getType() != Material.AIR)){
-        		if (!(hp.hasSellPermission(hyperAPI.getShop(this.shopname)))) {
-        			player.sendMessage("You cannot sell to this shop.");
-        		}
-        		else {
-        			ArrayList<String> enchants = new ArrayList<String>();
-	        		
-	        		//SELLING ENCHANTED BOOK
-	        		if (item_in_hand.getType()==Material.ENCHANTED_BOOK) {
-	        			
-	        			//make list of hyperconomy enchantment names from book enchants
-	        			for (HyperObject hob : hyperAPI.getEnchantmentHyperObjects(item_in_hand, player.getName())) {
-	        				enchants.add(hob.getDisplayName());
-	        			}
-	        			
-	        			if (!enchants.isEmpty()) {
-	        				for (String e : enchants) {
-	        					if (shopstock.display_names.contains(e.toLowerCase())) {
-	    	                		ItemStack item_holding = player.getItemInHand().clone();
-	    	                		player.setItemInHand(player.getItemOnCursor().clone());
-
-	    	    	        		HyperObject he = this.shop_trans.Sell(e);
-	    	    	                if (he != null) {
-	    	            				player.setItemOnCursor(player.getItemInHand());
-	    	            				player.setItemInHand(item_holding);	
-	    			        			int slot = this.itemOnCurrentPage(he);
-	    			        			if (slot > -1) {
-	    			        				this.itemRefresh(slot, he);
-	    			        			}
-	    			        			
-	    	                		} else {
-	    	                    		player.setItemInHand(item_holding);
-	    	                		}
-
-	    	                	} else {
-	    	                		player.sendMessage(ChatColor.YELLOW+"This shop doesn't want the enchantment: "+e);
-	    	                	}
-	        				}
-	        				return;
-	        			}
-
-	        		//MAKE LISTS OF ITEM ON CURSOR ENCHANMENTS	
-	        		} else {
-	        			//make list of hyperconomy enchantment names from book enchants
-	        			for (HyperObject hob : hyperAPI.getEnchantmentHyperObjects(item_in_hand, player.getName())) {
-	        				enchants.add(hob.getDisplayName());
-	        			}
-	        		}
-	        		
-	        		// SELLING ENCHANTS
-	        		if (!enchants.isEmpty()) {
-	                	String display_name = this.optionIcons[slot_num].getItemMeta().getDisplayName().replace("§6", "");
-            			String enchant_name = display_name.replace(" ", "_");
-	                	if (enchants.contains(enchant_name)) {
-	                		
-	                		ItemStack item_holding = player.getItemInHand().clone();
-	                		player.setItemInHand(player.getItemOnCursor().clone());
-	                		
-	    	        		HyperObject he = this.shop_trans.Sell(enchant_name);
-	    	                if (he != null) {
-	            				player.setItemOnCursor(player.getItemInHand());
-	            				player.setItemInHand(item_holding);
-			        			int slot = this.itemOnCurrentPage(he);
-			        			if (slot > -1) {
-			        				this.itemRefresh(slot, he);
-			        			}
-	            				return;
-	                		} else {
-	
-	                    		player.setItemInHand(item_holding);
-	                    		return;
-	                		}
-	                		
-	                	// TRY SELLING ENCHANTED ITEM
-	                	} 
-
-    	        		HyperObject ho = this.shop_trans.Sell(item_in_hand);
-    	                if (ho != null) {
-	    	        		this.inventory_view.setCursor(new ItemStack(Material.AIR));
-		        			int slot = this.itemOnCurrentPage(ho);
-		        			if (slot > -1) {
-		        				this.itemRefresh(slot, ho);
-		        			}
-		        			return;
-	    	        			
-	                	} else {
-	                		player.sendMessage(ChatColor.YELLOW+"This shop doesn't want your enchanted item");
-	                		return;
-	                	}
-	                }
-	                
-	                // SELLING ITEMS
-	        		HyperObject ho2 = this.shop_trans.Sell(item_in_hand);
-	                if (ho2 != null) {
-	        			this.inventory_view.setCursor(new ItemStack(Material.AIR));
-	        			int slot = this.itemOnCurrentPage(ho2);
-	        			if (slot > -1) {
-	        				this.itemRefresh(slot, ho2);
-	        			}
-	        			return;
-	        			
-	        		//THE SHOP WONT BUY IT	
-	        		} else {
-	        			player.sendMessage(ChatColor.YELLOW+"This shop does not deal in "+
-								item_in_hand.getType().name().toLowerCase()+".");
-	        			player.getInventory().addItem(item_in_hand);
-	        			this.inventory_view.setCursor(new ItemStack(Material.AIR));
-	        			return;
-	        		}
-        		}
-        	}
-            else if (slot_num == 46){
-	            this.previousPage();
+            else if (slot_num >= size-9 && slot_num < size) {
+            	this.handleMenuCommand(slot_num, event);
             }
-            else if (slot_num == 45){
-            	this.firstPage();
-            }
-            else if (slot_num == 52){
-            	this.nextPage();
-            }
-            else if (slot_num == 53){
-            	this.lastPage();
-            }
-            else if (slot_num == 51){
-            	if (event.isRightClick()) {
-            		this.ToggleZeroStock();
-            	} else this.Sort();
-            }
-            else if ((event.getRawSlot() >= 54) && (event.getRawSlot() <= 89)){
-            	if (event.isShiftClick()) {
-            		event.setCancelled(true);
-            	}
+            else if (slot_num >= size) {
+            	this.handlePlayerInventory(slot_num, event);
             }
         }
     }

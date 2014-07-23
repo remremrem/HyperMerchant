@@ -11,7 +11,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import regalowl.hyperconomy.api.HyperAPI;
 import regalowl.hyperconomy.HyperConomy;
@@ -45,53 +44,146 @@ public class ShopTransactions {
 
 	}
 	
-	//PLAYER SELLS ENCHANT TO SHOP
-	public HyperObject Sell(String enchant) {
-
-		HyperObject ho = hyperAPI.getHyperObject(enchant,hyperAPI.getShop(shopname).getEconomy());
-		if ((hyperAPI.getShop(shopname).isTradeable(ho))) {
-			TransactionResponse response = hyperAPI.sell(player, ho, 1, hyperAPI.getShop(shopname));
-			response.sendMessages();
-			if (response.successful()){
-				return ho;
+	
+	public ItemStack Sell(ItemStack item_stack){	
+		if (item_stack.getType()==Material.ENCHANTED_BOOK) {
+			ItemStack return_item = this.SellEnchantedBook(item_stack);
+			return return_item;
+		}
+		
+		ItemStack item = SellEnchantedItem(item_stack);
+		if (item==null) {
+			item = SellItem(item_stack);
+			if (item != null) {
+				return item;
 			}
 		}
 		
-		
-		return null;
-	}
+		HyperObject ho2 = hp.getHyperEconomy().getHyperObject(item);
+		if (ho2 == null){
+			return item_stack;
+		}
+		else {
+			return item;
+		}
+	}	
 	
-	//PLAYER SELLS ITEM TO SHOP
-	public HyperObject Sell(ItemStack item_stack) {
-			
-		int item_amount = item_stack.getAmount();
-		HyperObject ho = hyperAPI.getHyperObject(item_stack, hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
+	
+	public ItemStack SellItem(ItemStack item_stack){
+		HyperObject ho = hp.getHyperEconomy().getHyperObject(item_stack);
 		if (ho==null) {
 			return null;
 		}
+
+		int amount = item_stack.getAmount();
 		String item_name = ho.getDisplayName().toLowerCase();
-		ho = hyperAPI.getHyperObject(item_name, hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		
 		if (shopmenu.getShopStock().display_names.contains(item_name) && (hyperAPI.getShop(shopname).isTradeable(ho))) {
 			player.getInventory().addItem(item_stack);
-			TransactionResponse response = hyperAPI.sell(player, ho, item_amount, hyperAPI.getShop(shopname));
+			TransactionResponse response = hyperAPI.sell(player, ho, amount, hyperAPI.getShop(shopname));
 			response.sendMessages();
-			return ho;
+		
+			if (!response.successful()) {
+				player.sendMessage(ChatColor.YELLOW+"Cannot sell: "+ho.getDisplayName()+" to this shop.");
+				return item_stack;
+			} else {
+				return new ItemStack(Material.AIR);
+			}
+		}
+		return new ItemStack(item_stack);
+	}
+	
+	
+	public String SellEnchant(String enchant) {
+		HyperObject ho = hyperAPI.getHyperObject(enchant,hyperAPI.getShop(shopname).getEconomy());
+		if (ho == null) {
+			player.sendMessage(ChatColor.YELLOW+"This shop will not buy enchantment: "+enchant);
+			return enchant;
+		}
+		TransactionResponse response = hyperAPI.sell(player, ho, 1, hyperAPI.getShop(shopname));
+		if (!response.successful()){
+			player.sendMessage(ChatColor.YELLOW+"Could not sell enchantment: "+enchant);
+			return enchant;
+		} else {
+			player.sendMessage(ChatColor.YELLOW+"You sold 1 "+ho.getDisplayName()+" for "+response.getTotalPrice());
+			return "";
+		}
+	}
+	
+	
+	public ItemStack SellEnchantedItem(ItemStack item_stack){	
+		//make list of hyperconomy enchantment names from item's enchants
+		ArrayList<HyperObject> enchants = new ArrayList<HyperObject>();
+		for (HyperObject hob : hyperAPI.getEnchantmentHyperObjects(item_stack, player.getName())) {
+			enchants.add(hob);
+		}
+		if (enchants.size() < 1) {
+			return null;
 		}
 		
+		ArrayList<HyperObject> keep_enchant = new ArrayList<HyperObject>();
+		player.setItemInHand(item_stack.clone());
+		for (HyperObject e : enchants) {
+        	String ename = this.SellEnchant(e.getDisplayName());
+            if (ename.equals(e)) {
+        		keep_enchant.add(e);
+    		}
+        }
+		player.setItemInHand(new ItemStack(Material.AIR));
 		
-		return null;
+		ItemStack stack = new ItemStack(item_stack.getType());
+		if (keep_enchant.size()>0) {
+			for (HyperObject e : keep_enchant){
+				stack.addUnsafeEnchantment(e.getEnchantment(), e.getEnchantmentLevel());
+			}
+			player.sendMessage(ChatColor.YELLOW+"This shop doesn't want these enchantments: "+keep_enchant.toString());
+		}
+		return stack;
+	}
+	
+	
+	public ItemStack SellEnchantedBook(ItemStack ebook){
+		ArrayList<HyperObject> enchants = new ArrayList<HyperObject>();
+		for (HyperObject hob : hyperAPI.getEnchantmentHyperObjects(ebook, player.getName())) {
+			enchants.add(hob);
+		}
+		
+		ArrayList<HyperObject> keep_enchant = new ArrayList<HyperObject>();
+		player.setItemInHand(ebook.clone());
+		for (HyperObject e : enchants) {
+        	String ename = this.SellEnchant(e.getDisplayName());
+            if (ename.equals(e)) {
+        		keep_enchant.add(e);
+    		}
+        }
+		player.setItemInHand(new ItemStack(Material.AIR));
+		
+		ItemStack stack = new ItemStack(Material.BOOK);
+		if (keep_enchant.size()>0) {
+			stack = new ItemStack(Material.ENCHANTED_BOOK);
+			EnchantmentStorageMeta im = (EnchantmentStorageMeta) stack.getItemMeta();
+			for (HyperObject e : keep_enchant){
+				im.addStoredEnchant(e.getEnchantment(), e.getEnchantmentLevel(), true);
+			}
+			stack.setItemMeta(im);
+			player.sendMessage(ChatColor.YELLOW+"This shop doesn't want these enchantments: "+keep_enchant.toString());
+		}
+		
+		return stack;
+		
 	}
 	
 	//PLAYER BUYS ITEM FROM SHOP
 	public HyperObject Buy(String item, int qty, double commission) {
 		HyperObject ho = hyperAPI.getHyperObject(item.replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		if (!hp.hasBuyPermission(hyperAPI.getShop(shopname))) {
-			player.sendMessage("You cannot buy from this shop.");
+			player.sendMessage(ChatColor.YELLOW+"You cannot buy from this shop.");
 			return null;
 		}
 		
 		TransactionResponse response = hyperAPI.buy(player, ho, qty, hyperAPI.getShop(shopname));
+		player.sendMessage(ChatColor.YELLOW+"You purchased "+qty+" "+ho.getDisplayName()+" for "+response.getTotalPrice());
+		
 		
 		if (hyperAPI.getPlayerShopList().contains(shopname) && commission > 0.0) {
 		    if (ho.isShopObject()){
@@ -146,7 +238,7 @@ public class ShopTransactions {
 			int space = ho.getAvailableSpace(player.getInventory());
 			int qty_space = qty/ho.getItemStack().getMaxStackSize()+1;
 			if (space < qty_space) {
-				player.sendMessage("You haven't got enough space in your inventory to take "+qty+" "+ho.getDisplayName());
+				player.sendMessage(ChatColor.YELLOW+"You haven't got enough space in your inventory to take "+qty+" "+ho.getDisplayName());
 				return null;
 			}
 			if (ho.getStock() < 1) {
@@ -170,7 +262,7 @@ public class ShopTransactions {
 		HyperObject ho = hp.getHyperEconomy().getHyperObject(item_stack);
 		
 		if (item_stack.getType()==Material.ENCHANTED_BOOK) {
-			ItemStack return_item = this.addEnchantedBook(item_stack);
+			ItemStack return_item = this.AddEnchantedBook(item_stack);
 			return return_item;
 		}
 		
@@ -197,7 +289,6 @@ public class ShopTransactions {
 	
 	//PLAYER-MANAGER ADDS ITEMS TO SHOP
 	public ItemStack AddItem(ItemStack item_stack) {
-		//out.println("AddItem: "+item_stack);
 		PlayerShop pshop=hyperAPI.getPlayerShop(this.shopname);
 		HyperEconomy he = hc.getDataManager().getEconomy(pshop.getEconomy());
 		HyperObject ho = hp.getHyperEconomy().getHyperObject(item_stack);
@@ -207,12 +298,12 @@ public class ShopTransactions {
 		int globalMaxStock = hc.getConf().getInt("shop.max-stock-per-item-in-playershops");
 		HyperObject ho2 = he.getHyperObject(ho.getName(), pshop);
 		if (ho2.getStock() + amount > globalMaxStock) {
-			player.sendMessage("CANT_ADD_MORE_STOCK");
+			player.sendMessage(ChatColor.YELLOW+"CANT_ADD_MORE_STOCK");
 			return item_stack;
 		}
 		if (ho2.getType() == HyperObjectType.ITEM) {
 			ho2.setStock(ho2.getStock() + amount);
-			player.sendMessage("You added "+amount+" "+ho2.getDisplayName()+" to the shop "+this.shopname);
+			player.sendMessage(ChatColor.YELLOW+"You added "+amount+" "+ho2.getDisplayName()+" to the shop "+this.shopname);
 			return new ItemStack(Material.AIR);
 		}
 		return null;
@@ -220,13 +311,11 @@ public class ShopTransactions {
 	
 	//PLAYER-MANAGER ADDS ITEMS TO SHOP
 	public ItemStack AddEnchantedItem(ItemStack item_stack) {
-		//out.println("AddEcnhantedItem: "+item_stack);
 		//make list of hyperconomy enchantment names from item's enchants
 		ArrayList<HyperObject> enchants = new ArrayList<HyperObject>();
 		for (HyperObject hob : hyperAPI.getEnchantmentHyperObjects(item_stack, player.getName())) {
 			if (!hyperAPI.getShop(shopname).isBanned(hob)){
 				enchants.add(hob);
-				//out.println("enchant: "+hob.getDisplayName());
 			}
 		}
 		
@@ -235,11 +324,9 @@ public class ShopTransactions {
 		}
 		
 		ArrayList<HyperObject> keep_enchant = new ArrayList<HyperObject>();
-		//player.setItemInHand(player.getItemOnCursor().clone());
 		for (HyperObject e : enchants) {
         	String ename = this.AddEnchant(e.getDisplayName());
             if (ename.equals(e)) {
-    			//out.println("ELSE");
         		keep_enchant.add(e);
     		}
         }
@@ -255,7 +342,7 @@ public class ShopTransactions {
 		return stack;
 	}
 	
-	public ItemStack addEnchantedBook(ItemStack ebook) {
+	public ItemStack AddEnchantedBook(ItemStack ebook) {
 		//out.println("AddEnchantedBook: "+ebook);
 		//make list of hyperconomy enchantment names from item's enchants
 		ArrayList<HyperObject> enchants = new ArrayList<HyperObject>();
@@ -303,7 +390,7 @@ public class ShopTransactions {
 		int globalMaxStock = hc.getConf().getInt("shop.max-stock-per-item-in-playershops");
 		HyperObject ho2 = he.getHyperObject(ho.getName(), pshop);
 		if (ho2.getStock() + 1 > globalMaxStock) {
-			player.sendMessage("CANT_ADD_MORE_STOCK");
+			player.sendMessage(ChatColor.YELLOW+"CANT_ADD_MORE_STOCK");
 			return enchant;
 		} else {
 

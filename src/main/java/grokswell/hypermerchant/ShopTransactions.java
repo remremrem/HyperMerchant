@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,7 +70,9 @@ public class ShopTransactions {
 	
 	
 	public ItemStack SellItem(ItemStack item_stack){
-		HyperObject ho = hp.getHyperEconomy().getHyperObject(item_stack);
+		HyperObject ho = hyperAPI.getHyperObject(item_stack, hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
+		//HyperObject ho = hyperAPI.getHyperObject(item_name, hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
+
 		if (ho==null) {
 			return null;
 		}
@@ -82,20 +84,14 @@ public class ShopTransactions {
 			player.getInventory().addItem(item_stack);
 			TransactionResponse response = hyperAPI.sell(player, ho, amount, hyperAPI.getShop(shopname));
 			response.sendMessages();
-		
-			if (!response.successful()) {
-				player.sendMessage(ChatColor.YELLOW+"Cannot sell: "+ho.getDisplayName()+" to this shop.");
-				return item_stack;
-			} else {
-				return new ItemStack(Material.AIR);
-			}
+			return new ItemStack(Material.AIR);
 		}
 		return new ItemStack(item_stack);
 	}
 	
 	
 	public String SellEnchant(String enchant) {
-		HyperObject ho = hyperAPI.getHyperObject(enchant,hyperAPI.getShop(shopname).getEconomy());
+		HyperObject ho = hyperAPI.getHyperObject(enchant, hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		if (ho == null) {
 			player.sendMessage(ChatColor.YELLOW+"This shop will not buy enchantment: "+enchant);
 			return enchant;
@@ -182,8 +178,9 @@ public class ShopTransactions {
 		}
 		
 		TransactionResponse response = hyperAPI.buy(player, ho, qty, hyperAPI.getShop(shopname));
-		player.sendMessage(ChatColor.YELLOW+"You purchased "+qty+" "+ho.getDisplayName()+" for "+response.getTotalPrice());
-		
+		if (response.getSuccessfulObjects().size() > 0) {
+			player.sendMessage(ChatColor.YELLOW+"You purchased "+qty+" "+ho.getDisplayName()+" for "+response.getTotalPrice());
+		}
 		
 		if (hyperAPI.getPlayerShopList().contains(shopname) && commission > 0.0) {
 		    if (ho.isShopObject()){

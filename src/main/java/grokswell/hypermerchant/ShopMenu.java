@@ -468,15 +468,14 @@ public class ShopMenu implements Listener, MerchantMenu {
         
         //IF THE PLAYER IS SELLING SOMETHING TO THE SHOP
         else if (item_in_hand.getType() != Material.AIR) {
-    		
-            // SELLING ITEMS
-    		//Shop pshop=hyperAPI.getPlayerShop(this.shopname);
     		HyperObject ho = hp.getHyperEconomy().getHyperObject(item_in_hand);
-    		//if (ho != null) {
-    		//	ho = pshop.getPlayerShopObject(ho);
-    		//}
+
     		ItemStack stack = this.shop_trans.Sell(item_in_hand);
             if (ho != null && stack != null) {
+            	if (hyperAPI.getPlayerShopList().contains(this.shopname)){
+            		PlayerShop pshop=hyperAPI.getPlayerShop(this.shopname);
+            		ho = pshop.getPlayerShopObject(ho);
+            	}
     			this.inventory_view.setCursor(new ItemStack(ho.getItemStack().getType()));
 				if ((int) ho.getStock()==item_in_hand.getAmount()) {
 					this.refreshPage();

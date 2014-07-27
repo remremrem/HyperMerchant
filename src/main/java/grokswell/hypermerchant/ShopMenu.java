@@ -56,7 +56,7 @@ public class ShopMenu implements Listener, MerchantMenu {
 	private ItemStack sorting_icon;
 	String economy_name;
 	
-	public ShopStock shopstock;
+	private ShopStock shopstock;
 	
 	NPC npc;
 	double commission;
@@ -173,8 +173,13 @@ public class ShopMenu implements Listener, MerchantMenu {
 	        ItemStack stack;
 	        
         	HyperObject ho = hyperAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
-	        
-	        if (ho.getType()==HyperObjectType.ITEM) {
+	        if (ho == null) {
+	        	stock=0;
+	        	stack=new ItemStack(Material.AIR, 1, (short) 0);
+	        	value=0;
+	        	cost=0;
+	        	
+	        } else if (ho.getType()==HyperObjectType.ITEM) {
 	        	stock = ho.getStock();
 				stack = ho.getItemStack();
 				
@@ -201,20 +206,26 @@ public class ShopMenu implements Listener, MerchantMenu {
 
 				stack = new ItemStack(Material.POTION, 1, (short) 0);
 				
-				
 			} else {
 				stack = new ItemStack(Material.AIR, 1, (short) 0);
 			}
 	        
 	        String status = "";
-	        if (ho.getStatus()!=null){
+	        if (ho == null){
+	        	status="";
+	        } else if (ho.getStatus()!=null){
 	        	status = ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+ho.getStatus().name().toLowerCase();
 	        }
-			this.setOption(count, stack, ho.getDisplayName().replaceAll("_", " "), 
-					ChatColor.WHITE+"Price: "+ChatColor.DARK_PURPLE+String.format("%.2f", cost),
-					ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", value), 
-					ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) stock),
-	    			status );
+	        
+	        if (ho == null) {
+				this.setOption(count, stack, "","");
+	        } else {
+				this.setOption(count, stack, ho.getDisplayName().replaceAll("_", " "), 
+						ChatColor.WHITE+"Price: "+ChatColor.DARK_PURPLE+String.format("%.2f", cost),
+						ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", value), 
+						ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) stock),
+		    			status );
+	        }
 	        count++;
 		}
 		
@@ -560,7 +571,7 @@ public class ShopMenu implements Listener, MerchantMenu {
     
     
     public void destroy() {
-        HandlerList.unregisterAll(this);
+    	HandlerList.unregisterAll(this);
         this.plugin = null;
         this.optionNames = null;
         this.optionIcons = null;
@@ -568,5 +579,6 @@ public class ShopMenu implements Listener, MerchantMenu {
         this.inventory_view = null;
         this.shop_trans = null;
         this.inventory_name = null;
+        this.shopstock = null;
     }
 }

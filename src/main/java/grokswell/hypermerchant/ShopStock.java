@@ -101,7 +101,10 @@ public class ShopStock {
 				while(i < object_names.size()) {
 					String cname = object_names.get(i);
 					HyperObject ho = hyperAPI.getHyperObject(cname, economy_name, hyperAPI.getShop(shopname));
-				
+					if (ho == null) {
+						i++;
+						continue;
+					}
 					if (ho.getType() == HyperObjectType.ITEM) {
 						String mtrl = ho.getItemStack().getType().toString().toLowerCase();
 						items_by_material.add(Pair.with(mtrl+cname,cname));
@@ -125,6 +128,10 @@ public class ShopStock {
 				while(i < object_names.size()) {
 					String cname = object_names.get(i);
 					HyperObject ho = hyperAPI.getHyperObject(cname, economy_name, hyperAPI.getShop(shopname));
+					if (ho == null) {
+						i++;
+						continue;
+					}
 					items_by_price.add(Pair.with(ho.getBuyPriceWithTax(1.0),cname));
 					i++;
 				}
@@ -139,6 +146,10 @@ public class ShopStock {
 				while(i < object_names.size()) {
 					String cname = object_names.get(i);
 					HyperObject ho = hyperAPI.getHyperObject(cname, economy_name, hyperAPI.getShop(shopname));
+					if (ho == null) {
+						i++;
+						continue;
+					}
 					hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
 					items_by_price.add(Pair.with(ho.getSellPriceWithTax(1.0, hp),cname));
 					i++;
@@ -155,6 +166,10 @@ public class ShopStock {
 				while(i < object_names.size()) {
 					String cname = object_names.get(i);
 					HyperObject ho = hyperAPI.getHyperObject(cname, economy_name, hyperAPI.getShop(shopname));
+					if (ho == null) {
+						i++;
+						continue;
+					}
 					items_by_qty.add(Pair.with(ho.getStock(),cname));
 					i++;
 				}

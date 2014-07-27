@@ -194,8 +194,13 @@ public class ManageMenu implements Listener, MerchantMenu {
 	        ItemStack stack;
 	        
         	HyperObject ho = hyperAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
-	        
-	        if (ho.getType()==HyperObjectType.ITEM) {
+	        if (ho == null) {
+	        	stock=0;
+	        	stack=new ItemStack(Material.AIR, 1, (short) 0);
+	        	value=0;
+	        	cost=0;
+	        	
+	        } else if (ho.getType()==HyperObjectType.ITEM) {
 	        	stock = ho.getStock();
 				stack = ho.getItemStack();
 				
@@ -222,23 +227,27 @@ public class ManageMenu implements Listener, MerchantMenu {
 
 				stack = new ItemStack(Material.POTION, 1, (short) 0);
 				
-				
 			} else {
 				stack = new ItemStack(Material.AIR, 1, (short) 0);
 			}
+	        
 	        String buy_dynamic = ChatColor.GRAY+" <dynamic>";
-	        if (ho.getBuyPrice() > 0.0) {
-	        	buy_dynamic = ChatColor.GRAY+" <static>";
-	        }
 	        String sell_dynamic = ChatColor.GRAY+" <dynamic>";
-	        if (ho.getSellPrice() > 0.0) {
-	        	sell_dynamic = ChatColor.GRAY+" <static>";
+	        if (ho != null){
+		        if (ho.getBuyPrice() > 0.0) {
+		        	buy_dynamic = ChatColor.GRAY+" <static>";
+		        }
+		        if (ho.getSellPrice() > 0.0) {
+		        	sell_dynamic = ChatColor.GRAY+" <static>";
+		        }
+				this.setOption(count, stack, ho.getDisplayName().replaceAll("_", " "), 
+						ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", cost)+buy_dynamic,
+						ChatColor.WHITE+"Buy: "+ChatColor.DARK_PURPLE+String.format("%.2f", value)+sell_dynamic, 
+						ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) stock),
+		    			ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+ho.getStatus().name().toLowerCase() );
+	        } else {
+	        	this.setOption(count, stack,"","");
 	        }
-			this.setOption(count, stack, ho.getDisplayName().replaceAll("_", " "), 
-					ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", cost)+buy_dynamic,
-					ChatColor.WHITE+"Buy: "+ChatColor.DARK_PURPLE+String.format("%.2f", value)+sell_dynamic, 
-					ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) stock),
-	    			ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+ho.getStatus().name().toLowerCase() );
 	        count++;
 		}
 		

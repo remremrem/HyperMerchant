@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,6 +64,12 @@ public class ShopStock {
 			}
 		}
 		for (HyperObject ho:available_objects) {
+			
+			HyperObject ho1 = hyperAPI.getHyperObject(ho.getName(), hyperAPI.getShop(this.shopname).getEconomy(), hyperAPI.getShop(this.shopname));
+			if (ho1==null) {
+				out.println("bad object name: "+ho.getName());
+				continue;
+			}
 			if (display_zero_stock==0) {
 				if (ho.getStock()>=1) {
 					object_names.add(ho.getName());

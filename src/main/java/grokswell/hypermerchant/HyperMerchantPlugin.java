@@ -156,7 +156,12 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 						return true;
 						
 					} else {
-						if (hyperAPI.getPlayerShop(name).isAllowed(hyperAPI.getHyperPlayer(player.getName()))) {
+						PlayerShop ps = hyperAPI.getPlayerShop(name);
+						if (ps == null) {
+							sender.sendMessage(ChatColor.YELLOW+"You must be standing in a player shop to use the command /managemenu");
+							return true;
+						}
+						if (ps.isAllowed(hyperAPI.getHyperPlayer(player.getName()))) {
 							new ManageMenu(name, 54, this, sender, player, null);
 							return true;
 						}

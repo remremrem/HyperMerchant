@@ -480,8 +480,17 @@ public class ShopMenu implements Listener, MerchantMenu {
         //IF THE PLAYER IS SELLING SOMETHING TO THE SHOP
         else if (item_in_hand.getType() != Material.AIR) {
     		HyperObject ho = hp.getHyperEconomy().getHyperObject(item_in_hand);
+    		
+    		if (event.isLeftClick() && event.isShiftClick()) {
+    			ItemStack stack = this.shop_trans.SellEnchantedItem(item_in_hand);
+    			player.setItemOnCursor(new ItemStack(Material.AIR));
+				player.getInventory().addItem(stack);
+    			return;
+    		}
 
-    		ItemStack stack = this.shop_trans.Sell(item_in_hand);
+			String option_name = this.optionNames[slot_num];
+			option_name=option_name.replace(" ", "_");
+    		ItemStack stack = this.shop_trans.Sell(item_in_hand, option_name);
             if (ho != null && stack != null) {
             	if (hyperAPI.getPlayerShopList().contains(this.shopname)){
             		PlayerShop pshop=hyperAPI.getPlayerShop(this.shopname);

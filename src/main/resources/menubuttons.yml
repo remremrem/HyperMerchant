@@ -27,7 +27,7 @@ help4:
   material: PAPER
   data: 0
   name: "To Sell Enchantment:"
-  lore: Left-click enchanted item,on matching store enchantment
+  lore: Left-click enchanted item,on matching store enchantment,or shift+click to sell all enchants
 help5:
   material: BOOK
   data: 0

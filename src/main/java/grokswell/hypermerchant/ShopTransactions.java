@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,15 +45,17 @@ public class ShopTransactions {
 	}
 	
 	
-	public ItemStack Sell(ItemStack item_stack){	
+	public ItemStack Sell(ItemStack item_stack, String menu_item_name){	
 		if (item_stack.getType()==Material.ENCHANTED_BOOK) {
 			ItemStack return_item = this.SellEnchantedBook(item_stack);
 			return return_item;
 		}
 		
-		ItemStack item = SellEnchantedItem(item_stack);
+		ItemStack item = SellItem(item_stack);
+		//out.println("ITEM: "+item.getType()+" item_stack: "+item_stack.getType());
 		if (item==null) {
-			item = SellItem(item_stack);
+			item = SellSingleEnchant(item_stack, menu_item_name);
+			//item = SellEnchantedItem(item_stack);
 			if (item != null) {
 				return item;
 			}
@@ -87,6 +89,36 @@ public class ShopTransactions {
 			return new ItemStack(Material.AIR);
 		}
 		return new ItemStack(item_stack);
+	}
+	
+	
+	public ItemStack SellSingleEnchant(ItemStack item, String enchant) {
+		ArrayList<HyperObject> enchants = new ArrayList<HyperObject>();
+		for (HyperObject hob : hyperAPI.getEnchantmentHyperObjects(item, player.getName())) {
+			enchants.add(hob);
+		}
+		if (enchants.size() < 1) {
+			return null;
+		}
+		
+		ArrayList<HyperObject> keep_enchant = new ArrayList<HyperObject>();
+		player.setItemInHand(item.clone());
+		for (HyperObject e : enchants) {
+        	if (e.getDisplayName().equals(enchant)) {
+        		String ename = this.SellEnchant(e.getDisplayName());
+        	} else {
+        		keep_enchant.add(e);
+    		}
+        }
+		player.setItemInHand(new ItemStack(Material.AIR));
+		
+		ItemStack stack = new ItemStack(item.getType());
+		if (keep_enchant.size()>0) {
+			for (HyperObject e : keep_enchant){
+				stack.addUnsafeEnchantment(e.getEnchantment(), e.getEnchantmentLevel());
+			}
+		}
+		return stack;
 	}
 	
 	

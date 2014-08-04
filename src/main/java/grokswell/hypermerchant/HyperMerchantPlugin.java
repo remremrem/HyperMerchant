@@ -26,9 +26,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
-
-import regalowl.hyperconomy.DataManager;
 import regalowl.hyperconomy.HyperConomy;
+import regalowl.hyperconomy.HyperShopManager;
 import regalowl.hyperconomy.api.HyperEconAPI;
 import regalowl.hyperconomy.api.HyperAPI;
 import regalowl.hyperconomy.account.HyperPlayer;
@@ -79,8 +78,8 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			} 
 			
 			HyperConomy hc = HyperConomy.hc;
-			DataManager ecoMan = hc.getDataManager();
-			ArrayList<String> shoplist = ecoMan.listShops();
+			HyperShopManager shopManager = hc.getHyperShopManager();
+			ArrayList<String> shoplist = shopManager.listShops();
 			
 			if (args.length != 1) {
 				sender.sendMessage(ChatColor.YELLOW+"You must specify one shop name. Example: "+

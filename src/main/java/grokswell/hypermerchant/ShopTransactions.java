@@ -46,21 +46,23 @@ public class ShopTransactions {
 	
 	
 	public ItemStack Sell(ItemStack item_stack, String menu_item_name){	
-		if (item_stack.getType()==Material.ENCHANTED_BOOK) {
-			ItemStack return_item = this.SellEnchantedBook(item_stack);
-			return return_item;
-		}
 		
 		ItemStack item = SellItem(item_stack);
-		//out.println("ITEM: "+item.getType()+" item_stack: "+item_stack.getType());
 		if (item==null) {
+			
+			if (item_stack.getType()==Material.ENCHANTED_BOOK) {
+				ItemStack return_item = this.SellEnchantedBook(item_stack);
+				return return_item;
+			}
+			
 			item = SellSingleEnchant(item_stack, menu_item_name);
-			//item = SellEnchantedItem(item_stack);
 			if (item != null) {
 				return item;
 			}
 		}
-		
+		if (item.getType() == Material.AIR) {
+			return item;
+		}
 		HyperObject ho2 = hp.getHyperEconomy().getHyperObject(item);
 		if (ho2 == null){
 			return item_stack;
@@ -212,6 +214,9 @@ public class ShopTransactions {
 		TransactionResponse response = hyperAPI.buy(player, ho, qty, hyperAPI.getShop(shopname));
 		if (response.getSuccessfulObjects().size() > 0) {
 			player.sendMessage(ChatColor.YELLOW+"You purchased "+qty+" "+ho.getDisplayName()+" for "+response.getTotalPrice());
+		} 
+		else {
+			response.sendMessages();
 		}
 		
 		if (hyperAPI.getPlayerShopList().contains(shopname) && commission > 0.0) {

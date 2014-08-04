@@ -83,8 +83,6 @@ public class ShopMenu implements Listener, MerchantMenu {
         }
     	this.shop_trans = new ShopTransactions(player, this.shopname, this.plugin, this);
     	this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
-    	
-    	//this.sorting_icon = plugin.menuButtonData.help5.clone();
     	UpdateSortingIcon();
     	
         String iname = (this.shopname+"<>"+player.getName());
@@ -94,7 +92,6 @@ public class ShopMenu implements Listener, MerchantMenu {
         	this.inventory_name = iname;
         }
 
-	    //out.println("inventory name: "+ this.inventory_name);
         this.inventory = Bukkit.createInventory(player, size, this.inventory_name);
 
     	hp = hyperAPI.getHyperPlayer(player.getName());
@@ -102,7 +99,6 @@ public class ShopMenu implements Listener, MerchantMenu {
         economy_name = hyperAPI.getShop(this.shopname).getEconomy();
         
 		this.shopstock = new ShopStock(sender, this.player, this.shopname, this.plugin, "trade");
-        //shopstock.SortStock(1);
 		this.item_count=shopstock.items_count;
         double maxpages = this.item_count/45;
         this.last_page = (int) maxpages;

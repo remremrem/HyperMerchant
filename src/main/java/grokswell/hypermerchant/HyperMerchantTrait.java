@@ -21,6 +21,7 @@ import net.citizensnpcs.api.ai.speech.SimpleSpeechController;
 import regalowl.hyperconomy.api.HyperAPI;
 import regalowl.hyperconomy.api.HyperEconAPI;
 import regalowl.hyperconomy.account.HyperPlayer;
+import regalowl.hyperconomy.shop.PlayerShop;
 
 
 public class HyperMerchantTrait extends Trait {
@@ -313,6 +314,16 @@ public class HyperMerchantTrait extends Trait {
 			return;
 		}
 		
+		//if player is trying to manage shop
+		if (shift_click) {
+			PlayerShop pshop = hyperAPI.getPlayerShop(this.shop_name);
+			if (pshop != null) {
+				if (pshop.isAllowed(hp)) {
+					new ManageMenu(this.shop_name, 54, this.plugin, null, player, null);
+					return;
+				}
+			}
+		}
 		
 		//return if player has no permission to buy or sell from this shop.
 		if (!hp.hasBuyPermission(hyperAPI.getShop(this.shop_name)) && !hp.hasSellPermission(hyperAPI.getShop(this.shop_name))) {

@@ -47,6 +47,15 @@ public class ShopTransactions {
 	
 	public ItemStack Sell(ItemStack item_stack, String menu_item_name){	
 		
+		if(!hp.hasSellPermission(hyperAPI.getShop(shopname))) {
+			player.sendMessage(ChatColor.YELLOW+"You cannot sell items to this shop.");
+			return item_stack;
+		}
+		if(!player.hasPermission("hyperconomy.sell")) {
+			player.sendMessage(ChatColor.YELLOW+"You cannot sell items to shops.");
+			return item_stack;
+		}
+		
 		ItemStack item = SellItem(item_stack);
 		if (item==null) {
 			
@@ -208,6 +217,10 @@ public class ShopTransactions {
 		HyperObject ho = hyperAPI.getHyperObject(item.replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		if (!hp.hasBuyPermission(hyperAPI.getShop(shopname))) {
 			player.sendMessage(ChatColor.YELLOW+"You cannot buy from this shop.");
+			return null;
+		}
+		if (!player.hasPermission("hyperconomy.buy")) {
+			player.sendMessage(ChatColor.YELLOW+"You cannot purchase from shops");
 			return null;
 		}
 		

@@ -250,7 +250,11 @@ public class ClerkCommand {
 			//CLERK FIRE
 			if (args[0].equals("fire")) {
 				String npc_name = this_npc.getName();
-				if (merchmeth.Fire(this_npc.getId())){
+				if (this_npc.getTrait(HyperMerchantTrait.class).rented) {
+					String message = merchmeth.FireClerk(player);
+					player.sendMessage(message);
+				}
+				else if (merchmeth.Fire(this_npc.getId())){
 					int clerk_count = HMP.playerData.getPlayerData().getInt(player.getName()+".clerkcount");
 					HMP.playerData.savePlayerData(player.getName()+".clerkcount", clerk_count-1);
 					

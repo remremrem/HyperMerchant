@@ -229,7 +229,11 @@ public class ClerkCommand {
 				}
 				//MAKE SURE THIS NPC WORKS FOR THIS PLAYER
 				if (this_npc.hasTrait(HyperMerchantTrait.class)) {
-					if ( !merchmeth.GetEmployer(this_npc.getId()).equals(player.getName()) ) {
+					if (merchmeth.GetEmployer(this_npc.getId())==null) {
+						sender.sendMessage(ChatColor.YELLOW+"You may only perform this command on a clerk that works for you.");
+						return;
+					}
+					else if ( !merchmeth.GetEmployer(this_npc.getId()).equals(player.getName()) ) {
 						sender.sendMessage(ChatColor.YELLOW+"You may only perform this command on a clerk that works for you.");
 						return;
 					}

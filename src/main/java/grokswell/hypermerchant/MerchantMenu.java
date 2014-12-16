@@ -3,7 +3,7 @@ package grokswell.hypermerchant;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import regalowl.hyperconomy.hyperobject.HyperObject;
+import regalowl.hyperconomy.tradeobject.TradeObject;
 
 public interface MerchantMenu {
 	public ShopStock getShopStock();
@@ -15,10 +15,10 @@ public interface MerchantMenu {
 	public void previousPage();
 	public void lastPage();
 	public void firstPage();
-	public int itemOnCurrentPage(HyperObject ho);
+	public int itemOnCurrentPage(TradeObject ho);
 	public void ToggleZeroStock();
 	public void Sort();
-	public void itemRefresh(int slot, HyperObject ho);
+	public void itemRefresh(int slot, TradeObject ho);
 	public void menuRefresh();
 	public void openMenu(Player player);
 	public void destroy();

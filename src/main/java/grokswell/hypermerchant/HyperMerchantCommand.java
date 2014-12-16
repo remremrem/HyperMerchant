@@ -14,11 +14,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import regalowl.hyperconomy.api.HyperAPI;
+import regalowl.hyperconomy.HyperAPI;
+import regalowl.hyperconomy.account.HyperPlayer;
 
 public class HyperMerchantCommand {
 	CommandSender sender;
-	HyperAPI hyperAPI = new HyperAPI();
+	HyperAPI hyperAPI;
+	HyperPlayer hyplay;
 	MerchantMethods merchmeth;
 	int IDarg;
 	
@@ -26,6 +28,7 @@ public class HyperMerchantCommand {
 		IDarg=-1;
 		merchmeth = new MerchantMethods();
 		this.sender = snder;
+		hyperAPI = HMP.hyperAPI;
 		Player player = null;
 		NPCSelector sel = CitizensAPI.getDefaultNPCSelector(); 
 		List<String> argslist = Arrays.asList(args);
@@ -37,6 +40,7 @@ public class HyperMerchantCommand {
 			}
 		} else {
 			player = (Player) snder;
+			HyperPlayer hyplay = hyperAPI.getHyperPlayer(player.getName());
 		}
 		
 		try {
@@ -123,7 +127,7 @@ public class HyperMerchantCommand {
 						return;
 
 					} else {
-						String shop_name=hyperAPI.getPlayerShop(player);
+						String shop_name=hyperAPI.getPlayerShop(hyplay);
 						String message = merchmeth.SetShop(this_npc.getId(), shop_name);
 						sender.sendMessage(message);
 						return;

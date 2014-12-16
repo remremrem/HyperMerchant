@@ -1,11 +1,11 @@
 first_page:
-  material: STATIONARY_LAVA
-  data: 0
+  material: STAINED_GLASS_PANE
+  data: 14
   name: First Page
   lore: Go to the first page.
 back:
-  material: STATIONARY_WATER
-  data: 0
+  material: STAINED_GLASS_PANE
+  data: 5
   name: Back 1
   lore: Go back to the previous page.
 help1:
@@ -34,13 +34,13 @@ help5:
   name: "Switch Sorting Mode"
   lore: Left-click switch sorting mode, Right-click toggle zero stock
 forward:
-  material: STATIONARY_WATER
-  data: 0
+  material: STAINED_GLASS_PANE
+  data: 5
   name: Forward 1
   lore: Go to the next page.
 last_page:
-  material: STATIONARY_LAVA
-  data: 0
+  material: STAINED_GLASS_PANE
+  data: 14
   name: Last page
   lore: Go to the last page.
 buy_price:

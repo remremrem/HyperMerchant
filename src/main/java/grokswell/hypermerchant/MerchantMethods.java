@@ -19,15 +19,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.plugin.Plugin;
 
-import regalowl.hyperconomy.api.HyperAPI;
-import regalowl.hyperconomy.api.HyperEconAPI;
+import regalowl.hyperconomy.HyperAPI;
 
 
 public class MerchantMethods {
 	NPCRegistry npcReg = CitizensAPI.getNPCRegistry();
 	NPCSelector npcSel = CitizensAPI.getDefaultNPCSelector();
-	HyperAPI hyperAPI = new HyperAPI();
-	HyperEconAPI heAPI = new HyperEconAPI();
+	HyperAPI hyperAPI;
 	Utils utils = new Utils();
 
 	public String ListMerchants(Player player) {

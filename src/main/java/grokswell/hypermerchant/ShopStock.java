@@ -2,6 +2,8 @@ package grokswell.hypermerchant;
 
 //import static java.lang.System.out;
 
+import grokswell.util.HyperToBukkit;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -10,10 +12,10 @@ import org.bukkit.entity.Player;
 
 import org.javatuples.Pair;
 
-import regalowl.hyperconomy.hyperobject.HyperObject;
 import regalowl.hyperconomy.account.HyperPlayer;
-import regalowl.hyperconomy.api.HyperAPI;
-import regalowl.hyperconomy.hyperobject.HyperObjectType;
+import regalowl.hyperconomy.tradeobject.TradeObject;
+import regalowl.hyperconomy.tradeobject.TradeObjectType;
+import regalowl.hyperconomy.HyperAPI;
 
 
 public class ShopStock {
@@ -30,12 +32,13 @@ public class ShopStock {
 	private CommandSender sender;
 	private HyperPlayer hp;
 	private String menu_type;
-	
+	HyperToBukkit hypBuk;
 
 	HyperAPI hyperAPI;
 	
 	ShopStock(CommandSender snder, Player plyer, String sname, HyperMerchantPlugin hmp, String menutype) {
-		hyperAPI = new HyperAPI();
+		hyperAPI = hmp.hyperAPI;
+		hypBuk = new HyperToBukkit();
 		menu_type = menutype;
 		hp = hyperAPI.getHyperPlayer(plyer.getName());
 		shopname = sname;
@@ -52,7 +55,7 @@ public class ShopStock {
 		display_zero_stock=dzs;
 		object_names.clear();
 		display_names.clear();
-		ArrayList<HyperObject> available_objects = new ArrayList<HyperObject>();
+		ArrayList<TradeObject> available_objects = new ArrayList<TradeObject>();
 		if (menu_type == "trade") {
 			available_objects = hyperAPI.getAvailableObjects(shopname);
 		}
@@ -63,9 +66,9 @@ public class ShopStock {
 				return;
 			}
 		}
-		for (HyperObject ho:available_objects) {
+		for (TradeObject ho:available_objects) {
 			
-			HyperObject ho1 = hyperAPI.getHyperObject(ho.getName(), hyperAPI.getShop(this.shopname).getEconomy(), hyperAPI.getShop(this.shopname));
+			TradeObject ho1 = hyperAPI.getHyperObject(ho.getName(), hyperAPI.getShop(this.shopname).getEconomy(), hyperAPI.getShop(this.shopname));
 			if (ho1==null) {
 				//out.println("bad object name: "+ho.getName());
 				continue;
@@ -106,19 +109,19 @@ public class ShopStock {
 				ArrayList<Pair<String,String>> items_by_material = new ArrayList<Pair<String,String>>();
 				while(i < object_names.size()) {
 					String cname = object_names.get(i);
-					HyperObject ho = hyperAPI.getHyperObject(cname, economy_name, hyperAPI.getShop(shopname));
+					TradeObject ho = hyperAPI.getHyperObject(cname, economy_name, hyperAPI.getShop(shopname));
 					if (ho == null) {
 						i++;
 						continue;
 					}
-					if (ho.getType() == HyperObjectType.ITEM) {
-						String mtrl = ho.getItemStack().getType().toString().toLowerCase();
+					if (ho.getType() == TradeObjectType.ITEM) {
+						String mtrl = hypBuk.getItemStack(ho.getItemStack(1)).getType().toString().toLowerCase();
 						items_by_material.add(Pair.with(mtrl+cname,cname));
 						
-					} else if (ho.getType() == HyperObjectType.ENCHANTMENT) {
+					} else if (ho.getType() == TradeObjectType.ENCHANTMENT) {
 						items_by_material.add(Pair.with("enchantment"+cname,cname));
 						
-					} else if (ho.getType() == HyperObjectType.EXPERIENCE){
+					} else if (ho.getType() == TradeObjectType.EXPERIENCE){
 						items_by_material.add(Pair.with("xp"+cname,cname));
 					}
 					i++;
@@ -133,7 +136,7 @@ public class ShopStock {
 				ArrayList<Pair<Double,String>> items_by_price = new ArrayList<Pair<Double,String>>();
 				while(i < object_names.size()) {
 					String cname = object_names.get(i);
-					HyperObject ho = hyperAPI.getHyperObject(cname, economy_name, hyperAPI.getShop(shopname));
+					TradeObject ho = hyperAPI.getHyperObject(cname, economy_name, hyperAPI.getShop(shopname));
 					if (ho == null) {
 						i++;
 						continue;
@@ -151,7 +154,7 @@ public class ShopStock {
 				ArrayList<Pair<Double,String>> items_by_price = new ArrayList<Pair<Double,String>>();
 				while(i < object_names.size()) {
 					String cname = object_names.get(i);
-					HyperObject ho = hyperAPI.getHyperObject(cname, economy_name, hyperAPI.getShop(shopname));
+					TradeObject ho = hyperAPI.getHyperObject(cname, economy_name, hyperAPI.getShop(shopname));
 					if (ho == null) {
 						i++;
 						continue;
@@ -171,7 +174,7 @@ public class ShopStock {
 				ArrayList<Pair<Double,String>> items_by_qty = new ArrayList<Pair<Double,String>>();
 				while(i < object_names.size()) {
 					String cname = object_names.get(i);
-					HyperObject ho = hyperAPI.getHyperObject(cname, economy_name, hyperAPI.getShop(shopname));
+					TradeObject ho = hyperAPI.getHyperObject(cname, economy_name, hyperAPI.getShop(shopname));
 					if (ho == null) {
 						i++;
 						continue;

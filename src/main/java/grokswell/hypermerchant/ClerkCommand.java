@@ -20,19 +20,25 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import regalowl.hyperconomy.account.HyperPlayer;
-import regalowl.hyperconomy.api.HyperAPI;
+import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.shop.PlayerShop;
+
+import grokswell.util.HyperToBukkit;
 
 public class ClerkCommand {
 	CommandSender sender;
-	HyperAPI hyperAPI = new HyperAPI();
+	HyperAPI hyperAPI;
+	HyperPlayer hyplay;
 	MerchantMethods merchmeth;
 	int IDarg;
+	HyperToBukkit hypBuk;
 	
 	ClerkCommand(CommandSender snder, String[] args, HyperMerchantPlugin HMP) {
 		IDarg=-1;
+		hypBuk=new HyperToBukkit();
 		merchmeth = new MerchantMethods();
 		this.sender = snder;
+		hyperAPI = HMP.hyperAPI;
 		Player player = null;
 		NPCSelector sel = CitizensAPI.getDefaultNPCSelector();
 		NPCRegistry npcReg = CitizensAPI.getNPCRegistry();
@@ -45,6 +51,7 @@ public class ClerkCommand {
 			}
 		} else {
 			player = (Player) snder;
+			HyperPlayer hyplay = hyperAPI.getHyperPlayer(player.getName());
 		}
 		
 		//try {
@@ -138,13 +145,13 @@ public class ClerkCommand {
 					npctype=args[2].toUpperCase();
 				} else if (args.length == 3) {
 					npctype=args[2].toUpperCase();
-					shopname = hyperAPI.getPlayerShop(player);
+					shopname = hyperAPI.getPlayerShop(hyplay);
 					if (!shopnames.contains(shopname)) {
 						shopname = shopnames.get(0);
 					}
 				} else {
 					npctype="PLAYER";
-					shopname = hyperAPI.getPlayerShop(player);
+					shopname = hyperAPI.getPlayerShop(hyplay);
 					if (!shopnames.contains(shopname)) {
 						shopname = shopnames.get(0);
 					}
@@ -172,7 +179,7 @@ public class ClerkCommand {
 					return;
 				}
 
-				int npcid = merchmeth.Hire(args[1], npctype, shopname, hyperAPI.getPlayerShop(shopname).getLocation1());
+				int npcid = merchmeth.Hire(args[1], npctype, shopname, hypBuk.getLocation(hyperAPI.getPlayerShop(shopname).getLocation1()));
 				if ( npcid != -1 ) {
 					int clerk_count = HMP.playerData.getPlayerData().getInt(player.getName()+".clerkcount");
 					HMP.playerData.savePlayerData(player.getName()+".clerkcount", clerk_count+1);
@@ -280,7 +287,7 @@ public class ClerkCommand {
 					if (!HMP.settings.getNPC_IN_SHOP_ONLY())  {
 						merchmeth.Teleport(this_npc.getId(), player.getLocation());
 					} else {
-						String player_in_shop = hyperAPI.getPlayerShop(player);
+						String player_in_shop = hyperAPI.getPlayerShop(hyplay);
 						//out.println("player in shop: "+player_in_shop);
 						if (!player_in_shop.equals("")) {
 							if ( hyperAPI.getPlayerShop(player_in_shop).getOwner().getName().equals(player.getName()) ) {
@@ -302,7 +309,7 @@ public class ClerkCommand {
 						return;
 
 					} else {
-						String shop_name=hyperAPI.getPlayerShop(player);
+						String shop_name=hyperAPI.getPlayerShop(hyplay);
 						String message = merchmeth.SetShop(this_npc.getId(), shop_name);
 						sender.sendMessage(message);
 						return;

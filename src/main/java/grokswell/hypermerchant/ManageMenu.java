@@ -31,14 +31,17 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import regalowl.hyperconomy.HyperConomy;
-import regalowl.hyperconomy.api.HyperAPI;
-import regalowl.hyperconomy.hyperobject.HyperObject;
-import regalowl.hyperconomy.hyperobject.HyperObjectStatus;
-import regalowl.hyperconomy.hyperobject.HyperObjectType;
+import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.shop.PlayerShop;
+import regalowl.hyperconomy.tradeobject.BasicTradeObject;
+import regalowl.hyperconomy.tradeobject.TradeObject;
+import regalowl.hyperconomy.tradeobject.TradeObjectStatus;
+import regalowl.hyperconomy.tradeobject.TradeObjectType;
 import regalowl.hyperconomy.account.HyperPlayer;
+
 import grokswell.hypermerchant.ShopTransactions;
 import grokswell.util.EnchantIcons;
+import grokswell.util.HyperToBukkit;
  
 public class ManageMenu implements Listener, MerchantMenu {
  
@@ -49,7 +52,7 @@ public class ManageMenu implements Listener, MerchantMenu {
     int last_page; //the last_page number in the menu
     int sort_by; //sort-by 0=item name, 1=item type, 2=item price, 3=item quantity
     int display_zero_stock; //toggle displaying items with zero stock
-    private HyperMerchantPlugin plugin;
+    private HyperMerchantPlugin HMP;
     private Player player;
     private String inventory_name;
     private Inventory inventory;
@@ -61,14 +64,15 @@ public class ManageMenu implements Listener, MerchantMenu {
 	private HyperConomy hc;
 	ArrayList<String> status_list;
 	String economy_name;
+	HyperToBukkit hypBuk;
 	
 	public ShopStock shopstock;
 	
 	NPC npc;
 	double commission;
-	HyperAPI hyperAPI = new HyperAPI();
-
-	HyperPlayer hp;
+	
+	HyperAPI hyperAPI;
+	HyperPlayer hyplay;
 	
 	int edit_slot;
 	String edit_value;
@@ -87,12 +91,15 @@ public class ManageMenu implements Listener, MerchantMenu {
     	status_list.add("sell");
     	status_list.add("trade");
     	status_list.add("none");
+
+    	hyperAPI = plgn.hyperAPI;
+    	hypBuk = new HyperToBukkit();
     	this.editcooldown=null;
     	this.sort_by=0;
     	this.display_zero_stock=1;
     	this.shopname = name;
         this.size = size;
-        this.plugin = plgn;
+        this.HMP = plgn;
         this.optionNames = new String[size];
         this.page_number=0;
         this.optionIcons = new ItemStack[size];
@@ -103,26 +110,26 @@ public class ManageMenu implements Listener, MerchantMenu {
         } else {
         	this.commission = 0.0;
         }
-    	this.shop_trans = new ShopTransactions(player, this.shopname, this.plugin, this);
-    	this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
+    	this.shop_trans = new ShopTransactions(player, this.shopname, this.HMP, this);
+    	this.HMP.getServer().getPluginManager().registerEvents(this, this.HMP);
     	
     	UpdateSortingIcon();
     	
         String iname = (this.shopname+"<>"+player.getName());
         if (iname.length()>32) {
-        	this.inventory_name = iname.substring(0, 27)+this.plugin.uniquifier.uniquify();
+        	this.inventory_name = iname.substring(0, 27)+this.HMP.uniquifier.uniquify();
         } else {
         	this.inventory_name = iname;
         }
 
         this.inventory = Bukkit.createInventory(player, size, this.inventory_name);
 
-    	hp = hyperAPI.getHyperPlayer(player.getName());
-		hc = HyperConomy.hc;
+    	hyplay = hyperAPI.getHyperPlayer(player.getName());
+		hc = HMP.hc;
     	
         economy_name = hyperAPI.getShop(this.shopname).getEconomy();
         
-		this.shopstock = new ShopStock(sender, this.player, this.shopname, this.plugin, "manage");
+		this.shopstock = new ShopStock(sender, this.player, this.shopname, this.HMP, "manage");
 		this.item_count=shopstock.items_count;
         double maxpages = this.item_count/45;
         this.last_page = (int) maxpages;
@@ -173,14 +180,14 @@ public class ManageMenu implements Listener, MerchantMenu {
     	this.optionNames = new String[size];
     	
     	// Populate interface button inventory slots
-    	this.setOption(46, plugin.menuButtonData.back)
-	    .setOption(45, plugin.menuButtonData.first_page)
-	    .setOption(52, plugin.menuButtonData.forward.clone())
-	    .setOption(53, plugin.menuButtonData.last_page.clone())
-	    .setOption(47, plugin.menuButtonData.sell_price.clone())
-	    .setOption(48, plugin.menuButtonData.buy_price.clone())
-	    .setOption(49, plugin.menuButtonData.status.clone())
-	    .setOption(50, plugin.menuButtonData.manage_help_1)
+    	this.setOption(46, HMP.menuButtonData.back)
+	    .setOption(45, HMP.menuButtonData.first_page)
+	    .setOption(52, HMP.menuButtonData.forward.clone())
+	    .setOption(53, HMP.menuButtonData.last_page.clone())
+	    .setOption(47, HMP.menuButtonData.sell_price.clone())
+	    .setOption(48, HMP.menuButtonData.buy_price.clone())
+	    .setOption(49, HMP.menuButtonData.status.clone())
+	    .setOption(50, HMP.menuButtonData.manage_help_1)
 	    .setOption(51, sorting_icon);
     	int count = 0;
 		ArrayList<String> page=(ArrayList<String>) shopstock.pages.get(this.page_number);
@@ -193,36 +200,36 @@ public class ManageMenu implements Listener, MerchantMenu {
 	        double stock = 0.0;
 	        ItemStack stack;
 	        
-        	HyperObject ho = hyperAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
+	        TradeObject ho = hyperAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
 	        if (ho == null) {
 	        	stock=0;
 	        	stack=new ItemStack(Material.AIR, 1, (short) 0);
 	        	value=0;
 	        	cost=0;
 	        	
-	        } else if (ho.getType()==HyperObjectType.ITEM) {
+	        } else if (ho.getType()==TradeObjectType.ITEM) {
 	        	stock = ho.getStock();
-				stack = ho.getItemStack();
+				stack = hypBuk.getItemStack(ho.getItemStack(1));
 				
-				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
-				value = ho.getSellPriceWithTax(1.0, hp);
+				hyplay.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
+				value = ho.getSellPriceWithTax(1.0, hyplay);
 				cost = ho.getBuyPriceWithTax(1.0);
 				
-			} else if (ho.getType()==HyperObjectType.ENCHANTMENT) {
+			} else if (ho.getType()==TradeObjectType.ENCHANTMENT) {
 				stock = ho.getStock();
 				
-				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
-				value = ho.getSellPriceWithTax(1.0, hp);
+				hyplay.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
+				value = ho.getSellPriceWithTax(1.0, hyplay);
 				cost = ho.getBuyPriceWithTax(1.0);
 
 				stack = (new EnchantIcons()).getIcon(ho.getDisplayName(), ho.getEnchantmentLevel());
 
 				
-			} else if (ho.getType()==HyperObjectType.EXPERIENCE) {
+			} else if (ho.getType()==TradeObjectType.EXPERIENCE) {
 				stock = ho.getStock();
 				
-				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
-				value = ho.getSellPriceWithTax(1.0, hp);
+				hyplay.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
+				value = ho.getSellPriceWithTax(1.0, hyplay);
 				cost = ho.getBuyPriceWithTax(1.0);
 
 				stack = new ItemStack(Material.POTION, 1, (short) 0);
@@ -234,17 +241,17 @@ public class ManageMenu implements Listener, MerchantMenu {
 	        String buy_dynamic = ChatColor.GRAY+" <dynamic>";
 	        String sell_dynamic = ChatColor.GRAY+" <dynamic>";
 	        if (ho != null){
-		        if (ho.getBuyPrice() > 0.0) {
+		        if (ho.getBuyPrice(1) > 0.0) {
 		        	buy_dynamic = ChatColor.GRAY+" <static>";
 		        }
-		        if (ho.getSellPrice() > 0.0) {
+		        if (ho.getSellPrice(1) > 0.0) {
 		        	sell_dynamic = ChatColor.GRAY+" <static>";
 		        }
 				this.setOption(count, stack, ho.getDisplayName().replaceAll("_", " "), 
 						ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", cost)+buy_dynamic,
 						ChatColor.WHITE+"Buy: "+ChatColor.DARK_PURPLE+String.format("%.2f", value)+sell_dynamic, 
 						ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) stock),
-		    			ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+ho.getStatus().name().toLowerCase() );
+		    			ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+ho.getShopObjectStatus().name().toLowerCase() );
 	        } else {
 	        	this.setOption(count, stack,"","");
 	        }
@@ -304,7 +311,7 @@ public class ManageMenu implements Listener, MerchantMenu {
     }
     
     
-    public int itemOnCurrentPage(HyperObject ho) {
+    public int itemOnCurrentPage(TradeObject ho) {
 		int count = 0;
     	for (String item_name:shopstock.pages.get(this.page_number)){
     		if (item_name.equals(ho.getName())){
@@ -317,7 +324,7 @@ public class ManageMenu implements Listener, MerchantMenu {
     
     
     private void UpdateSortingIcon() {
-    	this.sorting_icon = plugin.menuButtonData.help5.clone();
+    	this.sorting_icon = HMP.menuButtonData.help5.clone();
     	ItemMeta im;
     	List<String> lore;
     	
@@ -387,31 +394,31 @@ public class ManageMenu implements Listener, MerchantMenu {
     }
 
     
-    public void itemRefresh(int slot, HyperObject ho) {
-    	hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
+    public void itemRefresh(int slot, TradeObject ho) {
+    	hyplay.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
 
         String buy_dynamic = ChatColor.GRAY+" <dynamic>";
-        if (ho.getBuyPrice() > 0.0) {
+        if (ho.getBuyPrice(1) > 0.0) {
         	buy_dynamic = ChatColor.GRAY+" <static>";
         }
         String sell_dynamic = ChatColor.GRAY+" <dynamic>";
-        if (ho.getSellPrice() > 0.0) {
+        if (ho.getSellPrice(1) > 0.0) {
         	sell_dynamic = ChatColor.GRAY+" <static>";
         }
         
-        String status = ho.getStatus().name().toLowerCase();
+        String status = ho.getShopObjectStatus().name().toLowerCase();
         
-        ItemStack stack = ho.getItemStack();
-        if (ho.getType()==HyperObjectType.ENCHANTMENT) {
+        ItemStack stack = hypBuk.getItemStack(ho.getItemStack(1));
+        if (ho.getType()==TradeObjectType.ENCHANTMENT) {
         	stack = (new EnchantIcons()).getIcon(ho.getDisplayName(), ho.getEnchantmentLevel());
         }
-        else if (ho.getType()==HyperObjectType.EXPERIENCE) {
+        else if (ho.getType()==TradeObjectType.EXPERIENCE) {
 			stack = new ItemStack(Material.POTION, 1, (short) 0);
         }
 
     	this.setOption(slot, stack, ho.getDisplayName().replaceAll("_", " "), 
     			ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getBuyPriceWithTax(1.0))+buy_dynamic,
-    			ChatColor.WHITE+"Buy: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getSellPriceWithTax(1.0, hp))+sell_dynamic, 
+    			ChatColor.WHITE+"Buy: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getSellPriceWithTax(1.0, hyplay))+sell_dynamic, 
     			ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) ho.getStock()),
     			ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+status);
     	this.inventory.setItem(slot, this.optionIcons[slot]);
@@ -448,36 +455,36 @@ public class ManageMenu implements Listener, MerchantMenu {
     	lore.add(0, ChatColor.RED+"<Activated>");
     	im.setLore(lore);
     	item.setItemMeta(im);
-    	item.addUnsafeEnchantment(plugin.active_enchant, 1);
+    	item.addUnsafeEnchantment(HMP.active_enchant, 1);
     	return item;
     }
     
     void toggleEditMode(String mode, int slot_num){
     	if (mode==null) {
     		if (this.edit_mode=="SellPrice") {
-    			this.inventory.setItem(47, plugin.menuButtonData.sell_price.clone());
+    			this.inventory.setItem(47, HMP.menuButtonData.sell_price.clone());
     		}
     		else if (this.edit_mode=="BuyPrice") {
-    			this.inventory.setItem(48, plugin.menuButtonData.buy_price.clone());
+    			this.inventory.setItem(48, HMP.menuButtonData.buy_price.clone());
     		} 
     		else if (this.edit_mode=="Status") {
-    			this.inventory.setItem(49, plugin.menuButtonData.status.clone());
+    			this.inventory.setItem(49, HMP.menuButtonData.status.clone());
     		}
     		this.edit_mode=null;
     	}
     	else if (mode.equals("BuyPrice")) {
     		this.edit_mode="BuyPrice";
-			ItemStack im = setActiveMeta(plugin.menuButtonData.buy_price.clone());
+			ItemStack im = setActiveMeta(HMP.menuButtonData.buy_price.clone());
 			this.inventory.setItem(slot_num, im);
     	}
     	else if (mode.equals("SellPrice")) {
     		this.edit_mode="SellPrice";
-			ItemStack im = setActiveMeta(plugin.menuButtonData.sell_price.clone());
+			ItemStack im = setActiveMeta(HMP.menuButtonData.sell_price.clone());
 			this.inventory.setItem(slot_num, im);
     	}
     	else if (mode.equals("Status")) {
     		this.edit_mode="Status";
-			ItemStack im = setActiveMeta(plugin.menuButtonData.status.clone());
+			ItemStack im = setActiveMeta(HMP.menuButtonData.status.clone());
 			this.inventory.setItem(slot_num, im);
     	}
     }
@@ -485,12 +492,12 @@ public class ManageMenu implements Listener, MerchantMenu {
     void setPriceCancel() {
 		this.editcooldown.cancel();
 		if (this.edit_mode=="SellPrice"){
-			this.optionIcons[47].removeEnchantment(plugin.active_enchant);
+			this.optionIcons[47].removeEnchantment(HMP.active_enchant);
 			this.inventory.setItem(47, this.optionIcons[47]);
     		this.edit_in_progress=false;
 		}
 		else if (this.edit_mode=="BuyPrice"){
-			this.optionIcons[48].removeEnchantment(plugin.active_enchant);
+			this.optionIcons[48].removeEnchantment(HMP.active_enchant);
 			this.inventory.setItem(48, this.optionIcons[48]);
     		this.edit_in_progress=false;
 		}
@@ -514,27 +521,27 @@ public class ManageMenu implements Listener, MerchantMenu {
     }
     
     void setStatus(int slot_num, int click_type){
-    	HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
+    	TradeObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
     							hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
-    	String status = ho.getStatus().name();
-		HyperObjectStatus newstatus = HyperObjectStatus.fromString(this.changeStatus(click_type, status));
-		ho.setStatus(newstatus);
+    	String status = ho.getShopObjectStatus().name();
+		TradeObjectStatus newstatus = TradeObjectStatus.fromString(this.changeStatus(click_type, status));
+		ho.setShopObjectStatus(newstatus);
 		this.itemRefresh(slot_num, ho);
     	return;
     }
     
     void setBuyDynamic(int slot_num){
-    	HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
+    	TradeObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
     							hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
-		ho.setSellPrice(0.0);
+		ho.setShopObjectSellPrice(0.0);
 		this.itemRefresh(slot_num, ho);
     	return;
     }
     
     void setBuyPrice(int slot_num, Double price){
-    	HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
+    	TradeObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
     							hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
-		ho.setSellPrice(price);
+		ho.setShopObjectSellPrice(price);
 		this.editcooldown.cancel();
 		player.sendMessage(ChatColor.YELLOW+"The buy price for "+ho.getDisplayName());
 		player.sendMessage(ChatColor.YELLOW+"is now: "+price.toString());
@@ -549,26 +556,26 @@ public class ManageMenu implements Listener, MerchantMenu {
 		this.edit_in_progress=true;
 		this.edit_slot = slot_num;
 		this.inventory_view.close();
-		hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
-		HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
+		hyplay.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
+		TradeObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
 								hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
-		player.sendMessage(ChatColor.YELLOW+"Currently you pay other players "+ho.getSellPriceWithTax(1.0, hp)+" for "+ho.getDisplayName());
+		player.sendMessage(ChatColor.YELLOW+"Currently you pay other players "+ho.getSellPriceWithTax(1.0, hyplay)+" for "+ho.getDisplayName());
 		player.sendMessage(ChatColor.YELLOW+"You have 8 seconds to say a new price.");
 		player.sendMessage(ChatColor.YELLOW+"Say 'c' to cancel.");
 		return;
     }
     
     void setSellDynamic(int slot_num){
-    	HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
+    	TradeObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
     							hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
-		ho.setBuyPrice(0.0);
+		ho.setShopObjectBuyPrice(0.0);
 		this.itemRefresh(slot_num, ho);
     	return;
     }
     
     void setSellPrice(int slot_num, Double price){
-    	HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
-    	ho.setBuyPrice(price);
+    	TradeObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
+    	ho.setShopObjectBuyPrice(price);
 		this.editcooldown.cancel();
 		player.sendMessage(ChatColor.YELLOW+"The sell price for "+ho.getDisplayName());
 		player.sendMessage(ChatColor.YELLOW+"is now: "+price.toString());
@@ -583,7 +590,7 @@ public class ManageMenu implements Listener, MerchantMenu {
 		this.edit_in_progress=true;
 		this.edit_slot = slot_num;
 		this.inventory_view.close();
-		HyperObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
+		TradeObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		player.sendMessage(ChatColor.YELLOW+"Currently other players pay you "+ho.getBuyPriceWithTax(1.0)+" for "+ho.getDisplayName());
 		player.sendMessage(ChatColor.YELLOW+"You have 8 seconds to say a new price.");
 		player.sendMessage(ChatColor.YELLOW+"Say 'c' to cancel.");
@@ -707,7 +714,7 @@ public class ManageMenu implements Listener, MerchantMenu {
                 else if (event.isRightClick() && event.isShiftClick()) {
             		qty=this.optionIcons[slot_num].getMaxStackSize();
                     }
-	        	HyperObject ho2 = this.shop_trans.Remove(this.optionNames[slot_num], qty);
+                TradeObject ho2 = this.shop_trans.Remove(this.optionNames[slot_num], qty);
 	            if (ho2 != null) {
 	            	if (ho2.getStock()<1){
 	            		this.refreshPage();
@@ -723,13 +730,13 @@ public class ManageMenu implements Listener, MerchantMenu {
 
             // ADDING ITEMS
     		PlayerShop pshop=hyperAPI.getPlayerShop(this.shopname);
-    		HyperObject ho = hp.getHyperEconomy().getHyperObject(item_in_hand);
+    		TradeObject ho = hyplay.getHyperEconomy().getTradeObject(item_in_hand.toString());
     		if (ho != null) {
     			ho = pshop.getPlayerShopObject(ho);
     		}
     		ItemStack stack = this.shop_trans.AddItemStack(item_in_hand);
             if (ho != null && stack != null) {
-    			this.inventory_view.setCursor(new ItemStack(ho.getItemStack().getType()));
+    			this.inventory_view.setCursor(new ItemStack(hypBuk.getItemStack(ho.getItemStack(1)).getType()));
 				if ((int) ho.getStock()==item_in_hand.getAmount()) {
 					this.refreshPage();
 				} else {
@@ -841,7 +848,7 @@ public class ManageMenu implements Listener, MerchantMenu {
 	    			return;
 	    		} else {
 	    		this.editcooldown = new EditCooldown(this);
-	    		editcooldown.runTaskLater(this.plugin, 160);
+	    		editcooldown.runTaskLater(this.HMP, 160);
 	    		}
 	    	}
 	    	else {
@@ -869,7 +876,7 @@ public class ManageMenu implements Listener, MerchantMenu {
     
     public void destroy() {
         HandlerList.unregisterAll(this);
-        this.plugin = null;
+        this.HMP = null;
         this.optionNames = null;
         this.optionIcons = null;
         this.inventory = null;

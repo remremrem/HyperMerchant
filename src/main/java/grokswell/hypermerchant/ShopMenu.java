@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,13 +28,15 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import regalowl.hyperconomy.api.HyperAPI;
-import regalowl.hyperconomy.hyperobject.HyperObject;
-import regalowl.hyperconomy.hyperobject.HyperObjectType;
+import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.shop.PlayerShop;
+import regalowl.hyperconomy.tradeobject.TradeObject;
+import regalowl.hyperconomy.tradeobject.TradeObjectType;
 import regalowl.hyperconomy.account.HyperPlayer;
+
 import grokswell.hypermerchant.ShopTransactions;
 import grokswell.util.EnchantIcons;
+import grokswell.util.HyperToBukkit;
  
 public class ShopMenu implements Listener, MerchantMenu {
  
@@ -52,15 +54,17 @@ public class ShopMenu implements Listener, MerchantMenu {
     private InventoryView inventory_view;
     private String[] optionNames;
     private ItemStack[] optionIcons;
-	ShopTransactions shop_trans;
 	private ItemStack sorting_icon;
+	
+	HyperToBukkit hypBuk;
+	ShopTransactions shop_trans;
 	String economy_name;
 	
 	private ShopStock shopstock;
 	
 	NPC npc;
 	double commission;
-	HyperAPI hyperAPI = new HyperAPI();
+	HyperAPI hyperAPI;
 
 	HyperPlayer hp;
 	
@@ -71,6 +75,8 @@ public class ShopMenu implements Listener, MerchantMenu {
     	this.shopname = name;
         this.size = size;
         this.plugin = plgn;
+        hypBuk = new HyperToBukkit();
+        hyperAPI = plgn.hyperAPI;
         this.optionNames = new String[size];
         this.page_number=0;
         this.optionIcons = new ItemStack[size];
@@ -93,7 +99,8 @@ public class ShopMenu implements Listener, MerchantMenu {
         }
 
         this.inventory = Bukkit.createInventory(player, size, this.inventory_name);
-
+        out.println(player.getName());
+        out.println(hyperAPI.getHyperPlayer(player.getName()));
     	hp = hyperAPI.getHyperPlayer(player.getName());
     	
         economy_name = hyperAPI.getShop(this.shopname).getEconomy();
@@ -168,22 +175,22 @@ public class ShopMenu implements Listener, MerchantMenu {
 	        double stock = 0.0;
 	        ItemStack stack;
 	        
-        	HyperObject ho = hyperAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
+        	TradeObject ho = hyperAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
 	        if (ho == null) {
 	        	stock=0;
 	        	stack=new ItemStack(Material.AIR, 1, (short) 0);
 	        	value=0;
 	        	cost=0;
 	        	
-	        } else if (ho.getType()==HyperObjectType.ITEM) {
+	        } else if (ho.getType()==TradeObjectType.ITEM) {
 	        	stock = ho.getStock();
-				stack = ho.getItemStack();
+				stack = hypBuk.getItemStack(ho.getItemStack(1));
 				
 				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
 				value = ho.getSellPriceWithTax(1.0, hp);
 				cost = ho.getBuyPriceWithTax(1.0);
 				
-			} else if (ho.getType()==HyperObjectType.ENCHANTMENT) {
+			} else if (ho.getType()==TradeObjectType.ENCHANTMENT) {
 				stock = ho.getStock();
 				
 				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
@@ -193,7 +200,7 @@ public class ShopMenu implements Listener, MerchantMenu {
 				stack = (new EnchantIcons()).getIcon(ho.getDisplayName(), ho.getEnchantmentLevel());
 
 				
-			} else if (ho.getType()==HyperObjectType.EXPERIENCE) {
+			} else if (ho.getType()==TradeObjectType.EXPERIENCE) {
 				stock = ho.getStock();
 				
 				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
@@ -209,8 +216,8 @@ public class ShopMenu implements Listener, MerchantMenu {
 	        String status = "";
 	        if (ho == null){
 	        	status="";
-	        } else if (ho.getStatus()!=null){
-	        	status = ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+ho.getStatus().name().toLowerCase();
+	        } else if (ho.getShopObjectStatus()!=null){
+	        	status = ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+ho.getShopObjectStatus().name().toLowerCase();
 	        }
 	        
 	        if (ho == null) {
@@ -278,7 +285,7 @@ public class ShopMenu implements Listener, MerchantMenu {
     }
     
     
-    public int itemOnCurrentPage(HyperObject ho) {
+    public int itemOnCurrentPage(TradeObject ho) {
 		int count = 0;
     	for (String item_name:shopstock.pages.get(this.page_number)){
     		if (item_name.equals(ho.getName())){
@@ -360,20 +367,24 @@ public class ShopMenu implements Listener, MerchantMenu {
     }
 
     
-    public void itemRefresh(int slot, HyperObject ho) {
+    public void itemRefresh(int slot, TradeObject ho) {
     	hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
+    	//out.println("ho "+ho.+" ,"+ho.getDisplayName());
 
         String status = "";
-        if (ho.getStatus()!=null){
-        	status = ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+ho.getStatus().name().toLowerCase();
+        if (ho.getShopObjectStatus()!=null){
+        	status = ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+ho.getShopObjectStatus().name().toLowerCase();
         }
         
-        ItemStack stack = ho.getItemStack();
-        if (ho.getType()==HyperObjectType.ENCHANTMENT) {
+        ItemStack stack;
+        if (ho.getType()==TradeObjectType.ENCHANTMENT) {
         	stack = (new EnchantIcons()).getIcon(ho.getDisplayName(), ho.getEnchantmentLevel());
         }
-        else if (ho.getType()==HyperObjectType.EXPERIENCE) {
+        else if (ho.getType()==TradeObjectType.EXPERIENCE) {
 			stack = new ItemStack(Material.POTION, 1, (short) 0);
+        }
+        else {
+        	stack = hypBuk.getItemStack(ho.getItemStack(1));
         }
         
     	this.setOption(slot, stack, ho.getDisplayName().replaceAll("_", " "), 
@@ -462,7 +473,7 @@ public class ShopMenu implements Listener, MerchantMenu {
                 else if (event.isRightClick() && event.isShiftClick()) {
             		qty=this.optionIcons[slot_num].getMaxStackSize();
                     }
-        		HyperObject ho2 = this.shop_trans.Buy(this.optionNames[slot_num], qty, commission);
+                TradeObject ho2 = this.shop_trans.Buy(this.optionNames[slot_num], qty, commission);
 	            if (ho2 != null) {
 	            	if (ho2.getStock()<1){
 	            		this.refreshPage();
@@ -475,7 +486,7 @@ public class ShopMenu implements Listener, MerchantMenu {
         
         //IF THE PLAYER IS SELLING SOMETHING TO THE SHOP
         else if (item_in_hand.getType() != Material.AIR) {
-    		HyperObject ho = hp.getHyperEconomy().getHyperObject(item_in_hand);
+        	TradeObject ho = hyperAPI.getHyperObject(item_in_hand.getType().name(), hp.getHyperEconomy().getName());
     		
     		if (event.isLeftClick() && event.isShiftClick()) {
     			ItemStack stack = this.shop_trans.SellEnchantedItem(item_in_hand);
@@ -492,7 +503,7 @@ public class ShopMenu implements Listener, MerchantMenu {
             		PlayerShop pshop=hyperAPI.getPlayerShop(this.shopname);
             		ho = pshop.getPlayerShopObject(ho);
             	}
-    			this.inventory_view.setCursor(new ItemStack(ho.getItemStack().getType()));
+    			this.inventory_view.setCursor(new ItemStack(hypBuk.getItemStack(ho.getItemStack(1)).getType()));
 				if ((int) ho.getStock()==item_in_hand.getAmount()) {
 					this.refreshPage();
 				} else {

@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -27,10 +27,12 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import regalowl.hyperconomy.HyperConomy;
-import regalowl.hyperconomy.HyperShopManager;
-import regalowl.hyperconomy.api.HyperEconAPI;
-import regalowl.hyperconomy.api.HyperAPI;
+import regalowl.hyperconomy.HyperAPI;
+import regalowl.hyperconomy.api.HEconomyProvider;
+import regalowl.hyperconomy.api.MineCraftConnector;
 import regalowl.hyperconomy.account.HyperPlayer;
+import regalowl.hyperconomy.bukkit.BukkitConnector;
+import regalowl.hyperconomy.shop.HyperShopManager;
 import regalowl.hyperconomy.shop.PlayerShop;
 
 import grokswell.hypermerchant.HyperMerchantTrait;
@@ -43,8 +45,10 @@ import grokswell.util.Settings;
 import grokswell.util.Uniquifier;
 
 public class HyperMerchantPlugin extends JavaPlugin implements Listener {
-	HyperEconAPI economyAPI = new HyperEconAPI();
-	HyperAPI hyperAPI = new HyperAPI();
+	HyperAPI hyperAPI = null;
+	HEconomyProvider ecoAPI;
+	HyperConomy hc;
+	BukkitConnector bukCon;
 	Uniquifier uniquifier = new Uniquifier();
 	Settings settings;
 	Players playerData;
@@ -77,7 +81,6 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 					return true;
 			} 
 			
-			HyperConomy hc = HyperConomy.hc;
 			HyperShopManager shopManager = hc.getHyperShopManager();
 			ArrayList<String> shoplist = shopManager.listShops();
 			
@@ -118,8 +121,8 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 						player.sendMessage(ChatColor.YELLOW+"You may not interact with shops while in creative mode.");
 						return true;
 				} 
-			
-			String name=hyperAPI.getPlayerShop(player);
+
+			String name=hyperAPI.getPlayerShop(hyperAPI.getHyperPlayer(player.getName()));
 			if (name.isEmpty()) {
 				sender.sendMessage(ChatColor.YELLOW+"You must be standing inside " +
 									"of a shop to use the command "+ChatColor.RED+"/shopmenu.");
@@ -147,7 +150,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 								return true;
 						} 
 					
-					String name=hyperAPI.getPlayerShop(player);
+					String name=hyperAPI.getPlayerShop(hyperAPI.getHyperPlayer(player.getName()));
 					
 					if (name.isEmpty()) {
 						sender.sendMessage(ChatColor.YELLOW+"You must be standing inside " +
@@ -196,7 +199,13 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 					return true;
 					
 				} else {
-					if (hyperAPI.getPlayerShop(name).isAllowed(hyperAPI.getHyperPlayer(player.getName()))) {
+					PlayerShop pshop = hyperAPI.getPlayerShop(name);
+					if (pshop == null) {
+						sender.sendMessage(ChatColor.RED+ name +ChatColor.YELLOW+ " is not a valid player shop name. " +
+								"Use the command"+ChatColor.RED+"/ms list"+ChatColor.YELLOW+" to see valid names.");
+						return true;
+					}
+					if (pshop.isAllowed(hyperAPI.getHyperPlayer(player.getName()))) {
 						new ManageMenu(name, 54, this, sender, player, null);
 						return true;
 					}
@@ -327,6 +336,12 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 
 	@Override
 	public void onEnable() {
+		Plugin hcPlugin = getServer().getPluginManager().getPlugin("HyperConomy");
+		bukCon = (BukkitConnector)hcPlugin;
+		hc = bukCon.getHC();
+		hyperAPI = (HyperAPI) hc.getAPI();
+		ecoAPI = hc.getEconomyAPI();
+		
 		getServer().getPluginManager().registerEvents(this, this);
 		Plugin p = Bukkit.getPluginManager().getPlugin("Citizens");
 		
@@ -425,7 +440,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		//if shop owners are required to be in their shops to trade..
 		if (settings.getONDUTY_IN_SHOP_ONLY()) {
 			//.. return, if the shop owner is not in shop
-			if (hyperAPI.getPlayerShop(owner) != shopname) return;
+			if (hyperAPI.getPlayerShop(hyperAPI.getHyperPlayer(owner.getName())) != shopname) return;
 		}
 		
 		PlayerShop shop = hyperAPI.getPlayerShop(shopname);

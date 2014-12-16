@@ -2,6 +2,7 @@ package grokswell.hypermerchant;
 
 //import static java.lang.System.out;
 
+import grokswell.util.HyperToBukkit;
 import grokswell.util.Utils;
 
 import java.util.ArrayList;
@@ -18,22 +19,23 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.ai.speech.SpeechContext;
 import net.citizensnpcs.api.ai.speech.SimpleSpeechController;
-import regalowl.hyperconomy.api.HyperAPI;
-import regalowl.hyperconomy.api.HyperEconAPI;
+import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.account.HyperPlayer;
+import regalowl.hyperconomy.api.HEconomyProvider;
 import regalowl.hyperconomy.shop.PlayerShop;
 
 
 public class HyperMerchantTrait extends Trait {
-	HyperAPI hyperAPI = new HyperAPI();
-	HyperEconAPI heAPI = new HyperEconAPI();
 	static ArrayList<String> shoplist;
 	HashMap<String,ShopMenu> customer_menus = new HashMap<String,ShopMenu>();
 	ArrayList<String> hire_cooldown;
 	ArrayList<String> rental_cooldown;
 	MerchantMethods merchmeth;
 	Utils utils;
+	HyperToBukkit hypBuk;
 	final HyperMerchantPlugin plugin;
+	HyperAPI hyperAPI;
+	HEconomyProvider ecoAPI;
 	
 	public DataKey trait_key;
 	
@@ -56,11 +58,14 @@ public class HyperMerchantTrait extends Trait {
 	public HyperMerchantTrait() {
 		super("hypermerchant");
 		plugin = (HyperMerchantPlugin) Bukkit.getServer().getPluginManager().getPlugin("HyperMerchant");
+		hyperAPI = plugin.hyperAPI;
+		ecoAPI = plugin.ecoAPI;
 		
 		hire_cooldown = new ArrayList<String>();
 		rental_cooldown = new ArrayList<String>();
 		merchmeth = new MerchantMethods();
 		utils=new Utils();
+		hypBuk=new HyperToBukkit();
 
 		farewellMsg = plugin.settings.getFAREWELL();
 		welcomeMsg = plugin.settings.getWELCOME();
@@ -173,7 +178,7 @@ public class HyperMerchantTrait extends Trait {
 		        hire_cooldown.remove(player.getName());
 		        plugin.hire_cooldowns.remove(player.getName());
 		        player.sendMessage(ChatColor.YELLOW+this.npc.getName()+" Now works in your shop, "+shopname);
-				merchmeth.Teleport(this.npc.getId(), hyperAPI.getPlayerShop(shopname).getLocation1());
+				merchmeth.Teleport(this.npc.getId(), hypBuk.getLocation(hyperAPI.getPlayerShop(shopname).getLocation1()));
 		    }
 		}
     }
@@ -277,9 +282,9 @@ public class HyperMerchantTrait extends Trait {
 	            if (rental_price>0){
 	            	hyperAPI.getHyperPlayer(player.getName()).withdraw(rental_price);
 		            if (plugin.settings.getDEFAULT_RENTAL_OWNER().equals("server")) {
-		            	heAPI.depositAccount(rental_price, "hyperconomy");
+		            	ecoAPI.depositAccount("hyperconomy", rental_price);
 		            } else {
-		            	heAPI.depositAccount(rental_price, plugin.settings.getDEFAULT_RENTAL_OWNER());
+		            	ecoAPI.depositAccount(plugin.settings.getDEFAULT_RENTAL_OWNER(), rental_price);
 		            }
 	            }
 	            

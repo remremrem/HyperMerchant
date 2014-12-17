@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 import grokswell.util.Utils;
 
 
@@ -25,9 +25,13 @@ import regalowl.hyperconomy.HyperAPI;
 public class MerchantMethods {
 	NPCRegistry npcReg = CitizensAPI.getNPCRegistry();
 	NPCSelector npcSel = CitizensAPI.getDefaultNPCSelector();
-	HyperAPI hyperAPI;
 	Utils utils = new Utils();
-
+	
+	private HyperAPI hyperAPI() {
+		Plugin p = Bukkit.getPluginManager().getPlugin("HyperMerchant");
+		HyperMerchantPlugin cp = (HyperMerchantPlugin) p;
+		return cp.hyperAPI;
+	}
 	public String ListMerchants(Player player) {
 		String message = "";
 		if (player == null) {
@@ -121,9 +125,9 @@ public class MerchantMethods {
 		String ownerName = null;
 		String shopName = GetShop(id);
 		
-		for (String name : hyperAPI.getPlayerShopList()) {
+		for (String name : hyperAPI().getPlayerShopList()) {
 			if (name.equals(shopName) ) {
-				ownerName = hyperAPI.getPlayerShop(name).getOwner().getName();
+				ownerName = hyperAPI().getPlayerShop(name).getOwner().getName();
 			}
 		}
 		
@@ -209,12 +213,13 @@ public class MerchantMethods {
 		String message = "";
 		NPC this_npc = npcReg.getById(id);
 		
-
+		out.println("server shoplist: "+hyperAPI().getServerShopList());
+		out.println("player shopplist: "+hyperAPI().getPlayerShopList());
 		if (shopname.isEmpty()) {
 			message=message+ChatColor.YELLOW+"You must specify a shop name, or be standing " +
 								"inside of a shop to use the command "+ChatColor.RED+"setshop.";
 			
-		} else if (hyperAPI.getServerShopList().contains(shopname) || hyperAPI.getPlayerShopList().contains(shopname)) {
+		} else if (hyperAPI().getServerShopList().contains(shopname) || hyperAPI().getPlayerShopList().contains(shopname)) {
 			this_npc.getTrait(HyperMerchantTrait.class).shop_name = shopname;
 			message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" has been assigned to shop "+
 								this_npc.getTrait(HyperMerchantTrait.class).shop_name;
@@ -428,7 +433,7 @@ public class MerchantMethods {
 		String shopname = npc.getTrait(HyperMerchantTrait.class).shop_name;
 		
 		if (npc.getTrait(HyperMerchantTrait.class).hired) {
-			if (hyperAPI.getPlayerShop(shopname).getOwner().getName().equals(player.getName())) {
+			if (hyperAPI().getPlayerShop(shopname).getOwner().getName().equals(player.getName())) {
 				npc.getTrait(HyperMerchantTrait.class).hired = false;
 				npc.getTrait(HyperMerchantTrait.class).forhire = true;
 				Teleport(npc.getId(), utils.StringToLoc(npc.getTrait(HyperMerchantTrait.class).location));
@@ -466,14 +471,14 @@ public class MerchantMethods {
 		
 		
 		if (npc.getTrait(HyperMerchantTrait.class).rented) {
-			if (hyperAPI.getPlayerShop(shopname).getOwner().getName().equals(player.getName())) {
+			if (hyperAPI().getPlayerShop(shopname).getOwner().getName().equals(player.getName())) {
 				npc.getTrait(HyperMerchantTrait.class).rented = false;
 				npc.getTrait(HyperMerchantTrait.class).rental = true;
 				Teleport(npc.getId(), utils.StringToLoc(npc.getTrait(HyperMerchantTrait.class).location));
 				npc.getTrait(HyperMerchantTrait.class).location = null;
 				
 				HyperMerchantPlugin plugin = (HyperMerchantPlugin) Bukkit.getServer().getPluginManager().getPlugin("HyperMerchant");
-				hyperAPI.getPlayerShop(shopname).setOwner(hyperAPI.getHyperPlayer(plugin.settings.getDEFAULT_RENTAL_OWNER()));
+				hyperAPI().getPlayerShop(shopname).setOwner(hyperAPI().getHyperPlayer(plugin.settings.getDEFAULT_RENTAL_OWNER()));
 				//hyperAPI.getPlayerShop(shopname).setOwner(hoAPI.getHyperPlayer("GREG"));
 				message = "The shop "+shopname+" is now closed.";
 				

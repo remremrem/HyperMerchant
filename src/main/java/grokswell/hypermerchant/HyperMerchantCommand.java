@@ -113,124 +113,124 @@ public class HyperMerchantCommand {
 //					}
 				
 				
-				//HMERCH INFO
-			    if (args[0].equals("info")) {
-					String message = merchmeth.GetInfo(sender, this_npc.getId());
-					sender.sendMessage(message);
-						
-						
-				//HMERCH SETSHOP
-				} else if (args[0].equals("setshop")) {
-					if (args.length>1) {
-						String message = merchmeth.SetShop(this_npc.getId(), shopname);
-						sender.sendMessage(message);
-						return;
-
-					} else {
-						String shop_name=hyperAPI.getPlayerShop(hyplay);
-						String message = merchmeth.SetShop(this_npc.getId(), shop_name);
-						sender.sendMessage(message);
-						return;
-					}
-				
+			//HMERCH INFO
+		    if (args[0].equals("info")) {
+				String message = merchmeth.GetInfo(sender, this_npc.getId());
+				sender.sendMessage(message);
 					
-				//HMERCH COMMISSION
-				} else if (args[0].equals("commission")) {
-					if (args.length>1) {
-						try {
-							String message = merchmeth.SetCommission(this_npc.getId(), Double.valueOf(args[1]));
-							sender.sendMessage(message);
-						} catch (Exception e) {
-							sender.sendMessage(ChatColor.YELLOW+args[1]+" is not a valid commission percentage.");
-
-						}
-					} else {
-						sender.sendMessage(ChatColor.YELLOW+"This merchant's commission is "+String.valueOf( this_npc.getTrait(HyperMerchantTrait.class).comission )+" percent.");
-					}
+					
+			//HMERCH SETSHOP
+			} else if (args[0].equals("setshop")) {
+				if (args.length>1) {
+					String message = merchmeth.SetShop(this_npc.getId(), shopname);
+					sender.sendMessage(message);
 					return;
-					
-					
-				//HMERCH RENTALPRICE
-				} else if (args[0].equals("rentalprice")) {
-					if (args.length>1) {
-						try {
-							String message = merchmeth.SetRentalPrice(this_npc.getId(), Double.valueOf(args[1]));
-							sender.sendMessage(message);
-						} catch (Exception e) {
-							sender.sendMessage(ChatColor.YELLOW+args[1]+" is not a valid rental price.");
 
-						}
-					} else {
-						sender.sendMessage(ChatColor.YELLOW+"This merchant's rental price is "+String.valueOf( this_npc.getTrait(HyperMerchantTrait.class).rental_price ));
-					}
-					return;
-				
-
-				//HMERCH GREETING
-				} else if (args[0].equals("greeting")) {
-					String greeting = "";
-					if (args.length>1) {
-						greeting = buffer.toString();
-					}
-					String message = merchmeth.SetGreeting(this_npc.getId(), greeting);
+				} else {
+					String shop_name=hyperAPI.getPlayerShop(hyplay);
+					String message = merchmeth.SetShop(this_npc.getId(), shop_name);
 					sender.sendMessage(message);
-
-				
-				//HMERCH FAREWELL
-				} else if (args[0].equals("farewell")) {
-					String farewell = "";
-					if (args.length>1) {
-						farewell = buffer.toString();
-					}
-					String message = merchmeth.SetFarewell(this_npc.getId(), farewell);
-					sender.sendMessage(message);
-
-				
-				//HMERCH DENIAL
-				} else if (args[0].equals("denial")) {
-					String denial = "";
-					if (args.length>1) {
-						denial = buffer.toString();
-					}
-					String message = merchmeth.SetDenial(this_npc.getId(), denial);
-					sender.sendMessage(message);
-
-				
-				//HMERCH CLOSED
-				} else if (args[0].equals("closed")) {
-					String closed = "";
-					if (args.length>1) {
-						closed = buffer.toString();
-					}
-					String message = merchmeth.SetClosed(this_npc.getId(), closed);
-					sender.sendMessage(message);
-
-				
-				//HMERCH OFFDUTY
-				} else if (args[0].equals("offduty") || args[0].equals("onduty")) {
-					String message = merchmeth.ToggleOffduty(this_npc.getId());
-						sender.sendMessage(message);
-
-						
-				//HMERCH FORHIRE
-				} else if (args[0].equals("forhire")) {
-					String message = merchmeth.ToggleForHire(this_npc.getId());
-						sender.sendMessage(message);
-
-								
-				//HMERCH RENTAL
-				} else if (args[0].equals("rental")) {
-					String message = merchmeth.ToggleRental(this_npc.getId());
-						sender.sendMessage(message);
-
-						
-					//ANY OTHER ARGUMENTS THAT ARE INVALID
-				}else {
-					sender.sendMessage(ChatColor.YELLOW+"Valid "+ChatColor.DARK_RED+"/hmerchant"+ChatColor.YELLOW+" subcommands are:\n" +
-							ChatColor.RED+"info, setshop , offduty , greeting , farewell , denial , closed, commission.");
 					return;
 				}
+			
+				
+			//HMERCH COMMISSION
+			} else if (args[0].equals("commission")) {
+				if (args.length>1) {
+					try {
+						String message = merchmeth.SetCommission(this_npc.getId(), Double.valueOf(args[1]));
+						sender.sendMessage(message);
+					} catch (Exception e) {
+						sender.sendMessage(ChatColor.YELLOW+args[1]+" is not a valid commission percentage.");
+
+					}
+				} else {
+					sender.sendMessage(ChatColor.YELLOW+"This merchant's commission is "+String.valueOf( this_npc.getTrait(HyperMerchantTrait.class).comission )+" percent.");
+				}
 				return;
+				
+				
+			//HMERCH RENTALPRICE
+			} else if (args[0].equals("rentalprice")) {
+				if (args.length>1) {
+					try {
+						String message = merchmeth.SetRentalPrice(this_npc.getId(), Double.valueOf(args[1]));
+						sender.sendMessage(message);
+					} catch (Exception e) {
+						sender.sendMessage(ChatColor.YELLOW+args[1]+" is not a valid rental price.");
+
+					}
+				} else {
+					sender.sendMessage(ChatColor.YELLOW+"This merchant's rental price is "+String.valueOf( this_npc.getTrait(HyperMerchantTrait.class).rental_price ));
+				}
+				return;
+			
+
+			//HMERCH GREETING
+			} else if (args[0].equals("greeting")) {
+				String greeting = "";
+				if (args.length>1) {
+					greeting = buffer.toString();
+				}
+				String message = merchmeth.SetGreeting(this_npc.getId(), greeting);
+				sender.sendMessage(message);
+
+			
+			//HMERCH FAREWELL
+			} else if (args[0].equals("farewell")) {
+				String farewell = "";
+				if (args.length>1) {
+					farewell = buffer.toString();
+				}
+				String message = merchmeth.SetFarewell(this_npc.getId(), farewell);
+				sender.sendMessage(message);
+
+			
+			//HMERCH DENIAL
+			} else if (args[0].equals("denial")) {
+				String denial = "";
+				if (args.length>1) {
+					denial = buffer.toString();
+				}
+				String message = merchmeth.SetDenial(this_npc.getId(), denial);
+				sender.sendMessage(message);
+
+			
+			//HMERCH CLOSED
+			} else if (args[0].equals("closed")) {
+				String closed = "";
+				if (args.length>1) {
+					closed = buffer.toString();
+				}
+				String message = merchmeth.SetClosed(this_npc.getId(), closed);
+				sender.sendMessage(message);
+
+			
+			//HMERCH OFFDUTY
+			} else if (args[0].equals("offduty") || args[0].equals("onduty")) {
+				String message = merchmeth.ToggleOffduty(this_npc.getId());
+					sender.sendMessage(message);
+
+					
+			//HMERCH FORHIRE
+			} else if (args[0].equals("forhire")) {
+				String message = merchmeth.ToggleForHire(this_npc.getId());
+					sender.sendMessage(message);
+
+							
+			//HMERCH RENTAL
+			} else if (args[0].equals("rental")) {
+				String message = merchmeth.ToggleRental(this_npc.getId());
+					sender.sendMessage(message);
+
+					
+				//ANY OTHER ARGUMENTS THAT ARE INVALID
+			}else {
+				sender.sendMessage(ChatColor.YELLOW+"Valid "+ChatColor.DARK_RED+"/hmerchant"+ChatColor.YELLOW+" subcommands are:\n" +
+						ChatColor.RED+"info, setshop , offduty , greeting , farewell , denial , closed, commission.");
+				return;
+			}
+			return;
 				
 				
 				//if the player doesn't have a hypermerchant npc selected
@@ -247,6 +247,7 @@ public class HyperMerchantCommand {
 				subcommand = args[0];
 			}
 			HMP.getLogger().info("/hypermerchant "+subcommand+" call threw exception "+e);
+			e.printStackTrace();
 			sender.sendMessage(ChatColor.YELLOW+"You must have a hypermerchant npc " +
 								"selected to use the command "+ChatColor.RED+"/hmerchant.");
 			return;

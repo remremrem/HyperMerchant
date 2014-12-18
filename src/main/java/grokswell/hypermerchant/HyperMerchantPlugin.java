@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -220,22 +220,16 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		else if (cmd.getName().equalsIgnoreCase("remoteshoplist")) {
 			sender.sendMessage(ChatColor.YELLOW+"Valid shop names to use with command /remotemenu:");
 			String shopList = "";
-			int numlists = 2;
-			try {
-				for (String shop:hyperAPI.getPlayerShopList()) {
-					shopList += shop + ",";
-				}
-			} catch(NullPointerException e) {
-				numlists = numlists-1;
+			for (String shop:hyperAPI.getPlayerShopList()) {
+				out.println("ps name: "+shop);
+				shopList += shop + ",";
 			}
-			try {
-				for (String shop:hyperAPI.getServerShopList()) {
-					shopList += shop + ",";
-				}
-			} catch(NullPointerException e) {
-				numlists = numlists-1;
+			for (String shop:hyperAPI.getServerShopList()) {
+				out.println("ss name: "+shop);
+				shopList += shop + ",";
 			}
-			if (numlists == 0) {
+
+			if (shopList.length() == 0) {
 				sender.sendMessage("No shops exist at this time.");
 			} else {
 				shopList = shopList.substring(0, shopList.length() - 1);

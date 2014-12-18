@@ -21,7 +21,6 @@ import org.bukkit.entity.Player;
 
 import regalowl.hyperconomy.account.HyperPlayer;
 import regalowl.hyperconomy.HyperAPI;
-import regalowl.hyperconomy.shop.PlayerShop;
 
 import grokswell.util.HyperToBukkit;
 
@@ -51,7 +50,7 @@ public class ClerkCommand {
 			}
 		} else {
 			player = (Player) snder;
-			HyperPlayer hyplay = hyperAPI.getHyperPlayer(player.getName());
+			hyplay = hyperAPI.getHyperPlayer(player.getName());
 		}
 		
 		//try {

@@ -33,7 +33,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.shop.PlayerShop;
-import regalowl.hyperconomy.tradeobject.BasicTradeObject;
 import regalowl.hyperconomy.tradeobject.TradeObject;
 import regalowl.hyperconomy.tradeobject.TradeObjectStatus;
 import regalowl.hyperconomy.tradeobject.TradeObjectType;

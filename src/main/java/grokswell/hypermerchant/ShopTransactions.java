@@ -7,7 +7,6 @@ import grokswell.util.HyperToBukkit;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -20,7 +19,6 @@ import regalowl.hyperconomy.HyperAPI;
 import regalowl.hyperconomy.HyperConomy;
 import regalowl.hyperconomy.HyperEconomy;
 import regalowl.hyperconomy.account.HyperPlayer;
-import regalowl.hyperconomy.bukkit.BukkitCommon;
 import regalowl.hyperconomy.bukkit.BukkitConnector;
 import regalowl.hyperconomy.inventory.HItemStack;
 import regalowl.hyperconomy.shop.PlayerShop;

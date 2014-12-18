@@ -40,7 +40,7 @@ public class HyperMerchantCommand {
 			}
 		} else {
 			player = (Player) snder;
-			HyperPlayer hyplay = hyperAPI.getHyperPlayer(player.getName());
+			hyplay = hyperAPI.getHyperPlayer(player.getName());
 		}
 		
 		try {

@@ -30,11 +30,11 @@
 		<url>https://github.com/remremrem/HyperMerchant/tree/master/</url>
 	</scm>
 	<dependencies>
-		<!--Bukkit API-->
 		<dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <version>1.8-R0.1-SNAPSHOT</version>
+			<scope>provided</scope>
  		</dependency>
 		<dependency>
 			<groupId>regalowl.hyperconomy</groupId>
@@ -52,6 +52,7 @@
         	<groupId>org.javatuples</groupId>
         	<artifactId>javatuples</artifactId>
         	<version>1.2</version>
+			<scope>provided</scope>
     	</dependency>
 	</dependencies>
 	<build>

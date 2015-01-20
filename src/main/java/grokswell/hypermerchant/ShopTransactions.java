@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 import grokswell.util.HyperToBukkit;
 
@@ -56,7 +56,7 @@ public class ShopTransactions {
 	
 	
 	public ItemStack Sell(ItemStack item_stack, String menu_item_name){	
-		out.println("Sell");
+		//out.println("Sell");
 		if(!hyplay.hasSellPermission(hyperAPI.getShop(shopname))) {
 			player.sendMessage(ChatColor.YELLOW+"You cannot sell items to this shop.");
 			return item_stack;
@@ -75,9 +75,12 @@ public class ShopTransactions {
 			}
 			
 			item = SellSingleEnchant(item_stack, menu_item_name);
-			out.println("sellsingleenchant "+item);
+			//out.println("sellsingleenchant "+item);
 			if (item != null) {
 				return item;
+			} else {
+				player.sendMessage(ChatColor.YELLOW+"You cannot sell this item here.");
+				return item_stack;
 			}
 		}
 		if (item.getType() == Material.AIR) {
@@ -94,13 +97,13 @@ public class ShopTransactions {
 	
 	
 	public ItemStack SellItem(ItemStack item_stack){
-		out.println("SellItem");
+		//out.println("SellItem");
 		HItemStack hi = bukCon.getBukkitCommon().getSerializableItemStack(item_stack);
-		out.println(hi.getAmount()+","+hi.hasEnchantments()+","+hi.getItemMeta());
+		//out.println(hi.getAmount()+","+hi.hasEnchantments()+","+hi.getItemMeta());
 		TradeObject ho = hyperAPI.getHyperObject(hi, hyperAPI.getShop(shopname).getEconomy());
 		//HyperObject ho = hyperAPI.getHyperObject(item_name, hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
-		out.println("hi"+hi);
-		out.println("ho"+ho);
+		//out.println("hi"+hi);
+		//out.println("ho"+ho);
 		if (ho==null) {
 			return null;
 		}
@@ -119,14 +122,14 @@ public class ShopTransactions {
 	
 	
 	public ItemStack SellSingleEnchant(ItemStack item, String enchant) {
-		out.println("SellSingleEnchant");
+		//out.println("SellSingleEnchant");
 		HItemStack hi = bukCon.getBukkitCommon().getSerializableItemStack(item);
 		ArrayList<TradeObject> enchants = new ArrayList<TradeObject>();
 		for (TradeObject hob : hyperAPI.getEnchantmentHyperObjects(hi, player.getName())) {
 			enchants.add(hob);
 		}
 		if (enchants.size() < 1) {
-			out.println("size < 1");
+			//out.println("size < 1");
 			return null;
 		}
 		
@@ -142,22 +145,22 @@ public class ShopTransactions {
 		player.setItemInHand(new ItemStack(Material.AIR));
 		
 		ItemStack stack = new ItemStack(item.getType());
-		out.println("stack= "+stack);
-		out.println("keepenchant "+keep_enchant);
+		//out.println("stack= "+stack);
+		//out.println("keepenchant "+keep_enchant);
 		if (keep_enchant.size()>0) {
 			for (TradeObject e : keep_enchant){
-				out.println("enchantment name: "+e.getEnchantment().getEnchantmentName());
-				out.println("enchantment level: "+e.getEnchantmentLevel());
+				//out.println("enchantment name: "+e.getEnchantment().getEnchantmentName());
+				//out.println("enchantment level: "+e.getEnchantmentLevel());
 				stack.addUnsafeEnchantment(Enchantment.getByName(e.getEnchantment().getEnchantmentName()), e.getEnchantmentLevel());
 			}
 		}
-		out.println("return stack");
+		//out.println("return stack");
 		return stack;
 	}
 	
 	
 	public String SellEnchant(String enchant) {
-		out.println("SellEnchant");
+		//out.println("SellEnchant");
 		TradeObject ho = hyperAPI.getHyperObject(enchant, hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		if (ho == null) {
 			player.sendMessage(ChatColor.YELLOW+"This shop will not buy enchantment: "+enchant);
@@ -175,7 +178,7 @@ public class ShopTransactions {
 	
 	
 	public ItemStack SellEnchantedItem(ItemStack item_stack){
-		out.println("SellEnchantedItem");
+		//out.println("SellEnchantedItem");
 		//make list of hyperconomy enchantment names from item's enchants
 		HItemStack hi = bukCon.getBukkitCommon().getSerializableItemStack(item_stack);
 		ArrayList<TradeObject> enchants = new ArrayList<TradeObject>();
@@ -208,7 +211,7 @@ public class ShopTransactions {
 	
 	
 	public ItemStack SellEnchantedBook(ItemStack ebook){
-		out.println("SellEnchantedBook");
+		//out.println("SellEnchantedBook");
 		HItemStack hi = bukCon.getBukkitCommon().getSerializableItemStack(ebook);
 		ArrayList<TradeObject> enchants = new ArrayList<TradeObject>();
 		for (TradeObject hob : hyperAPI.getEnchantmentHyperObjects(hi, player.getName())) {

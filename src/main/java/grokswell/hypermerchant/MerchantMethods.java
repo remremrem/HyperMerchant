@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 import grokswell.util.Utils;
 
 
@@ -213,8 +213,6 @@ public class MerchantMethods {
 		String message = "";
 		NPC this_npc = npcReg.getById(id);
 		
-		out.println("server shoplist: "+hyperAPI().getServerShopList());
-		out.println("player shopplist: "+hyperAPI().getPlayerShopList());
 		if (shopname.isEmpty()) {
 			message=message+ChatColor.YELLOW+"You must specify a shop name, or be standing " +
 								"inside of a shop to use the command "+ChatColor.RED+"setshop.";

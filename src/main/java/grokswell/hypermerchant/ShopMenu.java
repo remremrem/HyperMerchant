@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,8 +99,8 @@ public class ShopMenu implements Listener, MerchantMenu {
         }
 
         this.inventory = Bukkit.createInventory(player, size, this.inventory_name);
-        out.println(player.getName());
-        out.println(hyperAPI.getHyperPlayer(player.getName()));
+        //out.println(player.getName());
+        //out.println(hyperAPI.getHyperPlayer(player.getName()));
     	hp = hyperAPI.getHyperPlayer(player.getName());
     	
         economy_name = hyperAPI.getShop(this.shopname).getEconomy();

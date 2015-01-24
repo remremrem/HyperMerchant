@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 import grokswell.util.HyperToBukkit;
 
@@ -56,7 +56,7 @@ public class ShopTransactions {
 	
 	
 	public ItemStack Sell(ItemStack item_stack, String menu_item_name){	
-		out.println("Sell");
+		//out.println("Sell");
 		if(!hyplay.hasSellPermission(hyperAPI.getShop(shopname))) {
 			player.sendMessage(ChatColor.YELLOW+"You cannot sell items to this shop.");
 			return item_stack;
@@ -97,13 +97,13 @@ public class ShopTransactions {
 	
 	
 	public ItemStack SellItem(ItemStack item_stack){
-		out.println("SellItem");
+		//out.println("SellItem");
 		HItemStack hi = bukCon.getBukkitCommon().getSerializableItemStack(item_stack);
-		out.println(hi.getAmount()+", "+hi.hasEnchantments()+", "+hi.getItemMeta()+", "+
-				hi.getDurability()+", "+hi.getMaxDurability()+", "+hi.getData()+", "+hi.considerDamage());
+		//out.println(hi.getAmount()+", "+hi.hasEnchantments()+", "+hi.getItemMeta()+", "+
+				//hi.getDurability()+", "+hi.getMaxDurability()+", "+hi.getData()+", "+hi.considerDamage());
 		TradeObject ho = hyperAPI.getHyperObject(hi, hyperAPI.getShop(shopname).getEconomy());
-		out.println("hi"+hi);
-		out.println("ho"+ho);
+		//out.println("hi"+hi);
+		//out.println("ho"+ho);
 		short durability = hi.getDurability();
 		if (ho==null) {
 			if (hi.hasEnchantments()) {
@@ -188,7 +188,7 @@ public class ShopTransactions {
 	
 	
 	public ItemStack SellEnchantedItem(ItemStack item_stack){
-		out.println("SellEnchantedItem");
+		//out.println("SellEnchantedItem");
 		//make list of hyperconomy enchantment names from item's enchants
 		HItemStack hi = bukCon.getBukkitCommon().getSerializableItemStack(item_stack);
 		ArrayList<TradeObject> enchants = new ArrayList<TradeObject>();

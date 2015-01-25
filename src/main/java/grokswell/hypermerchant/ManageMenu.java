@@ -714,7 +714,8 @@ public class ManageMenu implements Listener, MerchantMenu {
             		qty=this.optionIcons[slot_num].getMaxStackSize();
                     }
                 TradeObject ho2 = this.shop_trans.Remove(this.optionNames[slot_num], qty);
-	            if (ho2 != null) {
+	            //out.println("ho2 "+ho2);
+                if (ho2 != null) {
 	            	if (ho2.getStock()<1){
 	            		this.refreshPage();
 	            	} else {

@@ -289,7 +289,10 @@ public class ShopTransactions {
 	//PLAYER-MANAGER REMOVES ITEMS FROM SHOP
 	public TradeObject Remove(String item, int qty) {
 		TradeObject ho = hyperAPI.getHyperObject(item.replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
-		
+		//out.println("item: "+item.replaceAll(" ", "_"));
+		//out.println("ho: "+ho);
+		//out.println("eco: "+hyperAPI.getShop(shopname).getEconomy());
+		//out.println("shop: "+hyperAPI.getShop(shopname));
 		if (ho.getType() == TradeObjectType.ENCHANTMENT) {
 			if (player.getInventory().contains(Material.BOOK)) {
 				ItemStack ebook = new ItemStack(Material.ENCHANTED_BOOK);

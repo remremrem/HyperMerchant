@@ -88,7 +88,9 @@ public class HyperMerchantCommand {
 			
 				this_npc = sel.getSelected(player);
 				if (args[0].equals("setshop")) {
-					shopname = args[1];
+					if (args.length>1){
+						shopname = args[1];
+					}
 				}
 				for(int i = 1; i < args.length; i++) {
 				    buffer.append(' ').append(args[i]);

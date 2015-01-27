@@ -289,10 +289,6 @@ public class ShopTransactions {
 	//PLAYER-MANAGER REMOVES ITEMS FROM SHOP
 	public TradeObject Remove(String item, int qty) {
 		TradeObject ho = hyperAPI.getHyperObject(item.replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
-		//out.println("item: "+item.replaceAll(" ", "_"));
-		//out.println("ho: "+ho);
-		//out.println("eco: "+hyperAPI.getShop(shopname).getEconomy());
-		//out.println("shop: "+hyperAPI.getShop(shopname));
 		if (ho.getType() == TradeObjectType.ENCHANTMENT) {
 			if (player.getInventory().contains(Material.BOOK)) {
 				ItemStack ebook = new ItemStack(Material.ENCHANTED_BOOK);
@@ -328,7 +324,7 @@ public class ShopTransactions {
 		else if (ho.getType() == TradeObjectType.ITEM) {
 			HItemStack hi = ho.getItemStack(1);
 			int space = hyplay.getInventory().getAvailableSpace(hi);
-			int qty_space = qty/ho.getItemStack(1).getMaxStackSize()+1;
+			int qty_space = qty/hi.getMaxStackSize()+1;
 			if (space < qty_space) {
 				player.sendMessage(ChatColor.YELLOW+"You haven't got enough space in your inventory to take "+qty+" "+ho.getDisplayName());
 				return null;
@@ -340,7 +336,8 @@ public class ShopTransactions {
 				qty=(int) ho.getStock();
 			}
 			
-			ho.add(qty, hyperAPI.getHyperPlayer(player.getName()));
+			//ho.add(qty, hyplay);
+			hyplay.getInventory().add(qty, ho.getItem());
 			ho.setStock(ho.getStock() - qty);
 		}
 		return ho;
@@ -387,6 +384,10 @@ public class ShopTransactions {
 		PlayerShop pshop=hyperAPI.getPlayerShop(this.shopname);
 		HyperEconomy he = hc.getDataManager().getEconomy(pshop.getEconomy());
 		TradeObject ho = hyplay.getHyperEconomy().getTradeObject(hi);
+		if (ho == null){
+			player.sendMessage(ChatColor.YELLOW+"That item cannot be placed in this shop.");
+			return item_stack;
+		}
 
 		
 		int amount = item_stack.getAmount();

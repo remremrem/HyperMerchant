@@ -97,14 +97,9 @@ public class ShopTransactions {
 	
 	
 	public ItemStack SellItem(ItemStack item_stack){
-		//out.println("SellItem");
 		HItemStack hi = bukCon.getBukkitCommon().getSerializableItemStack(item_stack);
-		//out.println(hi.getAmount()+", "+hi.hasEnchantments()+", "+hi.getItemMeta()+", "+
-				//hi.getDurability()+", "+hi.getMaxDurability()+", "+hi.getData()+", "+hi.considerDamage());
-		TradeObject ho = hyperAPI.getHyperObject(hi, hyperAPI.getShop(shopname).getEconomy());
-		//out.println("hi"+hi);
-		//out.println("ho"+ho);
-		short durability = hi.getDurability();
+		TradeObject ho = hyperAPI.getHyperObject(hi, hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
+		//short durability = hi.getDurability();
 		if (ho==null) {
 			if (hi.hasEnchantments()) {
 				player.sendMessage(ChatColor.YELLOW+"This shop does not want this enchanted item. "+
@@ -123,10 +118,6 @@ public class ShopTransactions {
 			response.sendMessages();
 			return new ItemStack(Material.AIR);
 		}
-		//ItemStack item_stack_new = new ItemStack(item_stack);
-		//out.println("dura"+": "+item_stack_new.getDurability());
-		//item_stack_new.setDurability(durability);
-		//return item_stack_new;
 		return new ItemStack(item_stack);
 	}
 	

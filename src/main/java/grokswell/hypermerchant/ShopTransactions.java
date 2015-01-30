@@ -66,23 +66,13 @@ public class ShopTransactions {
 			return item_stack;
 		}
 		
-		ItemStack item = SellItem(item_stack);
-		if (item==null) {
-			
-			if (item_stack.getType()==Material.ENCHANTED_BOOK) {
-				ItemStack return_item = this.SellEnchantedBook(item_stack);
-				return return_item;
-			}
-			
-			item = SellSingleEnchant(item_stack, menu_item_name);
-			//out.println("sellsingleenchant "+item);
-			if (item != null) {
-				return item;
-			} else {
-				player.sendMessage(ChatColor.YELLOW+"You cannot sell this item here.");
-				return item_stack;
-			}
+		if (item_stack.getType()==Material.ENCHANTED_BOOK) {
+			ItemStack return_item = this.SellEnchantedBook(item_stack);
+			return return_item;
 		}
+		
+		ItemStack item = SellItem(item_stack, menu_item_name);
+
 		if (item.getType() == Material.AIR) {
 			return item;
 		}
@@ -96,15 +86,16 @@ public class ShopTransactions {
 	}	
 	
 	
-	public ItemStack SellItem(ItemStack item_stack){
+	public ItemStack SellItem(ItemStack item_stack, String menu_item_name){
 		HItemStack hi = bukCon.getBukkitCommon().getSerializableItemStack(item_stack);
 		TradeObject ho = hyperAPI.getHyperObject(hi, hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		//short durability = hi.getDurability();
 		if (ho==null) {
 			if (hi.hasEnchantments()) {
-				player.sendMessage(ChatColor.YELLOW+"This shop does not want this enchanted item. "+
-							"Try selling it's enchantments.");
-				return item_stack;
+				ItemStack item = SellSingleEnchant(item_stack, menu_item_name);
+				if (item != null) {
+					return item;
+				}
 			}
 			return null;
 		}

@@ -45,13 +45,13 @@ public class ShopMenu implements Listener, MerchantMenu {
     int page_number; //the current page the player is viewing
     int item_count; //number of items in this shop
     int last_page; //the last_page number in the menu
-    int sort_by; //sort-by 0=item name, 1=item type, 2=item price, 3=item quantity
+    int sort_option; //sort-by 0=item name, 1=item type, 2=item price, 3=item quantity
     int display_zero_stock; //toggle displaying items with zero stock
     private HyperMerchantPlugin plugin;
     private Player player;
     private String inventory_name;
     private Inventory inventory;
-    private InventoryView inventory_view;
+    //private InventoryView inventory_view;
     private String[] optionNames;
     private ItemStack[] optionIcons;
 	private ItemStack sorting_icon;
@@ -70,7 +70,7 @@ public class ShopMenu implements Listener, MerchantMenu {
 	
 	
     public ShopMenu(String name, int size, HyperMerchantPlugin plgn,CommandSender sender, Player plyr, NPC npc) {
-    	this.sort_by=0;
+    	this.sort_option=0;
     	this.display_zero_stock=1;
     	this.shopname = name;
         this.size = size;
@@ -278,7 +278,7 @@ public class ShopMenu implements Listener, MerchantMenu {
     }
     
     public void refreshPage() {
-		shopstock.Refresh(sort_by, display_zero_stock);
+		shopstock.Refresh(sort_option, display_zero_stock);
 		this.inventory.clear();
 		this.loadPage();
     	this.menuRefresh();
@@ -316,15 +316,15 @@ public class ShopMenu implements Listener, MerchantMenu {
 	    
     	lore.add(" ");
     	
-    	if (sort_by == 0){
+    	if (sort_option == 0){
     		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Item Name");
-    	} else if (sort_by == 1){
+    	} else if (sort_option == 1){
     		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Material Name");
-    	} else if (sort_by == 2){
+    	} else if (sort_option == 2){
     		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Purchase Price");
-    	} else if (sort_by == 3){
+    	} else if (sort_option == 3){
     		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Sell Price");
-    	} else if (sort_by == 4){
+    	} else if (sort_option == 4){
     		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Stock Amount");
     	}
     	
@@ -346,7 +346,7 @@ public class ShopMenu implements Listener, MerchantMenu {
 		} else display_zero_stock=0;
 		
 		UpdateSortingIcon();
-		shopstock.Refresh(sort_by, display_zero_stock);
+		shopstock.Refresh(sort_option, display_zero_stock);
 		this.item_count=shopstock.items_count;
         double maxpages = this.item_count/45;
         this.last_page = (int) maxpages;
@@ -354,12 +354,12 @@ public class ShopMenu implements Listener, MerchantMenu {
     }
     
     public void Sort() {
-		if (sort_by < 4){
-			sort_by = sort_by+1;
-		} else sort_by = 0;
+		if (sort_option < 4){
+			sort_option = sort_option+1;
+		} else sort_option = 0;
 		
 		UpdateSortingIcon();
-		shopstock.Refresh(sort_by, display_zero_stock);
+		shopstock.Refresh(sort_option, display_zero_stock);
 		this.item_count=shopstock.items_count;
         double maxpages = this.item_count/45;
         this.last_page = (int) maxpages;
@@ -412,7 +412,7 @@ public class ShopMenu implements Listener, MerchantMenu {
             	this.inventory.setItem(i, this.optionIcons[i]);
             }
         }
-        this.inventory_view=player.openInventory(this.inventory);
+        player.openInventory(this.inventory);
     }
     
     
@@ -457,9 +457,9 @@ public class ShopMenu implements Listener, MerchantMenu {
     
     
     void handleMenuItem(int slot_num, InventoryClickEvent event){
-        ItemStack item_in_hand = event.getCursor();
+        ItemStack item_on_cursor = event.getCursor();
         //IF THE PLAYER IS BUYING SOMETHING FROM THE SHOP
-        if (item_in_hand.getType() == Material.AIR) {
+        if (item_on_cursor.getType() == Material.AIR) {
     		int qty = 1;
     		if (this.optionNames[slot_num] != null && this.optionNames[slot_num] != " ") {
                 if (event.isLeftClick()){
@@ -485,39 +485,26 @@ public class ShopMenu implements Listener, MerchantMenu {
         }
         
         //IF THE PLAYER IS SELLING SOMETHING TO THE SHOP
-        else if (item_in_hand.getType() != Material.AIR) {
-        	TradeObject ho = hyperAPI.getHyperObject(item_in_hand.getType().name(), hp.getHyperEconomy().getName());
-    		
+        else if (item_on_cursor.getType() != Material.AIR) {
+        	//TradeObject ho = hyperAPI.getHyperObject(item_on_cursor.getType().name(), hp.getHyperEconomy().getName());
+        	ItemStack stack;
     		if (event.isLeftClick() && event.isShiftClick()) {
-    			ItemStack stack = this.shop_trans.SellEnchantedItem(item_in_hand);
+    			stack = this.shop_trans.SellEnchantedItem(item_on_cursor);
     			player.setItemOnCursor(new ItemStack(Material.AIR));
-				player.getInventory().addItem(stack);
-    			return;
-    		}
+    			if (stack == null) {
+    				player.getInventory().addItem(item_on_cursor);
+    			} else {
+    				player.getInventory().addItem(stack);
+    			}
+    			
+    		} else {
 
-			String option_name = this.optionNames[slot_num];
-			option_name=option_name.replace(" ", "_");
-    		ItemStack stack = this.shop_trans.Sell(item_in_hand, option_name);
-            if (ho != null && stack != null) {
-            	if (hyperAPI.getPlayerShopList().contains(this.shopname)){
-            		PlayerShop pshop=hyperAPI.getPlayerShop(this.shopname);
-            		ho = pshop.getPlayerShopObject(ho);
-            	}
-    			this.inventory_view.setCursor(new ItemStack(hypBuk.getItemStack(ho.getItemStack(1)).getType()));
-				if ((int) ho.getStock()==item_in_hand.getAmount()) {
-					this.refreshPage();
-				} else {
-	    			int slot = this.itemOnCurrentPage(ho);
-	    			if (slot > -1) {
-	    				this.itemRefresh(slot, ho);
-	    			}
-				}
+				String option_name = this.optionNames[slot_num];
+				option_name=option_name.replace(" ", "_");
+	    		stack = this.shop_trans.Sell(item_on_cursor, option_name);
 				player.setItemOnCursor(new ItemStack(Material.AIR));
 				player.getInventory().addItem(stack);
-				return;
-            }
-			player.setItemOnCursor(new ItemStack(Material.AIR));
-			player.getInventory().addItem(stack);
+    		}    
 			return;
 
     	}
@@ -592,7 +579,7 @@ public class ShopMenu implements Listener, MerchantMenu {
         this.optionNames = null;
         this.optionIcons = null;
         this.inventory = null;
-        this.inventory_view = null;
+        //this.inventory_view = null;
         this.shop_trans = null;
         this.inventory_name = null;
         this.shopstock = null;

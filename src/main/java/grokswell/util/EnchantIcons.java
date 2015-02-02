@@ -128,6 +128,16 @@ public class EnchantIcons {
 			stack.addEnchantment(Enchantment.ARROW_KNOCKBACK, elevel);
 		}
 		
+		else if (ename.contains("strider")) {
+			stack = new ItemStack(Material.LEATHER_BOOTS);
+			stack.addEnchantment(Enchantment.DEPTH_STRIDER, elevel);
+		}
+		
+		else {
+			stack = new ItemStack(Material.PAPER);
+			stack.addEnchantment(Enchantment.DURABILITY, elevel);
+		}
+		
 		return stack;
 	}
 	

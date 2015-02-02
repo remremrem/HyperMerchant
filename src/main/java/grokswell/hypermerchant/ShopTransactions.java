@@ -78,9 +78,11 @@ public class ShopTransactions {
 		}
 		TradeObject ho2 = hyperAPI.getHyperObject(item.getType().name(), hyplay.getHyperEconomy().getName());
 		if (ho2 == null){
+			player.sendMessage("ho2 = null");
 			return item_stack;
 		}
 		else {
+			player.sendMessage("imte name: "+item.getType().name());
 			return item;
 		}
 	}	
@@ -113,40 +115,42 @@ public class ShopTransactions {
 	}
 	
 	
-	public ItemStack SellSingleEnchant(ItemStack item, String enchant) {
+	public ItemStack SellSingleEnchant(ItemStack item_stack, String enchant) {
 		//out.println("SellSingleEnchant");
-		HItemStack hi = bukCon.getBukkitCommon().getSerializableItemStack(item);
+		HItemStack hi = bukCon.getBukkitCommon().getSerializableItemStack(item_stack);
 		ArrayList<TradeObject> enchants = new ArrayList<TradeObject>();
 		for (TradeObject hob : hyperAPI.getEnchantmentHyperObjects(hi, player.getName())) {
 			enchants.add(hob);
 		}
 		if (enchants.size() < 1) {
-			//out.println("size < 1");
 			return null;
 		}
 		
-		ArrayList<TradeObject> keep_enchant = new ArrayList<TradeObject>();
-		player.setItemInHand(item.clone());
+		ArrayList<TradeObject> keep_enchants = new ArrayList<TradeObject>();
+		ArrayList<TradeObject> remove_enchants = new ArrayList<TradeObject>();
+		ItemStack held_item = player.getItemInHand();
+		player.setItemInHand(item_stack.clone());
 		for (TradeObject e : enchants) {
         	if (e.getDisplayName().equals(enchant)) {
-        		String ename = this.SellEnchant(e.getDisplayName());
+        		this.SellEnchant(e.getDisplayName());
+    			remove_enchants.add(e);
         	} else {
-        		keep_enchant.add(e);
+        		keep_enchants.add(e);
     		}
         }
-		player.setItemInHand(new ItemStack(Material.AIR));
+		player.setItemInHand(held_item);
 		
-		ItemStack stack = new ItemStack(item.getType());
-		//out.println("stack= "+stack);
-		//out.println("keepenchant "+keep_enchant);
-		if (keep_enchant.size()>0) {
-			for (TradeObject e : keep_enchant){
-				//out.println("enchantment name: "+e.getEnchantment().getEnchantmentName());
-				//out.println("enchantment level: "+e.getEnchantmentLevel());
+		ItemStack stack = new ItemStack(item_stack.clone());
+		if (keep_enchants.size()>0) {
+			for (TradeObject e : keep_enchants){
 				stack.addUnsafeEnchantment(Enchantment.getByName(e.getEnchantment().getEnchantmentName()), e.getEnchantmentLevel());
 			}
 		}
-		//out.println("return stack");
+		if (remove_enchants.size()>0) {
+			for (TradeObject e : remove_enchants){
+				stack.removeEnchantment(Enchantment.getByName(e.getEnchantment().getEnchantmentName()));
+			}
+		}
 		return stack;
 	}
 	
@@ -181,22 +185,28 @@ public class ShopTransactions {
 			return null;
 		}
 		
-		ArrayList<TradeObject> keep_enchant = new ArrayList<TradeObject>();
+		ArrayList<TradeObject> keep_enchants = new ArrayList<TradeObject>();
+		ArrayList<TradeObject> remove_enchants = new ArrayList<TradeObject>();
+		ItemStack held_item = player.getItemInHand();
 		player.setItemInHand(item_stack.clone());
 		for (TradeObject e : enchants) {
         	String ename = this.SellEnchant(e.getDisplayName());
             if (ename.equals(e)) {
-        		keep_enchant.add(e);
+        		keep_enchants.add(e);
+    		} else {
+    			remove_enchants.add(e);
     		}
         }
-		player.setItemInHand(new ItemStack(Material.AIR));
+		player.setItemInHand(held_item);
 		
-		ItemStack stack = new ItemStack(item_stack.getType());
-		if (keep_enchant.size()>0) {
-			for (TradeObject e : keep_enchant){
-				stack.addUnsafeEnchantment(Enchantment.getByName(e.getEnchantmentName()), e.getEnchantmentLevel());
+		ItemStack stack = new ItemStack(item_stack.clone());
+		if (keep_enchants.size()>0) {
+			player.sendMessage(ChatColor.YELLOW+"This shop doesn't want these enchantments: "+keep_enchants.toString());
+		}
+		if (remove_enchants.size()>0) {
+			for (TradeObject e : remove_enchants){
+				stack.removeEnchantment(Enchantment.getByName(e.getEnchantment().getEnchantmentName()));
 			}
-			player.sendMessage(ChatColor.YELLOW+"This shop doesn't want these enchantments: "+keep_enchant.toString());
 		}
 		return stack;
 	}

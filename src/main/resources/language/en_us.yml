@@ -1,0 +1,116 @@
+ItemIcons:
+  II_PRICE: §f Price
+  II_BUY: §f Buy\; §5 <buyprice>
+  II_SELL: §f Sell\; §5 <sellprice>
+  II_MANAGE_BUY: §f Buy\; §5 <buyprice> §7 <buytype>
+  II_MANAGE_SELL: §f Sell\; §5 <sellprice> §7 <selltype>
+  II_STOCK: §f Stock\; §5 <stock>
+  II_STATUS: §f Status\; §5 <status>
+  II_STATIC: §7 \<static\>
+  II_DYNAMIC: §7 \<dynamic\>
+Global:
+  G_CITIZENS_NOT_FOUND: §e Citizens not found. NPC hypermerchants will be disabled.
+  G_CITIZENS_NOT_LOADED: §c Citizens is not loaded. NPCs are unavailable at this time.
+  G_ID: §e ID
+  G_SHOP: §e SHOP
+  G_NO: §f No
+  G_YES: §f Yes
+  G_PERCENT: §e percent
+  G_PLAYER_COMMAND_ONLY: §e Only players can use the command §4 <command>
+  G_NO_CREATIVE: §e You may not interact with shops while in creative mode.
+  G_MISSING_SHOP_NAME: §e You must specify one shop name. Example\;
+  G_MISSING_SHOP_NAME_2: §e You must specify a shop name, to use the command §4 <command>
+  G_INVALID_SHOP_NAME: §e Shop name not recognized.
+  G_INVALID_PLAYER_SHOP_NAME: §c <shop> §e is not a valid player shop name.
+  G_VALID_SHOP_NAMES: §e Valid shop names to use with command §4 /remotemenu\;
+  G_NEED_VALID_SHOP_NAME: §e You must use a valid shop name. type §4 /rslist §e for valid shop names. Use exact spelling.
+  G_NO_SHOPS_EXIST: §e No shops exist at this time.
+  G_MUST_BE_IN_SHOP: §e You must be standing inside of a shop to use the command §4 <command>
+  G_MUST_BE_IN_OWN_SHOP: §e You must be standing inside of a shop that you own.
+  G_MUST_BE_IN_PLAYER_SHOP: §e You must be standing inside of a PlayerShop to use the command §4 <command>
+  G_NO_MANAGE: §e You are not allowed to manage the shop known as §c <shop>
+  G_PLAYER_OFFDUTY: §e You are now off duty. Other players cannot click on you to trade with your shop.
+  G_PLAYER_ONDUTY: §e You are now on duty. Other players may click on you to trade with your shop.
+  G_CLOSE_SHOP_REMINDER: §e Before you close the shop, make sure you take anything you want to keep. Type §c /closeshop confirm
+  G_SHOP_OPEN_FAIL: §4 Error, cannot open shop inventory.
+ClerkCommand:
+  CC_NO_NPC_SELECTED: §e You must have an NPC selected or specify one using the §4 --id §e flag.
+  CC_NO_NPC_SELECTED_2: §e You must have a hypermerchant NPC selected to use the command §4 <command>.
+  CC_OFFDUTY: §c <npc> §e is off duty.
+  CC_ONDUTY: §c <npc> §e is on duty.
+  CC_FIRED: §c <npc> §e has been fired!
+  CC_REMOVE_GREETING: §c <npc> §e will no longer say a greeting.
+  CC_SET_GREETING: §c <npc> §e greeting message has been updated.
+  CC_REMOVE_DENIAL: §c <npc> §e will no longer say a denail message.
+  CC_SET_DENIAL: §c <npc> §e denial message has been updated.
+  CC_REMOVE_FAREWELL: §c <npc> §e will no longer say a farewell.
+  CC_SET_FAREWELL: §c <npc> §e farewell message has been updated.
+  CC_REMOVE_CLOSED: §c <npc> §e will no longer say a closed message.
+  CC_SET_CLOSED: §c <npc> §e closed message has been updated.
+  CC_SPECIFY_CLERK_NAME: §e You must specify one of your clerks by ID or name. Use §4 /clerk list §e to view your clerk's names and ID numbers.
+  CC_CLERK_LIMIT_REACHED: §e You already have the maximum number of clerks you may hire.
+  CC_NO_SHOPS_OWNED: §e It seems you do not own any shops.
+  CC_SHOP_NOT_OWNED: §e You do not seem to own a shop named §c <shop>
+  CC_NO_CLERK_SELECTED: §e You must select a clerk that works for you. Type §c /clerk list §e to see their names.
+  CC_NAME_REQUIRED: §e You must provide a name for your new clerk.
+  CC_DISALLOWED_NAME: §e You may not use the name §c <name>
+  CC_DISALLOWED_TYPE: §e You may not use the NPC type §c <type>
+  CC_NOT_YOUR_NPC: §e That NPC does not work for you.
+  CC_SPECIFY_NPC_TYPE: §e You must specify a valid NPC type.
+  CC_SUBCOMMANDS: §e Valid §4 /clerk §e subcommands are\; \n §c hire, fire, info, select, setshop, offduty, greeting, farewell, denial, closed, outfit, type
+  CC_CLOSE_SHOP: §e The shop §4 <shopname> §e is now closed.
+  CC_COMMAND_INCOMPATIBLE: §e You cannot use the §4 <command> §e command on the selected npc.
+MerchantCommand:
+  MC_INVALID_COMMISSION: §e is not a valid commission percentage.
+  MC_COMMISSION: §c <npc> §e recieves a commission of §c <comission> <percent> 
+  MC_INVALID_RENTAL_PRICE: §e is not a valid rental price.
+  MC_RENTAL_PRICE: §e This merchant's rental price is\; §c <rental>
+  MC_FOR_HIRE: §c <npc> §e is for hire.
+  MC_NOT_FOR_HIRE: §c <npc> §e is not for hire.
+  MC_FOR_RENT: §c <npc> §e has a shop for rent.
+  MC_NOT_FOR_RENT: §c <npc> §e does not have a shop for rent.
+  MC_MISSING_SHOP_NAME: §e You must specify a shop name, or be standing inside of a shop to use the command\; §4 <command>
+  MC_SUBCOMMNADS: §e Valid §4 /hmerchant §e subcommands are\;\n §4 info, setshop, offduty, greeting, farewell, denial, closed, commission.
+TraitCommand:
+  TC_HIRED: §c <npc> §e now works in your shop,
+  TC_SHOPNAME_PROMPT: §e Within 10 seconds, enter the name of the shop you would like this clerk to work at.
+  TC_SHIFTCLICK_REMIND: §e To rent this shop you must hold shift and click.
+  TC_SHIFTCLICK_REMIND_2: §e ShiftClick this clerk again within 8 seconds to rent this shop.
+  TC_NPC_NO_SHOP: §e This merchant isn't assigned to a shop.
+  TC_NPC_NO_PLAYERSHOP: §e This merchant isn't assigned to a player shop.
+  TC_NOW_RENTING: §e You are now renting the shop named §c <shop>
+  TC_IT_WILL_COST: §e It will cost you §c <cost>
+  TC_YOU_WILL_PAY: §e You will pay §c <percent>% of all sales made by §c <npc>
+  TC_NPC_NULL_SHOP: §c <npc> §e is assigned to shop §c <shop>.
+  TC_SHOP_NO_EXIST: §e The shop does not exist.
+ManageMenu:
+  MM_ACTIVATED: §7 \<activated\>
+  MM_SORTING: §7 sorting
+  MM_ITEM_NAME: §f Item Name
+  MM_MATERIAL_NAME: §f Material Name
+  MM_PURCHASE_PRICE: §f Purchase Price
+  MM_SELL_PRICE_2: §f Sell Price
+  MM_STOCK_AMOUNT: §f Stock Amount
+  MM_SHOW_ZERO_STOCK: §7 show zero stock
+  MM_BUY_PRICE: §e The buy price for §c <item> is now\; §c <cost>
+  MM_SELL_PRICE: §e The sell price for §c <item> is now\; §c <cost>
+  MM_YOUPAY_1: §e You currently pay other players §c <cost> §e for §c <item> §e . \nYou have 8 seconds to say a new price. Say 'c' to cancel.
+  MM_YOUPAY_3: §e Say 'c' to cancel.
+  MM_CHANGE_PRICE_FAIL: §e Couldn't change price.
+  MM_THEYPAY_1: §e Other players currently pay you §c <cost> §e for §c <item> §e . \nYou have 8 seconds to say a new price. Say 'c' to cancel.
+ShopTransactions:
+  ST_NO_SELL_PERMISSION: §e You cannot sell items to this shop.
+  ST_NO_SELL_PERMISSION2: §e You cannot sell items to shops.
+  ST_NO_BUY_PERMISSION: §e You cannot purchase items from this shop.
+  ST_NO_BUY_PERMISSION2: §e You lack permission to purchase from shops.
+  ST_NO_BUY_ENCHANT: §e This shop will not buy enchantment\; §c <enchant>
+  ST_CANT_SELL_ENCHANT: §e Could not sell enchantment\; §c <enchant>
+  ST_ITEM_SOLD: §e You sold <amount> §c <item> §e for §c <price>
+  ST_ITEM_BOUGHT: §e You purchased <amount> §c <item> §e for §c <price>
+  ST_ITEM_ADDED: §e You added <amount> §c <item> §e to §c <shopname>.
+  ST_NO_WANT_ENCHANTS: §e This shop doesn't want these enchantments\; §c <enchants>
+  ST_INVENTORY_FULL: §e Your inventory is full.
+  ST_INVENTORY_TOO_FULL: §e You don't have enough space in your inventory to take <amount> <item>
+  ST_NEED_BOOK: §e You must have a book to take an enchantment from your shop.
+  ST_CANT_STOCK_ITEM: §e That item cannot be placed in this shop.
+  ST_MAX_STOCK: §e This shop will not accept any more <item>.

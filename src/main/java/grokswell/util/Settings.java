@@ -17,6 +17,8 @@ public class Settings {
 	static Boolean ENABLE_COMMAND;
 	static Boolean ENABLE_NPCS;
 	static Boolean OFFDUTY;
+	static Boolean UUID_SUPPORT;
+	static String LANGUAGE;
 	static String WELCOME;
 	static String FAREWELL;
 	static String DENIAL;
@@ -43,6 +45,8 @@ public class Settings {
 		ENABLE_COMMAND = true;
 		ENABLE_NPCS = true;
 		OFFDUTY = false;
+		UUID_SUPPORT = true;
+		LANGUAGE = "en_us";
 		WELCOME = "Welcome to my little shop.";
 		FAREWELL = "I thank you for your continued patronage.";
 		DENIAL = "I'm afraid you are not a shop member. " +
@@ -91,6 +95,12 @@ public class Settings {
         }
         if (config.contains("Messages.offduty")){
         	OFFDUTY = config.getBoolean("Main.offduty");
+        }
+        if (config.contains("Messages.uuid-support")){
+        	UUID_SUPPORT = config.getBoolean("Main.uuid-support");
+        }
+        if (config.contains("Messages.language")){
+        	LANGUAGE = config.getString("Messages.language");
         }
         if (config.contains("Messages.welcome")){
         	WELCOME = config.getString("Messages.welcome");
@@ -149,6 +159,8 @@ public class Settings {
 	    config.set("Main.enable-command", ENABLE_COMMAND);
 	    config.set("Main.enable-npcs", ENABLE_NPCS);
 	    config.set("Main.offduty", OFFDUTY);
+	    config.set("Main.uuid-support", UUID_SUPPORT);
+	    config.set("Main.language", LANGUAGE);
 	    config.set("Messages.welcome", WELCOME);
 	    config.set("Messages.farewell", FAREWELL);
 	    config.set("Messages.denial", DENIAL);
@@ -196,6 +208,23 @@ public class Settings {
 
 	public void setOFFDUTY(Boolean oFFDUTY) {
 		OFFDUTY = oFFDUTY;
+	}
+
+	public Boolean getUUID_SUPPORT() {
+		return UUID_SUPPORT;
+	}
+
+	public void setUUID_SUPPORT(Boolean uUID_SUPPORT) {
+		UUID_SUPPORT = uUID_SUPPORT;
+	}
+
+
+	public String getLANGUAGE() {
+		return LANGUAGE;
+	}
+
+	public void setLANGUAGE(String lANGUAGE) {
+		LANGUAGE = lANGUAGE;
 	}
 
 	public String getWELCOME() {

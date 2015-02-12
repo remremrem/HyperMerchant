@@ -1,6 +1,10 @@
 package grokswell.hypermerchant;
 
 //import static java.lang.System.out;
+import java.util.HashMap;
+
+import grokswell.util.Language;
+import grokswell.util.Settings;
 import grokswell.util.Utils;
 
 
@@ -8,6 +12,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.npc.NPCSelector;
+import net.citizensnpcs.api.trait.trait.Owner;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -32,40 +37,87 @@ public class MerchantMethods {
 		HyperMerchantPlugin cp = (HyperMerchantPlugin) p;
 		return cp.hyperAPI;
 	}
+	
+	private Language getL() {
+		Plugin p = Bukkit.getPluginManager().getPlugin("HyperMerchant");
+		HyperMerchantPlugin cp = (HyperMerchantPlugin) p;
+		return cp.language;
+	}
+	
+	private Settings getSettings() {
+		Plugin p = Bukkit.getPluginManager().getPlugin("HyperMerchant");
+		HyperMerchantPlugin cp = (HyperMerchantPlugin) p;
+		return cp.settings;
+	}
+	
+	Language L = getL();
+	Settings settings = getSettings();
+	
+	@SuppressWarnings("static-access")
 	public String ListMerchants(Player player) {
 		String message = "";
-		if (player == null) {
+		if (player == null) { //if command is from console
 			for (NPC npc: npcReg) {
 				if (npc.hasTrait(HyperMerchantTrait.class)) {
 					if (npc.getTrait(HyperMerchantTrait.class).offduty) {
-						message=message+ChatColor.YELLOW+npc.getName()+" is OFFDUTY\n";
+						HashMap<String, String> keywords = new HashMap<String, String>();
+						keywords.put("<npc>",  npc.getName());
+						message=message+Utils.formatText(L.CC_OFFDUTY, keywords)+"\n";
 					} else {
-						message=message+ChatColor.YELLOW+npc.getName()+" is ONDUTY\n";
+						HashMap<String, String> keywords = new HashMap<String, String>();
+						keywords.put("<npc>",  npc.getName());
+						message=message+Utils.formatText(L.CC_ONDUTY, keywords)+"\n";
 					}
-					message=message+ChatColor.YELLOW+"ID: " + String.valueOf(npc.getId()) + " , SHOP: "+ npc.getTrait(HyperMerchantTrait.class).shop_name +"\n";
+					message=message+L.G_ID+": " + String.valueOf(npc.getId()) + ", "+
+							L.G_SHOP+": "+ npc.getTrait(HyperMerchantTrait.class).shop_name +"\n";
 				}
 			}
 			
-		} else {
+		} else { //if command is from player
+			String player_id = null;
+			if (settings.getUUID_SUPPORT() == true) {
+				player_id = player.getUniqueId().toString();
+			} else {
+				player_id = player.getName();
+			}
+			
 			for (NPC npc: npcReg) {
 				if (npc.hasTrait(HyperMerchantTrait.class)) {
-					if (npc.data().get("owner") == player.getName()){
-						if (npc.getTrait(HyperMerchantTrait.class).offduty) {
-							message=message+ChatColor.YELLOW+npc.getName()+" is OFFDUTY\n";
-						} else {
-							message=message+ChatColor.YELLOW+npc.getName()+" is ONDUTY\n";
+					Owner owner = npc.getTrait(Owner.class);
+					
+					String owner_id = null;
+					if (settings.getUUID_SUPPORT() == true) {
+						if (owner.getOwnerId() != null) {
+							owner_id = owner.getOwnerId().toString();
 						}
-						message=message+ChatColor.YELLOW+"ID: " + String.valueOf(npc.getId()) + " , SHOP: "+ npc.getTrait(HyperMerchantTrait.class).shop_name +"\n";
+					} else {
+						owner_id = owner.getName();
+					}
+					
+					if (owner_id != null) {
+						if (owner_id.equals(player_id)){
+							if (npc.getTrait(HyperMerchantTrait.class).offduty) {
+								HashMap<String, String> keywords = new HashMap<String, String>();
+								keywords.put("<npc>",  npc.getName());
+								message=message+Utils.formatText(L.CC_OFFDUTY, keywords)+"\n";
+							} else {
+								HashMap<String, String> keywords = new HashMap<String, String>();
+								keywords.put("<npc>",  npc.getName());
+								message=message+Utils.formatText(L.CC_ONDUTY, keywords)+"\n";
+							}
+							message=message+L.G_ID+": " + String.valueOf(npc.getId()) + ", "+
+									L.G_SHOP+": "+ npc.getTrait(HyperMerchantTrait.class).shop_name +"\n";
+						}
 					}
 				}
 			}
 		}
 		
-		
 		return message;
 	}
 	
 
+	@SuppressWarnings("static-access")
 	public String GetInfo(CommandSender sender, int id) {
 		String message = "";
 		NPC npc = npcReg.getById(id);
@@ -73,25 +125,27 @@ public class MerchantMethods {
 			return null;
 		}
 		
+		HashMap<String, String> keywords = new HashMap<String, String>();
+		keywords.put("<npc>",  npc.getName());
 		
 		if (npc.getTrait(HyperMerchantTrait.class).offduty) {
-			message=message+ChatColor.YELLOW+npc.getName()+" is OFFDUTY.\n";
+			message=message+Utils.formatText(L.CC_OFFDUTY, keywords)+"\n";
 		} else {
-			message=message+ChatColor.YELLOW+npc.getName()+" is ONDUTY.\n";
+			message=message+Utils.formatText(L.CC_ONDUTY, keywords)+"\n";
 		}
 		
 		
 		if (npc.getTrait(HyperMerchantTrait.class).forhire) {
-			message=message+ChatColor.YELLOW+npc.getName()+" is for hire.\n";
+			message=message+Utils.formatText(L.MC_FOR_HIRE, keywords)+"\n";
 		} else {
-			message=message+ChatColor.YELLOW+npc.getName()+" is not for hire.\n";
+			message=message+Utils.formatText(L.MC_NOT_FOR_HIRE, keywords)+"\n";
 		}
 		
 		
 		if (npc.getTrait(HyperMerchantTrait.class).rental) {
-			message=message+ChatColor.YELLOW+npc.getName()+" has a shop for rent.\n";
+			message=message+Utils.formatText(L.MC_FOR_RENT, keywords)+"\n";
 		} else {
-			message=message+ChatColor.YELLOW+npc.getName()+" does not have a shop for rent.\n";
+			message=message+Utils.formatText(L.MC_NOT_FOR_RENT, keywords)+"\n";
 		}
 		
 		
@@ -209,24 +263,26 @@ public class MerchantMethods {
 	}
 
 	
+	@SuppressWarnings("static-access")
 	public String SetShop(int id, String shopname) {
 		String message = "";
 		NPC this_npc = npcReg.getById(id);
 		
 		if (shopname.isEmpty()) {
-			message=message+ChatColor.YELLOW+"You must specify a shop name, or be standing " +
-								"inside of a shop to use the command "+ChatColor.RED+"setshop.";
+			HashMap<String, String> keywords = new HashMap<String, String>();
+			keywords.put("<command>",  "setshop");
+			message=message+Utils.formatText(L.MC_MISSING_SHOP_NAME, keywords);
 			
 		} else if (hyperAPI().getServerShopList().contains(shopname) || hyperAPI().getPlayerShopList().contains(shopname)) {
 			this_npc.getTrait(HyperMerchantTrait.class).shop_name = shopname;
-			message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" has been assigned to shop "+
-								this_npc.getTrait(HyperMerchantTrait.class).shop_name;
+			
+			HashMap<String, String> keywords = new HashMap<String, String>();
+			keywords.put("<npc>",  this_npc.getName());
+			keywords.put("<shop>",  this_npc.getTrait(HyperMerchantTrait.class).shop_name);
+			message=message+Utils.formatText(L.TC_NPC_NULL_SHOP, keywords);
 			
 		} else {
-			message=message+ChatColor.YELLOW+"You must provide a valid shop name. " +
-					"Use "+ChatColor.RED+"/remoteshoplist "+ChatColor.YELLOW+ 
-							"or "+ChatColor.RED+"/rslist "+ChatColor.YELLOW+
-							"for valid shop names. Use exact spelling.";	
+			message=message+Utils.formatText(L.G_NEED_VALID_SHOP_NAME, null);
 		}	
 		
 		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
@@ -249,11 +305,17 @@ public class MerchantMethods {
 	}
 
 
+	@SuppressWarnings("static-access")
 	public String SetCommission(int id, double percentage) {
 		String message = "";
 		NPC this_npc = npcReg.getById(id);
 		this_npc.getTrait(HyperMerchantTrait.class).comission = percentage;
-		message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" now recieves a "+percentage+"% comission";
+
+		HashMap<String, String> keywords = new HashMap<String, String>();
+		keywords.put("<npc>",  this_npc.getName());
+		keywords.put("<commission>",  String.valueOf(percentage));
+		keywords.put("<percent>",  L.G_PERCENT);
+		message=message+Utils.formatText(L.MC_COMMISSION, keywords);
 		
 		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
 			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
@@ -263,11 +325,15 @@ public class MerchantMethods {
 	}
 
 
+	@SuppressWarnings("static-access")
 	public String SetRentalPrice(int id, double price) {
 		String message = "";
 		NPC this_npc = npcReg.getById(id);
 		this_npc.getTrait(HyperMerchantTrait.class).rental_price = price;
-		message=message+ChatColor.YELLOW+"It now costs "+price+" to rent a shop from "+this_npc.getName();
+
+		HashMap<String, String> keywords = new HashMap<String, String>();
+		keywords.put("<rental>",  String.valueOf(price));
+		message=message+Utils.formatText(L.MC_RENTAL_PRICE, keywords);
 		
 		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
 			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
@@ -277,6 +343,7 @@ public class MerchantMethods {
 	}
 	
 	
+	@SuppressWarnings("static-access")
 	public String ToggleOffduty(int id) {
 		String message = "";
 		NPC this_npc = npcReg.getById(id);
@@ -285,16 +352,20 @@ public class MerchantMethods {
 		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
 			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
 		}
+
+		HashMap<String, String> keywords = new HashMap<String, String>();
+		keywords.put("<npc>",  String.valueOf(this_npc.getName()));
 		
 		if (this_npc.getTrait(HyperMerchantTrait.class).offduty) {
-			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+" is now off duty.";
+			message=Utils.formatText(L.CC_OFFDUTY, keywords);
 		} else {
-			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+" is now on duty.";
+			message=Utils.formatText(L.CC_ONDUTY, keywords);
 		}
 		return message;
 	}
 	
 	
+	@SuppressWarnings("static-access")
 	public String ToggleForHire(int id) {
 		String message = "";
 		NPC this_npc = npcReg.getById(id);
@@ -306,11 +377,14 @@ public class MerchantMethods {
 		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
 			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
 		}
+
+		HashMap<String, String> keywords = new HashMap<String, String>();
+		keywords.put("<npc>",  String.valueOf(this_npc.getName()));
 		
 		if (!this_npc.getTrait(HyperMerchantTrait.class).forhire) {
-			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+" is no longer for hire.";
+			message=Utils.formatText(L.MC_NOT_FOR_HIRE, keywords);
 		} else {
-			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+" is now for hire.";
+			message=Utils.formatText(L.MC_FOR_HIRE, keywords);
 		}
 		
 		
@@ -318,6 +392,7 @@ public class MerchantMethods {
 	}
 	
 	
+	@SuppressWarnings("static-access")
 	public String ToggleRental(int id) {
 		String message = "";
 		NPC this_npc = npcReg.getById(id);
@@ -329,11 +404,14 @@ public class MerchantMethods {
 		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
 			this_npc.getTrait(HyperMerchantTrait.class).save(this_npc.getTrait(HyperMerchantTrait.class).trait_key);
 		}
+
+		HashMap<String, String> keywords = new HashMap<String, String>();
+		keywords.put("<npc>",  String.valueOf(this_npc.getName()));
 		
 		if (!this_npc.getTrait(HyperMerchantTrait.class).rental) {
-			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+"'s shop is no longer for rent.";
+			message=Utils.formatText(L.MC_NOT_FOR_RENT, keywords);
 		} else {
-			message=ChatColor.YELLOW+"NPC "+this_npc.getName()+"'s shop is now for rent.";
+			message=Utils.formatText(L.MC_FOR_RENT, keywords);
 		}
 		
 		
@@ -341,15 +419,19 @@ public class MerchantMethods {
 	}
 
 	
+	@SuppressWarnings("static-access")
 	public String SetGreeting(int id, String greeting) {
 		String message = "";
 		NPC this_npc = npcReg.getById(id);
 		this_npc.getTrait(HyperMerchantTrait.class).welcomeMsg = greeting;
 		
+		HashMap<String, String> keywords = new HashMap<String, String>();
+		keywords.put("<npc>",  String.valueOf(this_npc.getName()));
+		
 		if (greeting=="") {
-			message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer say a greeting to customers.";
+			message=Utils.formatText(L.CC_REMOVE_GREETING, keywords);
 		} else {
-			message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" greeting message has been updated.";
+			message=Utils.formatText(L.CC_SET_GREETING, keywords);
 		}
 		
 		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
@@ -361,15 +443,19 @@ public class MerchantMethods {
 	}
 
 	
+	@SuppressWarnings("static-access")
 	public String SetFarewell(int id, String farewell) {
 		String message = "";
 		NPC this_npc = npcReg.getById(id);
 		this_npc.getTrait(HyperMerchantTrait.class).farewellMsg = farewell;
 		
+		HashMap<String, String> keywords = new HashMap<String, String>();
+		keywords.put("<npc>",  String.valueOf(this_npc.getName()));
+		
 		if (farewell=="") {
-			message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer say a farewell to customers.";
+			message=Utils.formatText(L.CC_REMOVE_FAREWELL, keywords);
 		} else {
-			message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" farewell message has been updated.";
+			message=Utils.formatText(L.CC_SET_FAREWELL, keywords);
 		}
 		
 		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
@@ -381,15 +467,19 @@ public class MerchantMethods {
 	}
 
 	
+	@SuppressWarnings("static-access")
 	public String SetClosed(int id, String closed) {
 		String message = "";
 		NPC this_npc = npcReg.getById(id);
 		this_npc.getTrait(HyperMerchantTrait.class).closedMsg = closed;
 		
+		HashMap<String, String> keywords = new HashMap<String, String>();
+		keywords.put("<npc>",  String.valueOf(this_npc.getName()));
+		
 		if (closed=="") {
-			message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer say a closed message to customers.";
+			message=Utils.formatText(L.CC_REMOVE_CLOSED, keywords);
 		} else {
-			message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" closed message has been updated.";
+			message=Utils.formatText(L.CC_SET_CLOSED, keywords);
 		}
 		
 		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
@@ -401,15 +491,19 @@ public class MerchantMethods {
 	}
 
 	
+	@SuppressWarnings("static-access")
 	public String SetDenial(int id, String denial) {
 		String message = "";
 		NPC this_npc = npcReg.getById(id);
 		this_npc.getTrait(HyperMerchantTrait.class).denialMsg = denial;
 		
+		HashMap<String, String> keywords = new HashMap<String, String>();
+		keywords.put("<npc>",  String.valueOf(this_npc.getName()));
+		
 		if (denial=="") {
-			message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" will no longer say a denial message to customers.";
+			message=Utils.formatText(L.CC_REMOVE_DENIAL, keywords);
 		} else {
-			message=message+ChatColor.YELLOW+"NPC "+this_npc.getName()+" denial message has been updated.";
+			message=Utils.formatText(L.CC_SET_DENIAL, keywords);
 		}
 		
 		if (this_npc.getTrait(HyperMerchantTrait.class).trait_key != null) {
@@ -421,11 +515,12 @@ public class MerchantMethods {
 	}
 
 	
+	@SuppressWarnings("static-access")
 	public String FireClerk(Player player) {
 		String message = "";
 		NPC npc = npcSel.getSelected(player);
 		if (npc == null) {
-			message ="You must select a clerk that works for you.";
+			message =Utils.formatText(L.CC_NO_CLERK_SELECTED, null);
 			return message;
 		}
 		String shopname = npc.getTrait(HyperMerchantTrait.class).shop_name;
@@ -437,9 +532,13 @@ public class MerchantMethods {
 				Teleport(npc.getId(), utils.StringToLoc(npc.getTrait(HyperMerchantTrait.class).location));
 				npc.getTrait(HyperMerchantTrait.class).shop_name = null;
 				npc.getTrait(HyperMerchantTrait.class).location = null;
-				message = npc.getName()+" no longer works for you.";
+
+				HashMap<String, String> keywords = new HashMap<String, String>();
+				keywords.put("<npc>",  String.valueOf(npc.getName()));
+				
+				message = Utils.formatText(L.CC_FIRED, keywords);
 			} else {
-				message ="You must select a clerk that works for you.";
+				message =Utils.formatText(L.CC_NO_CLERK_SELECTED, null);
 				return message;
 			}
 			
@@ -458,11 +557,12 @@ public class MerchantMethods {
 	}
 
 	
+	@SuppressWarnings("static-access")
 	public String CloseShop(Player player) {
 		String message = "";
 		NPC npc = npcSel.getSelected(player);
 		if (npc == null) {
-			message ="You must select a clerk that works for you.";
+			message=Utils.formatText(L.CC_NO_CLERK_SELECTED, null);
 			return message;
 		}
 		String shopname = npc.getTrait(HyperMerchantTrait.class).shop_name;
@@ -477,16 +577,21 @@ public class MerchantMethods {
 				
 				HyperMerchantPlugin plugin = (HyperMerchantPlugin) Bukkit.getServer().getPluginManager().getPlugin("HyperMerchant");
 				hyperAPI().getPlayerShop(shopname).setOwner(hyperAPI().getHyperPlayer(plugin.settings.getDEFAULT_RENTAL_OWNER()));
-				//hyperAPI.getPlayerShop(shopname).setOwner(hoAPI.getHyperPlayer("GREG"));
-				message = "The shop "+shopname+" is now closed.";
+				
+				HashMap<String, String> keywords = new HashMap<String, String>();
+				keywords.put("<shop>",  shopname);
+				message = Utils.formatText(L.CC_CLOSE_SHOP, keywords);
 				
 			} else {
-				message ="You must select a clerk that works for you.";
+				message = Utils.formatText(L.CC_NO_CLERK_SELECTED, null);
 				return message;
 			}
 			
 		} else {
-			message = "You cannot use the /closeshop command on the selected npc.";
+			
+			HashMap<String, String> keywords = new HashMap<String, String>();
+			keywords.put("<command>",  "/closeshop");
+			message = Utils.formatText(L.CC_COMMAND_INCOMPATIBLE, keywords);
 			return message;
 		}
 		

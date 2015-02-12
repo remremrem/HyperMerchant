@@ -3,6 +3,8 @@ package grokswell.hypermerchant;
 //import static java.lang.System.out;
 
 import grokswell.util.HyperToBukkit;
+import grokswell.util.Language;
+import grokswell.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,6 +34,7 @@ public class ShopStock {
 	private CommandSender sender;
 	private HyperPlayer hp;
 	private String menu_type;
+	Language L;
 	HyperToBukkit hypBuk;
 
 	HyperAPI hyperAPI;
@@ -39,6 +42,7 @@ public class ShopStock {
 	ShopStock(CommandSender snder, Player plyer, String sname, HyperMerchantPlugin hmp, String menutype) {
 		hyperAPI = hmp.hyperAPI;
 		hypBuk = new HyperToBukkit();
+		L = hmp.language;
 		menu_type = menutype;
 		hp = hyperAPI.getHyperPlayer(plyer.getName());
 		shopname = sname;
@@ -193,7 +197,7 @@ public class ShopStock {
 		} 
 		
 		catch (Exception e) {
-			sender.sendMessage("Error, cannot open shop inventory");
+			sender.sendMessage(Utils.formatText(L.G_SHOP_OPEN_FAIL, null));
 			return null;
 		}
 	}

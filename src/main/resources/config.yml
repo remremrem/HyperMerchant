@@ -2,6 +2,8 @@ Main:
   enable-command: true
   enable-npcs: true
   offduty: true
+  uuid-support: true
+  language: en_us
 Messages:
   welcome: Welcome to my little shop.
   farewell: Thank you for your continued patronage.

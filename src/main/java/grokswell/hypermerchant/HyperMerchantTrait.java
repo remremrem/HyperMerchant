@@ -3,6 +3,7 @@ package grokswell.hypermerchant;
 //import static java.lang.System.out;
 
 import grokswell.util.HyperToBukkit;
+import grokswell.util.Language;
 import grokswell.util.Utils;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class HyperMerchantTrait extends Trait {
 	final HyperMerchantPlugin plugin;
 	HyperAPI hyperAPI;
 	HEconomyProvider ecoAPI;
+	Language L;
 	
 	public DataKey trait_key;
 	
@@ -60,6 +62,7 @@ public class HyperMerchantTrait extends Trait {
 		plugin = (HyperMerchantPlugin) Bukkit.getServer().getPluginManager().getPlugin("HyperMerchant");
 		hyperAPI = plugin.hyperAPI;
 		ecoAPI = plugin.ecoAPI;
+		L=plugin.language;
 		
 		hire_cooldown = new ArrayList<String>();
 		rental_cooldown = new ArrayList<String>();
@@ -177,13 +180,14 @@ public class HyperMerchantTrait extends Trait {
 		    	this.location = utils.LocToString(this.npc.getEntity().getLocation());
 		        hire_cooldown.remove(player.getName());
 		        plugin.hire_cooldowns.remove(player.getName());
-		        player.sendMessage(ChatColor.YELLOW+this.npc.getName()+" Now works in your shop, "+shopname);
+		        player.sendMessage(ChatColor.YELLOW+this.npc.getName()+" "+L.TC_HIRED+" "+shopname);
 				merchmeth.Teleport(this.npc.getId(), hypBuk.getLocation(hyperAPI.getPlayerShop(shopname).getLocation1()));
 		    }
 		}
     }
     
     
+	@SuppressWarnings("static-access")
 	@EventHandler
 	public void onRightClick(net.citizensnpcs.api.event.NPCRightClickEvent event) {
 		if(this.npc!=event.getNPC()) return;
@@ -208,7 +212,7 @@ public class HyperMerchantTrait extends Trait {
 		   (!player.hasPermission("creative.hypermerchant"))) {
 			
 			event.setCancelled(true);
-			player.sendMessage(ChatColor.YELLOW+"You may not interact with merchants while in creative mode.");
+			player.sendMessage(ChatColor.YELLOW+L.G_NO_CREATIVE);
 			return;
     	} 
 		
@@ -235,7 +239,7 @@ public class HyperMerchantTrait extends Trait {
 			if (this.comission > 0.0) {
 				player.sendMessage(ChatColor.YELLOW+"If you hire "+this.npc.getName()+", you will pay "+this.npc.getName()+" "+this.comission+" percent of all sales made by "+this.npc.getName()+".");
 			}
-			player.sendMessage(ChatColor.YELLOW+"Within 10 seconds, enter the name of the shop you would like this clerk to work at:");
+			player.sendMessage(ChatColor.YELLOW+L.TC_SHOPNAME_PROMPT);
 			
 			int x=0;
 			for (String shopname : hyperAPI.getPlayerShopList()) { //List shops owned by clicking player
@@ -245,7 +249,7 @@ public class HyperMerchantTrait extends Trait {
 				}
 			}
 			if (x==0){
-				player.sendMessage(ChatColor.YELLOW+"It seems you do not own any shops.");
+				player.sendMessage(ChatColor.YELLOW+L.CC_NO_SHOPS_OWNED);
 			}
 			
 			new RemoveHireCooldown(player.getName()).runTaskLater(this.plugin, 200);
@@ -261,17 +265,17 @@ public class HyperMerchantTrait extends Trait {
 			if (rental_cooldown.contains(player.getName())){
 				
 				if (!shift_click) {
-		            player.sendMessage(ChatColor.YELLOW+"You must hold shift and click "+npc.getName()+" to rent this shop.");
+		            player.sendMessage(ChatColor.YELLOW+L.TC_SHIFTCLICK_REMIND+" "+npc.getName());
 		            return;
 				}
 				
 				if (this.shop_name.equals("null") || this.shop_name.equals("") || this.shop_name == null) {
-		            player.sendMessage(ChatColor.YELLOW+"This merchant isn't assigned to a shop.");
+		            player.sendMessage(ChatColor.YELLOW+L.TC_NPC_NO_SHOP);
 		            return;
 				}
 				
 				if (!hyperAPI.getPlayerShopList().contains(shop_name)) {
-					player.sendMessage(ChatColor.YELLOW+"This merchant isn't assigned to a player shop.");
+					player.sendMessage(ChatColor.YELLOW+L.TC_NPC_NO_PLAYERSHOP);
 		            return;
 				}
 
@@ -288,7 +292,7 @@ public class HyperMerchantTrait extends Trait {
 		            }
 	            }
 	            
-	            player.sendMessage(ChatColor.YELLOW+"You are now renting the shop named "+this.shop_name+".");
+	            player.sendMessage(ChatColor.YELLOW+L.TC_NOW_RENTING+" "+this.shop_name+".");
 	            this.location = utils.LocToString(this.npc.getEntity().getLocation());
 	            this.rental = false;
 	            this.rented = true;
@@ -305,13 +309,13 @@ public class HyperMerchantTrait extends Trait {
 				new SimpleSpeechController(this.npc).speak(message);
 			}
 			
-			player.sendMessage(ChatColor.YELLOW+"ShiftClick this clerk again within 8 seconds to rent this shop.");
+			player.sendMessage(ChatColor.YELLOW+L.TC_SHIFTCLICK_REMIND_2);
 			
 			if (this.rental_price > 0.0) {
-				player.sendMessage(ChatColor.YELLOW+"It will cost you "+rental_price+" and");
+				player.sendMessage(ChatColor.YELLOW+L.TC_IT_WILL_COST+" "+rental_price+" &");
 			}
 			if (this.comission > 0.0) {
-				player.sendMessage(ChatColor.YELLOW+"You will pay "+this.npc.getName()+" "+this.comission+" percent of all sales made by "+this.npc.getName()+".");
+				player.sendMessage(ChatColor.YELLOW+L.TC_YOU_WILL_PAY+" "+this.npc.getName()+" "+this.comission+" "+L.TC_SALES_MADE+" "+this.npc.getName()+".");
 			}
 			
 			
@@ -369,8 +373,8 @@ public class HyperMerchantTrait extends Trait {
 				SpeechContext message = new SpeechContext(this.npc, this.closedMsg, player);
 				new SimpleSpeechController(this.npc).speak(message);
 			}
-			plugin.getLogger().info("npc #"+this.npc.getId()+" is assigned to a shop named "+
-					shop_name+". This shop does not exist.");
+			plugin.getLogger().info("npc #"+this.npc.getId()+" "+L.TC_NPC_NULL_SHOP+" "+
+					shop_name+". "+L.TC_SHOP_NO_EXIST);
 			
 			return;
 		

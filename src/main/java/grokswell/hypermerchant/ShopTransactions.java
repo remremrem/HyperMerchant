@@ -3,6 +3,8 @@ package grokswell.hypermerchant;
 //import static java.lang.System.out;
 
 import grokswell.util.HyperToBukkit;
+import grokswell.util.Language;
+import grokswell.util.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,13 +34,13 @@ public class ShopTransactions {
 	String shopname;
 	private Player player;
 	private HyperConomy hc;
-	//private LanguageFile hc_lang;
     MerchantMenu shopmenu;
     HyperPlayer hyplay;
 	HyperAPI hyperAPI;
 	HEconomyProvider ecoAPI;
 	HyperToBukkit hypBuk;
 	BukkitConnector bukCon;
+	Language L;
 	
 	public ShopTransactions(Player plyr, String sname, HyperMerchantPlugin HMP, MerchantMenu sm) {
 		player=plyr;
@@ -50,19 +52,21 @@ public class ShopTransactions {
 		bukCon=HMP.bukCon;
 		hyplay = hyperAPI.getHyperPlayer(player.getName());
 		hypBuk = new HyperToBukkit();
+		L = HMP.language;
 		//hc_lang = hc.getLanguageFile();
 
 	}
 	
 	
+	@SuppressWarnings("static-access")
 	public ItemStack Sell(ItemStack item_stack, String menu_item_name){	
 		//out.println("Sell");
 		if(!hyplay.hasSellPermission(hyperAPI.getShop(shopname))) {
-			player.sendMessage(ChatColor.YELLOW+"You cannot sell items to this shop.");
+			player.sendMessage(Utils.formatText(L.ST_NO_SELL_PERMISSION, null));
 			return item_stack;
 		}
 		if(!player.hasPermission("hyperconomy.sell")) {
-			player.sendMessage(ChatColor.YELLOW+"You cannot sell items to shops.");
+			player.sendMessage(Utils.formatText(L.ST_NO_SELL_PERMISSION2, null));
 			return item_stack;
 		}
 		
@@ -78,11 +82,9 @@ public class ShopTransactions {
 		}
 		TradeObject ho2 = hyperAPI.getHyperObject(item.getType().name(), hyplay.getHyperEconomy().getName());
 		if (ho2 == null){
-			player.sendMessage("ho2 = null");
 			return item_stack;
 		}
 		else {
-			player.sendMessage("imte name: "+item.getType().name());
 			return item;
 		}
 	}	
@@ -155,24 +157,37 @@ public class ShopTransactions {
 	}
 	
 	
+	@SuppressWarnings("static-access")
 	public String SellEnchant(String enchant) {
 		//out.println("SellEnchant");
 		TradeObject ho = hyperAPI.getHyperObject(enchant, hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		if (ho == null) {
-			player.sendMessage(ChatColor.YELLOW+"This shop will not buy enchantment: "+enchant);
+
+            HashMap<String, String> keywords = new HashMap<String, String>();
+    		keywords.put("<enchant>",  enchant);
+			player.sendMessage(Utils.formatText(L.ST_NO_BUY_ENCHANT, keywords));
 			return enchant;
 		}
 		TransactionResponse response = hyperAPI.sell(hyplay, ho, 1, hyperAPI.getShop(shopname));
 		if (!response.successful()){
-			player.sendMessage(ChatColor.YELLOW+"Could not sell enchantment: "+enchant);
+			
+            HashMap<String, String> keywords = new HashMap<String, String>();
+    		keywords.put("<enchant>",  enchant);
+			player.sendMessage(Utils.formatText(L.ST_CANT_SELL_ENCHANT, keywords));
 			return enchant;
 		} else {
-			player.sendMessage(ChatColor.YELLOW+"You sold 1 "+ho.getDisplayName()+" for "+response.getTotalPrice());
+			
+            HashMap<String, String> keywords = new HashMap<String, String>();
+    		keywords.put("<amount>",  "1");
+    		keywords.put("<item>",  ho.getDisplayName());
+    		keywords.put("<price>",  String.format("%.2f", response.getTotalPrice()));
+			player.sendMessage(Utils.formatText(L.ST_ITEM_SOLD, keywords));
 			return "";
 		}
 	}
 	
 	
+	@SuppressWarnings("static-access")
 	public ItemStack SellEnchantedItem(ItemStack item_stack){
 		//out.println("SellEnchantedItem");
 		//make list of hyperconomy enchantment names from item's enchants
@@ -201,7 +216,10 @@ public class ShopTransactions {
 		
 		ItemStack stack = new ItemStack(item_stack.clone());
 		if (keep_enchants.size()>0) {
-			player.sendMessage(ChatColor.YELLOW+"This shop doesn't want these enchantments: "+keep_enchants.toString());
+
+            HashMap<String, String> keywords = new HashMap<String, String>();
+    		keywords.put("<enchants>",  keep_enchants.toString());
+			player.sendMessage(Utils.formatText(L.ST_NO_WANT_ENCHANTS, keywords));
 		}
 		if (remove_enchants.size()>0) {
 			for (TradeObject e : remove_enchants){
@@ -212,6 +230,7 @@ public class ShopTransactions {
 	}
 	
 	
+	@SuppressWarnings("static-access")
 	public ItemStack SellEnchantedBook(ItemStack ebook){
 		//out.println("SellEnchantedBook");
 		HItemStack hi = bukCon.getBukkitCommon().getSerializableItemStack(ebook);
@@ -238,7 +257,10 @@ public class ShopTransactions {
 				im.addStoredEnchant(Enchantment.getByName(e.getEnchantmentName()), e.getEnchantmentLevel(), true);
 			}
 			stack.setItemMeta(im);
-			player.sendMessage(ChatColor.YELLOW+"This shop doesn't want these enchantments: "+keep_enchant.toString());
+			
+            HashMap<String, String> keywords = new HashMap<String, String>();
+    		keywords.put("<enchants>",  keep_enchant.toString());
+			player.sendMessage(Utils.formatText(L.ST_NO_WANT_ENCHANTS, keywords));
 		}
 		
 		return stack;
@@ -246,20 +268,26 @@ public class ShopTransactions {
 	}
 	
 	//PLAYER BUYS ITEM FROM SHOP
+	@SuppressWarnings("static-access")
 	public TradeObject Buy(String item, int qty, double commission) {
 		TradeObject ho = hyperAPI.getHyperObject(item.replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		if (!hyplay.hasBuyPermission(hyperAPI.getShop(shopname))) {
-			player.sendMessage(ChatColor.YELLOW+"You cannot buy from this shop.");
+			player.sendMessage(Utils.formatText(L.ST_NO_BUY_PERMISSION, null));
 			return null;
 		}
 		if (!player.hasPermission("hyperconomy.buy")) {
-			player.sendMessage(ChatColor.YELLOW+"You cannot purchase from shops");
+			player.sendMessage(Utils.formatText(L.ST_NO_BUY_PERMISSION2, null));
 			return null;
 		}
 		
 		TransactionResponse response = hyperAPI.buy(hyplay, ho, qty, hyperAPI.getShop(shopname));
 		if (response.getSuccessfulObjects().size() > 0) {
-			player.sendMessage(ChatColor.YELLOW+"You purchased "+qty+" "+ho.getDisplayName()+" for "+response.getTotalPrice());
+			
+            HashMap<String, String> keywords = new HashMap<String, String>();
+    		keywords.put("<amount>",  String.valueOf(qty));
+    		keywords.put("<item>",  ho.getDisplayName());
+    		keywords.put("<price>",  String.format("%.2f", response.getTotalPrice()));
+			player.sendMessage(Utils.formatText(L.ST_ITEM_BOUGHT, keywords));
 		} 
 		else {
 			response.sendMessages();
@@ -279,6 +307,7 @@ public class ShopTransactions {
 	
 	
 	//PLAYER-MANAGER REMOVES ITEMS FROM SHOP
+	@SuppressWarnings("static-access")
 	public TradeObject Remove(String item, int qty) {
 		TradeObject ho = hyperAPI.getHyperObject(item.replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		if (ho.getType() == TradeObjectType.ENCHANTMENT) {
@@ -290,7 +319,7 @@ public class ShopTransactions {
 				HashMap<Integer, ItemStack> excess = player.getInventory().addItem(ebook);
 				//out.println("EXCESS: "+excess);
 				if (excess.size() > 0) {
-					player.sendMessage(ChatColor.YELLOW+"Your inventory is full.");
+					player.sendMessage(Utils.formatText(L.ST_INVENTORY_FULL, null));
 					return null;
 				} else {
 					ho.setStock(ho.getStock() - 1);
@@ -307,7 +336,7 @@ public class ShopTransactions {
 				}
 			}
 			else {
-				player.sendMessage(ChatColor.YELLOW+"You must have a book to take an enchantment from your shop.");
+				player.sendMessage(Utils.formatText(L.ST_NEED_BOOK, null));
 				return null;
 			}
 			
@@ -318,7 +347,12 @@ public class ShopTransactions {
 			int space = hyplay.getInventory().getAvailableSpace(hi);
 			int qty_space = qty/hi.getMaxStackSize()+1;
 			if (space < qty_space) {
-				player.sendMessage(ChatColor.YELLOW+"You haven't got enough space in your inventory to take "+qty+" "+ho.getDisplayName());
+
+	            HashMap<String, String> keywords = new HashMap<String, String>();
+	    		keywords.put("<amount>",  String.valueOf(qty));
+	    		keywords.put("<item>",  ho.getDisplayName());
+				player.sendMessage(Utils.formatText(L.ST_INVENTORY_TOO_FULL, keywords));
+				
 				return null;
 			}
 			if (ho.getStock() < 1) {
@@ -371,13 +405,14 @@ public class ShopTransactions {
 	}	
 	
 	//PLAYER-MANAGER ADDS ITEMS TO SHOP
+	@SuppressWarnings("static-access")
 	public ItemStack AddItem(ItemStack item_stack) {
 		HItemStack hi = bukCon.getBukkitCommon().getSerializableItemStack(item_stack);
 		PlayerShop pshop=hyperAPI.getPlayerShop(this.shopname);
 		HyperEconomy he = hc.getDataManager().getEconomy(pshop.getEconomy());
 		TradeObject ho = hyplay.getHyperEconomy().getTradeObject(hi);
 		if (ho == null){
-			player.sendMessage(ChatColor.YELLOW+"That item cannot be placed in this shop.");
+			player.sendMessage(Utils.formatText(L.ST_CANT_STOCK_ITEM, null));
 			return item_stack;
 		}
 
@@ -386,7 +421,11 @@ public class ShopTransactions {
 		int globalMaxStock = hc.getConf().getInt("shop.max-stock-per-item-in-playershops");
 		TradeObject ho2 = he.getTradeObject(ho.getName(), pshop);
 		if (ho2.getStock() + amount > globalMaxStock) {
-			player.sendMessage(ChatColor.YELLOW+"CANT_ADD_MORE_STOCK");
+			
+            HashMap<String, String> keywords = new HashMap<String, String>();
+    		keywords.put("<item>",  ho2.getDisplayName());
+			player.sendMessage(Utils.formatText(L.ST_MAX_STOCK, keywords));
+			
 			return item_stack;
 		}
 		if (ho2.getType() == TradeObjectType.ITEM) {
@@ -398,6 +437,7 @@ public class ShopTransactions {
 	}
 	
 	//PLAYER-MANAGER ADDS ITEMS TO SHOP
+	@SuppressWarnings("static-access")
 	public ItemStack AddEnchantedItem(ItemStack item_stack) {
 		//make list of hyperconomy enchantment names from item's enchants
 		HItemStack hi = bukCon.getBukkitCommon().getSerializableItemStack(item_stack);
@@ -425,12 +465,16 @@ public class ShopTransactions {
 			for (TradeObject e : keep_enchant){
 				stack.addUnsafeEnchantment(Enchantment.getByName(e.getEnchantmentName()), e.getEnchantmentLevel());
 			}
-			player.sendMessage(ChatColor.YELLOW+"This shop doesn't want these enchantments: "+keep_enchant.toString());
+			
+            HashMap<String, String> keywords = new HashMap<String, String>();
+    		keywords.put("<enchants>",  keep_enchant.toString());
+			player.sendMessage(Utils.formatText(L.ST_NO_WANT_ENCHANTS, keywords));
 		}
 		
 		return stack;
 	}
 	
+	@SuppressWarnings("static-access")
 	public ItemStack AddEnchantedBook(ItemStack ebook) {
 		//out.println("AddEnchantedBook: "+ebook);
 		//make list of hyperconomy enchantment names from item's enchants
@@ -461,13 +505,17 @@ public class ShopTransactions {
 				im.addStoredEnchant(Enchantment.getByName(e.getEnchantmentName()), e.getEnchantmentLevel(), true);
 			}
 			stack.setItemMeta(im);
-			player.sendMessage(ChatColor.YELLOW+"This shop doesn't want these enchantments: "+keep_enchant.toString());
+			
+            HashMap<String, String> keywords = new HashMap<String, String>();
+    		keywords.put("<enchants>",  keep_enchant.toString());
+			player.sendMessage(Utils.formatText(L.ST_NO_WANT_ENCHANTS, keywords));
 		}
 		
 		return stack;
 	}
 	
 	//PLAYER-MANAGER ADDS ENCHANT TO SHOP
+	@SuppressWarnings("static-access")
 	public String AddEnchant(String enchant) {
 		//out.println("AddEnchant: "+enchant);
 		PlayerShop pshop=hyperAPI.getPlayerShop(this.shopname);
@@ -480,7 +528,11 @@ public class ShopTransactions {
 		int globalMaxStock = hc.getConf().getInt("shop.max-stock-per-item-in-playershops");
 		TradeObject ho2 = he.getTradeObject(ho.getName(), pshop);
 		if (ho2.getStock() + 1 > globalMaxStock) {
-			player.sendMessage(ChatColor.YELLOW+"CANT_ADD_MORE_STOCK");
+
+            HashMap<String, String> keywords = new HashMap<String, String>();
+    		keywords.put("<item>",  ho2.getDisplayName());
+			player.sendMessage(Utils.formatText(L.ST_MAX_STOCK, keywords));
+			
 			return enchant;
 		} else {
 

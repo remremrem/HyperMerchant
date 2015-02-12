@@ -38,10 +38,12 @@ import grokswell.hypermerchant.HyperMerchantTrait;
 import grokswell.hypermerchant.ShopMenu;
 import grokswell.util.ActiveEnchant;
 import grokswell.util.Blacklist;
+import grokswell.util.Language;
 import grokswell.util.MenuButtonData;
 import grokswell.util.Players;
 import grokswell.util.Settings;
 import grokswell.util.Uniquifier;
+import grokswell.util.Utils;
 
 public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	HyperAPI hyperAPI = null;
@@ -49,7 +51,8 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	HyperConomy hc;
 	BukkitConnector bukCon;
 	Uniquifier uniquifier = new Uniquifier();
-	Settings settings;
+	public Settings settings;
+	public Language language;
 	Players playerData;
 	Blacklist blacklist;
 	ArrayList<String> name_blacklist;
@@ -61,13 +64,14 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	MerchantMethods merchmeth;
 	ActiveEnchant active_enchant;
 	
+	@SuppressWarnings("static-access")
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label,String[] args) {
 		
 		//REMOTEMENU 
 		if (cmd.getName().equalsIgnoreCase("remotemenu")) {
 			if (!(sender instanceof Player)) {
-				sender.sendMessage("Only players can use the command "+ChatColor.RED+"/remotemenu");
+				sender.sendMessage(language.G_PLAYER_COMMAND_ONLY +ChatColor.RED+" /remotemenu");
 				return true;
 			}
 			
@@ -76,7 +80,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			
 			if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 
 				(!player.hasPermission("creative.hypermerchant"))) {
-					player.sendMessage(ChatColor.YELLOW+"You may not interact with shops while in creative mode.");
+					player.sendMessage(ChatColor.YELLOW+language.G_NO_CREATIVE);
 					return true;
 			} 
 			
@@ -84,8 +88,8 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			ArrayList<String> shoplist = shopManager.listShops();
 			
 			if (args.length != 1) {
-				sender.sendMessage(ChatColor.YELLOW+"You must specify one shop name. Example: "+
-									ChatColor.RED+"/remotemenu DonutShop");
+				sender.sendMessage(ChatColor.YELLOW+language.G_MISSING_SHOP_NAME+
+									ChatColor.RED+" /remotemenu DonutShop");
 				sender.sendMessage(ChatColor.YELLOW+"Use "+ChatColor.RED+"/remoteshoplist or "+
 									ChatColor.RED+"/rslist "+ChatColor.YELLOW+"for valid shop names.");
 				return true;
@@ -96,7 +100,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 					return true;
 					
 				} else {
-					sender.sendMessage(ChatColor.YELLOW+"Shop name not recognized. Use "+
+					sender.sendMessage(ChatColor.YELLOW+language.G_INVALID_SHOP_NAME+" Use "+
 										ChatColor.RED+"/remoteshoplist "+ChatColor.YELLOW+ 
 										"or "+ChatColor.RED+"/rslist "+ChatColor.YELLOW+
 										"for valid shop names. Use exact spelling.");
@@ -109,7 +113,8 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		// SHOPMENU 
 		else if (cmd.getName().equalsIgnoreCase("shopmenu")) {
 			if (!(sender instanceof Player)) {
-				sender.sendMessage("Only players can use the command "+ChatColor.RED+"/shopmenu");
+				sender.sendMessage(ChatColor.YELLOW+language.G_PLAYER_COMMAND_ONLY+
+						ChatColor.RED+" /shopmenu");
 				return true;
 			}
 			
@@ -117,14 +122,13 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			
 			if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 
 					(!player.hasPermission("creative.hypermerchant"))) {
-						player.sendMessage(ChatColor.YELLOW+"You may not interact with shops while in creative mode.");
+						player.sendMessage(ChatColor.YELLOW+language.G_NO_CREATIVE);
 						return true;
 				} 
 
 			String name=hyperAPI.getPlayerShop(hyperAPI.getHyperPlayer(player.getName()));
 			if (name.isEmpty()) {
-				sender.sendMessage(ChatColor.YELLOW+"You must be standing inside " +
-									"of a shop to use the command "+ChatColor.RED+"/shopmenu.");
+				sender.sendMessage(ChatColor.YELLOW+language.G_MUST_BE_IN_SHOP+ChatColor.RED+" /shopmenu.");
 				return true;
 				
 			} else {
@@ -137,7 +141,8 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			// MANAGEMENU 
 				else if (cmd.getName().equalsIgnoreCase("managemenu")) {
 					if (!(sender instanceof Player)) {
-						sender.sendMessage("Only players can use the command "+ChatColor.RED+"/managemenu");
+						sender.sendMessage(ChatColor.YELLOW+language.G_PLAYER_COMMAND_ONLY+
+								ChatColor.RED+" /managemenu");
 						return true;
 					}
 					
@@ -145,21 +150,22 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 					
 					if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 
 							(!player.hasPermission("creative.hypermerchant"))) {
-								player.sendMessage(ChatColor.YELLOW+"You may not interact with shops while in creative mode.");
+								player.sendMessage(ChatColor.YELLOW+language.G_NO_CREATIVE);
 								return true;
 						} 
 					
 					String name=hyperAPI.getPlayerShop(hyperAPI.getHyperPlayer(player.getName()));
 					
 					if (name.isEmpty()) {
-						sender.sendMessage(ChatColor.YELLOW+"You must be standing inside " +
-											"of a shop to use the command "+ChatColor.RED+"/managemenu.");
+						sender.sendMessage(ChatColor.YELLOW+language.G_MUST_BE_IN_SHOP+
+								ChatColor.RED+" /managemenu.");
 						return true;
 						
 					} else {
 						PlayerShop ps = hyperAPI.getPlayerShop(name);
 						if (ps == null) {
-							sender.sendMessage(ChatColor.YELLOW+"You must be standing in a player shop to use the command /managemenu");
+							sender.sendMessage(ChatColor.YELLOW+language.G_MUST_BE_IN_PLAYER_SHOP+
+									ChatColor.RED+" /managemenu");
 							return true;
 						}
 						if (ps.isAllowed(hyperAPI.getHyperPlayer(player.getName()))) {
@@ -167,7 +173,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 							return true;
 						}
 						else {
-							sender.sendMessage(ChatColor.YELLOW+"You are not allowed to manage the shop known as "+name);
+							sender.sendMessage(ChatColor.YELLOW+language.G_NO_MANAGE+" "+name);
 							return true;
 						}
 					}
@@ -177,7 +183,8 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		// RMANAGE 
 			else if (cmd.getName().equalsIgnoreCase("rmanage")) {
 				if (!(sender instanceof Player)) {
-					sender.sendMessage("Only players can use the command "+ChatColor.RED+"/rmanage");
+					sender.sendMessage(ChatColor.YELLOW+language.G_PLAYER_COMMAND_ONLY+
+							ChatColor.RED+"/rmanage");
 					return true;
 				}
 				
@@ -185,7 +192,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 				
 				if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 
 						(!player.hasPermission("creative.hypermerchant"))) {
-							player.sendMessage(ChatColor.YELLOW+"You may not interact with shops while in creative mode.");
+							player.sendMessage(ChatColor.YELLOW+language.G_NO_CREATIVE);
 							return true;
 					} 
 				
@@ -194,14 +201,15 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 					name=args[0];
 				}
 				if (name.isEmpty()) {
-					sender.sendMessage(ChatColor.YELLOW+"You must specify a shop name, to use the command "+ChatColor.RED+"/rmanage.");
+					sender.sendMessage(ChatColor.YELLOW+language.G_MISSING_SHOP_NAME_2+ChatColor.RED+" /rmanage.");
 					return true;
 					
 				} else {
 					PlayerShop pshop = hyperAPI.getPlayerShop(name);
 					if (pshop == null) {
-						sender.sendMessage(ChatColor.RED+ name +ChatColor.YELLOW+ " is not a valid player shop name. " +
-								"Use the command"+ChatColor.RED+"/ms list"+ChatColor.YELLOW+" to see valid names.");
+						sender.sendMessage(ChatColor.RED+ name +ChatColor.YELLOW+
+								language.G_INVALID_PLAYER_SHOP_NAME+" Use the command "+
+								ChatColor.RED+"/ms list"+ChatColor.YELLOW+" to see valid names.");
 						return true;
 					}
 					if (pshop.isAllowed(hyperAPI.getHyperPlayer(player.getName()))) {
@@ -209,7 +217,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 						return true;
 					}
 					else {
-						sender.sendMessage(ChatColor.YELLOW+"You are not allowed to manage the shop known as "+name);
+						sender.sendMessage(ChatColor.YELLOW+language.G_NO_MANAGE+" "+name);
 						return true;
 					}
 				}
@@ -218,7 +226,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		
 		//REMOTESHOPLIST
 		else if (cmd.getName().equalsIgnoreCase("remoteshoplist")) {
-			sender.sendMessage(ChatColor.YELLOW+"Valid shop names to use with command /remotemenu:");
+			sender.sendMessage(Utils.formatText(language.G_VALID_SHOP_NAMES, null));
 			String shopList = "";
 			for (String shop:hyperAPI.getPlayerShopList()) {
 				//out.println("ps name: "+shop);
@@ -230,10 +238,10 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			}
 
 			if (shopList.length() == 0) {
-				sender.sendMessage("No shops exist at this time.");
+				sender.sendMessage(Utils.formatText(language.G_NO_SHOPS_EXIST, null));
 			} else {
 				shopList = shopList.substring(0, shopList.length() - 1);
-				sender.sendMessage(shopList);
+				sender.sendMessage("§e"+shopList);
 			}
 			return true;
 		}
@@ -242,7 +250,9 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		//ONDUTY
 		else if (cmd.getName().equalsIgnoreCase("onduty")) {
 			if (!(sender instanceof Player)) {
-				sender.sendMessage("Only players can use the command "+ChatColor.RED+"/remotemenu");
+				HashMap<String, String> keywords = new HashMap<String, String>();
+				keywords.put("<command>",  "/remotemenu");
+				sender.sendMessage(Utils.formatText(language.G_PLAYER_COMMAND_ONLY, keywords));
 				return true;
 			}
 			
@@ -252,10 +262,10 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 			
 			if (onduty){
 				playerData.savePlayerData(playerName+".onduty", false);
-				sender.sendMessage(ChatColor.YELLOW+"You are now off duty. Other players cannot click on you to trade with your shop.");
+				sender.sendMessage(Utils.formatText(language.G_PLAYER_OFFDUTY, null));
 			} else {
 				playerData.savePlayerData(playerName+".onduty", true);
-				sender.sendMessage(ChatColor.YELLOW+"You are now on duty. Other players may click on you to trade with your shop.");
+				sender.sendMessage(Utils.formatText(language.G_PLAYER_ONDUTY, null));
 			}
 			
 			return true;
@@ -265,7 +275,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		//HYPERMERCHANT
 		else if (cmd.getName().equalsIgnoreCase("hmerchant")) {
 			if (!this.citizens_is_loaded) {
-				sender.sendMessage(ChatColor.RED+"Citizens is not loaded. NPCs are unavailable at this time.");
+				sender.sendMessage(Utils.formatText(language.G_CITIZENS_NOT_LOADED, null));
 				return true;
 			} else if (args.length < 1) {
 				return false;	
@@ -280,7 +290,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		//CLERK
 		else if (cmd.getName().equalsIgnoreCase("clerk")) {
 			if (!this.citizens_is_loaded) {
-				sender.sendMessage(ChatColor.RED+"Citizens is not loaded. NPCs are unavailable at this time.");
+				sender.sendMessage(Utils.formatText(language.G_CITIZENS_NOT_LOADED, null));
 				return true;
 			} else if (args.length < 1) {
 				return false;	
@@ -295,13 +305,13 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		//FIRECLERK
 		else if (cmd.getName().equalsIgnoreCase("fireclerk")) {
 			if (!this.citizens_is_loaded) {
-				sender.sendMessage(ChatColor.RED+"Citizens is not loaded. NPCs are unavailable at this time.");
+				sender.sendMessage(Utils.formatText(language.G_CITIZENS_NOT_LOADED, null));
 				return true;
 			} else if (args.length > 0) {
 				return false;	
 			} else {
 				String message = merchmeth.FireClerk((Player) sender);
-				sender.sendMessage(ChatColor.YELLOW+message);
+				sender.sendMessage(message);
 				return true;
 			}
 			
@@ -311,18 +321,18 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		//CLOSESHOP
 		else if (cmd.getName().equalsIgnoreCase("closeshop")) {
 			if (!this.citizens_is_loaded) {
-				sender.sendMessage(ChatColor.RED+"Citizens is not loaded. NPCs are unavailable at this time.");
+				sender.sendMessage(Utils.formatText(language.G_CITIZENS_NOT_LOADED, null));
 				return true;
 			}
 			if (args.length == 1) {
 				if (args[0].equals("confirm")) {
 					String message = merchmeth.CloseShop((Player) sender);
-					sender.sendMessage(ChatColor.YELLOW+message);
+					sender.sendMessage(message);
 				}
 
 				return true;
 			} else {				
-				sender.sendMessage(ChatColor.YELLOW+"Before you close the shop, make sure you take anything you want to keep. Type \"/closeshop confirm\"");
+				sender.sendMessage(Utils.formatText(language.G_CLOSE_SHOP_REMINDER, null));
 				return true;
 			}
 			
@@ -340,6 +350,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		// TODO Auto-generated method stub
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void onEnable() {
 		Plugin hcPlugin = getServer().getPluginManager().getPlugin("HyperConomy");
@@ -349,6 +360,14 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		ecoAPI = hc.getEconomyAPI();
 		
 		getServer().getPluginManager().registerEvents(this, this);
+
+		settings = new Settings(this);
+		language = new Language(this);
+		playerData = new Players(this);
+		blacklist = new Blacklist(this);
+		this.name_blacklist = blacklist.getNameBlacklist();
+		this.type_blacklist = blacklist.getTypesBlacklist();
+		
 		Plugin p = Bukkit.getPluginManager().getPlugin("Citizens");
 		
 		CitizensPlugin cp = (CitizensPlugin) p;
@@ -363,14 +382,8 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 				//out.println("EXCEPTION: "+e);
 			}
 		} else {
-			this.getLogger().info("Citizens not found. NPC hypermerchants will be disabled.");
+			this.getLogger().info(language.G_CITIZENS_NOT_FOUND);
 		}
-		
-		settings = new Settings(this);
-		playerData = new Players(this);
-		blacklist = new Blacklist(this);
-		this.name_blacklist = blacklist.getNameBlacklist();
-		this.type_blacklist = blacklist.getTypesBlacklist();
 		//out.println("names: "+this.name_blacklist);
 		//out.println("types: "+this.type_blacklist);
 		
@@ -439,7 +452,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 
 		   (!player.hasPermission("creative.hypermerchant"))) {
 			
-			player.sendMessage(ChatColor.YELLOW+"You may not interact with merchants while in creative mode.");
+			player.sendMessage(ChatColor.YELLOW+language.G_NO_CREATIVE);
 			return;
     	} 
 

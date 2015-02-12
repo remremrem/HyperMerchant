@@ -4,6 +4,7 @@ package grokswell.hypermerchant;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -24,12 +25,10 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import regalowl.hyperconomy.HyperAPI;
-import regalowl.hyperconomy.shop.PlayerShop;
 import regalowl.hyperconomy.tradeobject.TradeObject;
 import regalowl.hyperconomy.tradeobject.TradeObjectType;
 import regalowl.hyperconomy.account.HyperPlayer;
@@ -37,6 +36,8 @@ import regalowl.hyperconomy.account.HyperPlayer;
 import grokswell.hypermerchant.ShopTransactions;
 import grokswell.util.EnchantIcons;
 import grokswell.util.HyperToBukkit;
+import grokswell.util.Language;
+import grokswell.util.Utils;
  
 public class ShopMenu implements Listener, MerchantMenu {
  
@@ -56,6 +57,7 @@ public class ShopMenu implements Listener, MerchantMenu {
     private ItemStack[] optionIcons;
 	private ItemStack sorting_icon;
 	
+	Language L;
 	HyperToBukkit hypBuk;
 	ShopTransactions shop_trans;
 	String economy_name;
@@ -75,6 +77,7 @@ public class ShopMenu implements Listener, MerchantMenu {
     	this.shopname = name;
         this.size = size;
         this.plugin = plgn;
+        L=plgn.language;
         hypBuk = new HyperToBukkit();
         hyperAPI = plgn.hyperAPI;
         this.optionNames = new String[size];
@@ -148,7 +151,8 @@ public class ShopMenu implements Listener, MerchantMenu {
     }
     
     
-    public void loadPage() {
+    @SuppressWarnings("static-access")
+	public void loadPage() {
     	this.optionIcons = null;
     	this.optionIcons = new ItemStack[size];
     	this.optionNames = null;
@@ -174,8 +178,9 @@ public class ShopMenu implements Listener, MerchantMenu {
 	        double value = 0.0;
 	        double stock = 0.0;
 	        ItemStack stack;
-	        
         	TradeObject ho = hyperAPI.getHyperObject(item_name, economy_name, hyperAPI.getShop(shopname));
+        	//TradeObject ho = hyperAPI.getHyperObject(item_name, economy_name);
+        	
 	        if (ho == null) {
 	        	stock=0;
 	        	stack=new ItemStack(Material.AIR, 1, (short) 0);
@@ -213,21 +218,24 @@ public class ShopMenu implements Listener, MerchantMenu {
 				stack = new ItemStack(Material.AIR, 1, (short) 0);
 			}
 	        
-	        String status = "";
-	        if (ho == null){
-	        	status="";
-	        } else if (ho.getShopObjectStatus()!=null){
-	        	status = ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+ho.getShopObjectStatus().name().toLowerCase();
-	        }
+	        //String status = "";
+	        //if (ho == null){
+	        //	status="";
+	        //} else if (ho.getShopObjectStatus()!=null){
+	        //	status = ChatColor.WHITE+L.II_STATUS+": "+ChatColor.DARK_PURPLE+ho.getShopObjectStatus().name().toLowerCase();
+	        //}
 	        
 	        if (ho == null) {
 				this.setOption(count, stack, "","");
 	        } else {
-				this.setOption(count, stack, ho.getDisplayName().replaceAll("_", " "), 
-						ChatColor.WHITE+"Price: "+ChatColor.DARK_PURPLE+String.format("%.2f", cost),
-						ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", value), 
-						ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) stock),
-		    			status );
+	            HashMap<String, String> keywords = new HashMap<String, String>();
+	    		keywords.put("<buyprice>",  String.format("%.2f", cost));
+	    		keywords.put("<sellprice>",  String.format("%.2f", value));
+	    		keywords.put("<stock>",  String.valueOf((int) stock));
+	        	this.setOption(count, stack, ho.getDisplayName().replaceAll("_", " "),
+	        			Utils.formatText(L.II_BUY, keywords),
+	        			Utils.formatText(L.II_SELL, keywords),
+	        			Utils.formatText(L.II_STOCK, keywords));
 	        }
 	        count++;
 		}
@@ -296,7 +304,8 @@ public class ShopMenu implements Listener, MerchantMenu {
     	return -1;
     }
     
-    private void UpdateSortingIcon() {
+    @SuppressWarnings("static-access")
+	private void UpdateSortingIcon() {
     	this.sorting_icon = plugin.menuButtonData.help5.clone();
     	ItemMeta im;
     	List<String> lore;
@@ -317,23 +326,23 @@ public class ShopMenu implements Listener, MerchantMenu {
     	lore.add(" ");
     	
     	if (sort_option == 0){
-    		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Item Name");
+    		lore.add(Utils.formatText(L.MM_SORTING, null)+": "+Utils.formatText(L.MM_ITEM_NAME, null));
     	} else if (sort_option == 1){
-    		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Material Name");
+    		lore.add(Utils.formatText(L.MM_SORTING, null)+": "+Utils.formatText(L.MM_MATERIAL_NAME, null));
     	} else if (sort_option == 2){
-    		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Purchase Price");
+    		lore.add(Utils.formatText(L.MM_SORTING, null)+": "+Utils.formatText(L.MM_PURCHASE_PRICE, null));
     	} else if (sort_option == 3){
-    		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Sell Price");
+    		lore.add(Utils.formatText(L.MM_SORTING, null)+": "+Utils.formatText(L.MM_SELL_PRICE_2, null));
     	} else if (sort_option == 4){
-    		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Stock Amount");
+    		lore.add(Utils.formatText(L.MM_SORTING, null)+": "+Utils.formatText(L.MM_STOCK_AMOUNT, null));
     	}
     	
     	lore.add(" ");
     	
     	if (display_zero_stock == 0){
-    		lore.add(ChatColor.DARK_PURPLE+"show zero stock: "+ChatColor.RED+"No");
+    		lore.add(Utils.formatText(L.MM_SHOW_ZERO_STOCK, null)+": "+Utils.formatText(L.G_NO, null));
     	} else {
-    		lore.add(ChatColor.DARK_PURPLE+"show zero stock: "+ChatColor.RED+"Yes");
+    		lore.add(Utils.formatText(L.MM_SHOW_ZERO_STOCK, null)+": "+Utils.formatText(L.G_YES, null));
     	}
     	
     	im.setLore(lore);
@@ -367,14 +376,17 @@ public class ShopMenu implements Listener, MerchantMenu {
     }
 
     
-    public void itemRefresh(int slot, TradeObject ho) {
+    @SuppressWarnings("static-access")
+	public void itemRefresh(int slot, TradeObject ho) {
     	hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
     	//out.println("ho "+ho.+" ,"+ho.getDisplayName());
 
-        String status = "";
-        if (ho.getShopObjectStatus()!=null){
-        	status = ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+ho.getShopObjectStatus().name().toLowerCase();
-        }
+        //String status = "";
+        //if (ho.getShopObjectStatus()!=null){
+	    //    HashMap<String, String> keywords = new HashMap<String, String>();
+		//	keywords.put("<buyprice>",  ho.getShopObjectStatus().name().toLowerCase());
+        //	status = Utils.formatText(L.II_STATUS, keywords);
+        //}
         
         ItemStack stack;
         if (ho.getType()==TradeObjectType.ENCHANTMENT) {
@@ -387,11 +399,15 @@ public class ShopMenu implements Listener, MerchantMenu {
         	stack = hypBuk.getItemStack(ho.getItemStack(1));
         }
         
-    	this.setOption(slot, stack, ho.getDisplayName().replaceAll("_", " "), 
-    			ChatColor.WHITE+"Price: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getBuyPriceWithTax(1.0)),
-    			ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getSellPriceWithTax(1.0, hp)), 
-    			ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) ho.getStock()),
-    			status );
+        HashMap<String, String> keywords = new HashMap<String, String>();
+		keywords.put("<buyprice>",  String.format("%.2f", ho.getBuyPriceWithTax(1.0)));
+		keywords.put("<sellprice>",  String.format("%.2f", ho.getSellPriceWithTax(1.0, hp)));
+		keywords.put("<stock>",  String.valueOf((int) ho.getStock()));
+    	this.setOption(slot, stack, ho.getDisplayName().replaceAll("_", " "),
+    			Utils.formatText(L.II_BUY, keywords),
+    			Utils.formatText(L.II_SELL, keywords),
+    			Utils.formatText(L.II_STOCK, keywords));
+        
     	this.inventory.setItem(slot, this.optionIcons[slot]);
 
     }

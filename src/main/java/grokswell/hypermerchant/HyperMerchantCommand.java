@@ -2,7 +2,11 @@ package grokswell.hypermerchant;
 
 
 //import java.util.ArrayList;
+import grokswell.util.Language;
+import grokswell.util.Utils;
+
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -23,7 +27,9 @@ public class HyperMerchantCommand {
 	HyperPlayer hyplay;
 	MerchantMethods merchmeth;
 	int IDarg;
+	Language L;
 	
+	@SuppressWarnings("static-access")
 	HyperMerchantCommand(CommandSender snder, String[] args, HyperMerchantPlugin HMP) {
 		IDarg=-1;
 		merchmeth = new MerchantMethods();
@@ -32,10 +38,11 @@ public class HyperMerchantCommand {
 		Player player = null;
 		NPCSelector sel = CitizensAPI.getDefaultNPCSelector(); 
 		List<String> argslist = Arrays.asList(args);
+		L = HMP.language;
 		
 		if (!(sender instanceof Player)) {
 			if ((!argslist.contains("--id")) && (!args[0].equals("list"))) {
-				sender.sendMessage(ChatColor.YELLOW+"You must have an NPC selected or use the --id flag to execute this commnad");
+				sender.sendMessage(ChatColor.YELLOW+L.CC_NO_NPC_SELECTED);
 				return;
 			}
 		} else {
@@ -48,20 +55,12 @@ public class HyperMerchantCommand {
 			StringBuilder buffer = new StringBuilder();
 			String shopname = null;
 			
-			
-			
+
 			if (args[0].equals("list")) {
-				for (NPC npc: CitizensAPI.getNPCRegistry()) {
-					if (npc.hasTrait(HyperMerchantTrait.class)) {
-						if (npc.getTrait(HyperMerchantTrait.class).offduty) {
-							sender.sendMessage(ChatColor.YELLOW+npc.getName()+" is OFFDUTY");
-						} else {
-							sender.sendMessage(ChatColor.YELLOW+npc.getName()+" is ONDUTY");
-						}
-						sender.sendMessage(ChatColor.YELLOW+"ID: " + String.valueOf(npc.getId()) + " , SHOP: "+ npc.getTrait(HyperMerchantTrait.class).shop_name +"\n");
-					}
-				}
+				String message = merchmeth.ListMerchants(null);
+				sender.sendMessage(message);
 				return;
+
 			
 			} else if (argslist.contains("--id")) {
 				int id_index = argslist.indexOf("--id") + 1;
@@ -96,23 +95,6 @@ public class HyperMerchantCommand {
 				    buffer.append(' ').append(args[i]);
 				}
 			}
-			
-//				//HMERCH SELECT
-//			if (this_npc.hasTrait(HyperMerchantTrait.class)) {
-//				if (args[0].equals("select")) {
-//					if (IDarg != -1) {
-//						merchmeth.Select(IDarg, player);
-//						
-//					} else if (args.length > 1){
-//						
-//						try {
-//							int id = Integer.parseInt(args[1]);
-//							merchmeth.Select(id, player);
-//							
-//						} catch (Exception e) {
-//							merchmeth.Select(args[1], player);
-//						}
-//					}
 				
 				
 			//HMERCH INFO
@@ -143,11 +125,11 @@ public class HyperMerchantCommand {
 						String message = merchmeth.SetCommission(this_npc.getId(), Double.valueOf(args[1]));
 						sender.sendMessage(message);
 					} catch (Exception e) {
-						sender.sendMessage(ChatColor.YELLOW+args[1]+" is not a valid commission percentage.");
+						sender.sendMessage(ChatColor.YELLOW+args[1]+" "+L.MC_INVALID_COMMISSION);
 
 					}
 				} else {
-					sender.sendMessage(ChatColor.YELLOW+"This merchant's commission is "+String.valueOf( this_npc.getTrait(HyperMerchantTrait.class).comission )+" percent.");
+					sender.sendMessage(ChatColor.YELLOW+L.MC_COMMISSION+" "+String.valueOf( this_npc.getTrait(HyperMerchantTrait.class).comission )+" %.");
 				}
 				return;
 				
@@ -159,11 +141,11 @@ public class HyperMerchantCommand {
 						String message = merchmeth.SetRentalPrice(this_npc.getId(), Double.valueOf(args[1]));
 						sender.sendMessage(message);
 					} catch (Exception e) {
-						sender.sendMessage(ChatColor.YELLOW+args[1]+" is not a valid rental price.");
+						sender.sendMessage(ChatColor.YELLOW+args[1]+" "+L.MC_INVALID_RENTAL_PRICE);
 
 					}
 				} else {
-					sender.sendMessage(ChatColor.YELLOW+"This merchant's rental price is "+String.valueOf( this_npc.getTrait(HyperMerchantTrait.class).rental_price ));
+					sender.sendMessage(ChatColor.YELLOW+L.MC_RENTAL_PRICE+" "+String.valueOf( this_npc.getTrait(HyperMerchantTrait.class).rental_price ));
 				}
 				return;
 			
@@ -228,21 +210,13 @@ public class HyperMerchantCommand {
 					
 				//ANY OTHER ARGUMENTS THAT ARE INVALID
 			}else {
-				sender.sendMessage(ChatColor.YELLOW+"Valid "+ChatColor.DARK_RED+"/hmerchant"+ChatColor.YELLOW+" subcommands are:\n" +
-						ChatColor.RED+"info, setshop , offduty , greeting , farewell , denial , closed, commission.");
+				sender.sendMessage(Utils.formatText(L.MC_SUBCOMMNADS, null));
 				return;
 			}
 			return;
 				
-				
-				//if the player doesn't have a hypermerchant npc selected
-			//} else {
-			//	sender.sendMessage(ChatColor.YELLOW+"You must have a hypermerchant npc " +
-			//			"selected to use the command "+ChatColor.RED+"/hmerchant.");
-			//	return;
-			//}
-			
-			//for any other exception not explicitly checked for
+
+		//for any other exception not explicitly checked for
 		} catch (Exception e){
 			String subcommand = "";
 			if (args.length>0) {
@@ -250,8 +224,10 @@ public class HyperMerchantCommand {
 			}
 			HMP.getLogger().info("/hypermerchant "+subcommand+" call threw exception "+e);
 			e.printStackTrace();
-			sender.sendMessage(ChatColor.YELLOW+"You must have a hypermerchant npc " +
-								"selected to use the command "+ChatColor.RED+"/hmerchant.");
+
+	        HashMap<String, String> keywords = new HashMap<String, String>();
+			keywords.put("<command>",  "/hypermerchant");
+			sender.sendMessage(Utils.formatText(L.CC_NO_NPC_SELECTED_2, keywords));
 			return;
 		}	
 	}

@@ -4,6 +4,7 @@ package grokswell.hypermerchant;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import net.citizensnpcs.api.npc.NPC;
@@ -41,6 +42,8 @@ import regalowl.hyperconomy.account.HyperPlayer;
 import grokswell.hypermerchant.ShopTransactions;
 import grokswell.util.EnchantIcons;
 import grokswell.util.HyperToBukkit;
+import grokswell.util.Language;
+import grokswell.util.Utils;
  
 public class ManageMenu implements Listener, MerchantMenu {
  
@@ -65,6 +68,7 @@ public class ManageMenu implements Listener, MerchantMenu {
 	String economy_name;
 	HyperToBukkit hypBuk;
 	
+	Language L;
 	public ShopStock shopstock;
 	
 	NPC npc;
@@ -91,6 +95,7 @@ public class ManageMenu implements Listener, MerchantMenu {
     	status_list.add("trade");
     	status_list.add("none");
 
+    	L = plgn.language;
     	hyperAPI = plgn.hyperAPI;
     	hypBuk = new HyperToBukkit();
     	this.editcooldown=null;
@@ -172,7 +177,8 @@ public class ManageMenu implements Listener, MerchantMenu {
     }
     
     
-    public void loadPage() {
+    @SuppressWarnings("static-access")
+	public void loadPage() {
     	this.optionIcons = null;
     	this.optionIcons = new ItemStack[size];
     	this.optionNames = null;
@@ -237,20 +243,31 @@ public class ManageMenu implements Listener, MerchantMenu {
 				stack = new ItemStack(Material.AIR, 1, (short) 0);
 			}
 	        
-	        String buy_dynamic = ChatColor.GRAY+" <dynamic>";
-	        String sell_dynamic = ChatColor.GRAY+" <dynamic>";
+	        String buy_dynamic = Utils.formatText(L.II_DYNAMIC, null);
+	        String sell_dynamic = Utils.formatText(L.II_DYNAMIC, null);
 	        if (ho != null){
 		        if (ho.getBuyPrice(1) > 0.0) {
-		        	buy_dynamic = ChatColor.GRAY+" <static>";
+		        	buy_dynamic = Utils.formatText(L.II_STATIC, null);
 		        }
 		        if (ho.getSellPrice(1) > 0.0) {
-		        	sell_dynamic = ChatColor.GRAY+" <static>";
+		        	sell_dynamic = Utils.formatText(L.II_STATIC, null);
 		        }
-				this.setOption(count, stack, ho.getDisplayName().replaceAll("_", " "), 
-						ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", cost)+buy_dynamic,
-						ChatColor.WHITE+"Buy: "+ChatColor.DARK_PURPLE+String.format("%.2f", value)+sell_dynamic, 
-						ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) stock),
-		    			ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+ho.getShopObjectStatus().name().toLowerCase() );
+		        
+		        HashMap<String, String> keywords = new HashMap<String, String>();
+				keywords.put("<buyprice>",  String.format("%.2f", value));
+				keywords.put("<buytype>",  buy_dynamic);
+				keywords.put("<sellprice>",  String.format("%.2f", cost));
+				keywords.put("<selltype>",  sell_dynamic);
+				keywords.put("<stock>",  String.valueOf((int) stock));
+				keywords.put("<status>",  ho.getShopObjectStatus().name().toLowerCase());
+				keywords.put("<static>",  L.II_STATIC);
+				keywords.put("<dynamic>",  L.II_DYNAMIC);
+		    	this.setOption(count, stack, ho.getDisplayName().replaceAll("_", " "),
+		    			Utils.formatText(L.II_MANAGE_SELL, keywords),
+		    			Utils.formatText(L.II_MANAGE_BUY, keywords),
+		    			Utils.formatText(L.II_STOCK, keywords),
+		    			Utils.formatText(L.II_STATUS, keywords));
+		    	
 	        } else {
 	        	this.setOption(count, stack,"","");
 	        }
@@ -322,7 +339,8 @@ public class ManageMenu implements Listener, MerchantMenu {
     }
     
     
-    private void UpdateSortingIcon() {
+    @SuppressWarnings("static-access")
+	private void UpdateSortingIcon() {
     	this.sorting_icon = HMP.menuButtonData.help5.clone();
     	ItemMeta im;
     	List<String> lore;
@@ -343,23 +361,23 @@ public class ManageMenu implements Listener, MerchantMenu {
     	lore.add(" ");
     	
     	if (sort_by == 0){
-    		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Item Name");
+    		lore.add(L.MM_SORTING+": "+L.MM_ITEM_NAME);
     	} else if (sort_by == 1){
-    		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Material Name");
+    		lore.add(L.MM_SORTING+": "+L.MM_MATERIAL_NAME);
     	} else if (sort_by == 2){
-    		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Purchase Price");
+    		lore.add(L.MM_SORTING+": "+L.MM_PURCHASE_PRICE);
     	} else if (sort_by == 3){
-    		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Sell Price");
+    		lore.add(L.MM_SORTING+": "+L.MM_SELL_PRICE_2);
     	} else if (sort_by == 4){
-    		lore.add(ChatColor.DARK_PURPLE+"sorting: "+ChatColor.RED+"Stock Amount");
+    		lore.add(L.MM_SORTING+": "+L.MM_STOCK_AMOUNT);
     	}
     	
     	lore.add(" ");
     	
     	if (display_zero_stock == 0){
-    		lore.add(ChatColor.DARK_PURPLE+"show zero stock: "+ChatColor.RED+"No");
+    		lore.add(L.MM_SHOW_ZERO_STOCK+": "+L.G_NO);
     	} else {
-    		lore.add(ChatColor.DARK_PURPLE+"show zero stock: "+ChatColor.RED+"Yes");
+    		lore.add(L.MM_SHOW_ZERO_STOCK+": "+L.G_YES);
     	}
     	
     	im.setLore(lore);
@@ -393,19 +411,19 @@ public class ManageMenu implements Listener, MerchantMenu {
     }
 
     
-    public void itemRefresh(int slot, TradeObject ho) {
+    @SuppressWarnings("static-access")
+	public void itemRefresh(int slot, TradeObject ho) {
     	hyplay.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
 
-        String buy_dynamic = ChatColor.GRAY+" <dynamic>";
+        String buy_dynamic = Utils.formatText(L.II_DYNAMIC, null);
         if (ho.getBuyPrice(1) > 0.0) {
-        	buy_dynamic = ChatColor.GRAY+" <static>";
+        	buy_dynamic = Utils.formatText(L.II_STATIC, null);
         }
-        String sell_dynamic = ChatColor.GRAY+" <dynamic>";
+        String sell_dynamic = Utils.formatText(L.II_DYNAMIC, null);
         if (ho.getSellPrice(1) > 0.0) {
-        	sell_dynamic = ChatColor.GRAY+" <static>";
+        	sell_dynamic = Utils.formatText(L.II_STATIC, null);
         }
         
-        String status = ho.getShopObjectStatus().name().toLowerCase();
         
         ItemStack stack = hypBuk.getItemStack(ho.getItemStack(1));
         if (ho.getType()==TradeObjectType.ENCHANTMENT) {
@@ -415,14 +433,24 @@ public class ManageMenu implements Listener, MerchantMenu {
 			stack = new ItemStack(Material.POTION, 1, (short) 0);
         }
 
-    	this.setOption(slot, stack, ho.getDisplayName().replaceAll("_", " "), 
-    			ChatColor.WHITE+"Sell: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getBuyPriceWithTax(1.0))+buy_dynamic,
-    			ChatColor.WHITE+"Buy: "+ChatColor.DARK_PURPLE+String.format("%.2f", ho.getSellPriceWithTax(1.0, hyplay))+sell_dynamic, 
-    			ChatColor.WHITE+"Stock: "+ChatColor.DARK_PURPLE+String.valueOf((int) ho.getStock()),
-    			ChatColor.WHITE+"Status: "+ChatColor.DARK_PURPLE+status);
+		HashMap<String, String> keywords = new HashMap<String, String>();
+		keywords.put("<buyprice>",  String.format("%.2f", ho.getBuyPriceWithTax(1.0)));
+		keywords.put("<buytype>",  buy_dynamic);
+		keywords.put("<sellprice>",  String.format("%.2f", ho.getSellPriceWithTax(1.0, hyplay)));
+		keywords.put("<selltype>",  sell_dynamic);
+		keywords.put("<stock>",  String.valueOf((int) ho.getStock()));
+		keywords.put("<status>",  ho.getShopObjectStatus().name().toLowerCase());
+		keywords.put("<static>",  L.II_STATIC);
+		keywords.put("<dynamic>",  L.II_DYNAMIC);
+    	this.setOption(slot, stack, ho.getDisplayName().replaceAll("_", " "),
+    			Utils.formatText(L.II_MANAGE_SELL, keywords),
+    			Utils.formatText(L.II_MANAGE_BUY, keywords),
+    			Utils.formatText(L.II_STOCK, keywords),
+    			Utils.formatText(L.II_STATUS, keywords));
     	this.inventory.setItem(slot, this.optionIcons[slot]);
 
     }
+
 
     
     public void menuRefresh() {
@@ -448,10 +476,13 @@ public class ManageMenu implements Listener, MerchantMenu {
         return this.shopstock;
     }
     
-    ItemStack setActiveMeta(ItemStack item) {
+    @SuppressWarnings("static-access")
+	ItemStack setActiveMeta(ItemStack item) {
     	ItemMeta im = item.getItemMeta();
     	List<String> lore = im.getLore();
-    	lore.add(0, ChatColor.RED+"<Activated>");
+    	
+    	lore.add(0, Utils.formatText(L.MM_ACTIVATED, null));
+    	
     	im.setLore(lore);
     	item.setItemMeta(im);
     	item.addUnsafeEnchantment(HMP.active_enchant, 1);
@@ -537,20 +568,26 @@ public class ManageMenu implements Listener, MerchantMenu {
     	return;
     }
     
-    void setBuyPrice(int slot_num, Double price){
+    @SuppressWarnings("static-access")
+	void setBuyPrice(int slot_num, Double price){
     	TradeObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
     							hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
 		ho.setShopObjectSellPrice(price);
 		this.editcooldown.cancel();
-		player.sendMessage(ChatColor.YELLOW+"The buy price for "+ho.getDisplayName());
-		player.sendMessage(ChatColor.YELLOW+"is now: "+price.toString());
+		
+		HashMap<String, String> keywords = new HashMap<String, String>();
+		keywords.put("<cost>", String.format("%.2f", ho.getSellPriceWithTax(1.0, hyplay)));
+		keywords.put("<item>", ho.getDisplayName());
+		player.sendMessage(Utils.formatText(L.MM_BUY_PRICE, keywords));
+		
 		this.inventory_view=this.player.openInventory(this.inventory);
 		this.itemRefresh(slot_num, ho);
 		this.edit_in_progress=false;
     	return;
     }
     
-    void askBuyPrice(int slot_num) {
+    @SuppressWarnings("static-access")
+	void askBuyPrice(int slot_num) {
     	this.player.setItemOnCursor(new ItemStack(Material.AIR));
 		this.edit_in_progress=true;
 		this.edit_slot = slot_num;
@@ -558,9 +595,12 @@ public class ManageMenu implements Listener, MerchantMenu {
 		hyplay.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
 		TradeObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), 
 								hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
-		player.sendMessage(ChatColor.YELLOW+"Currently you pay other players "+ho.getSellPriceWithTax(1.0, hyplay)+" for "+ho.getDisplayName());
-		player.sendMessage(ChatColor.YELLOW+"You have 8 seconds to say a new price.");
-		player.sendMessage(ChatColor.YELLOW+"Say 'c' to cancel.");
+		
+		HashMap<String, String> keywords = new HashMap<String, String>();
+		keywords.put("<cost>", String.format("%.2f", ho.getSellPriceWithTax(1.0, hyplay)));
+		keywords.put("<item>", ho.getDisplayName());
+		player.sendMessage(Utils.formatText(L.MM_YOUPAY_1, keywords));
+		
 		return;
     }
     
@@ -572,27 +612,36 @@ public class ManageMenu implements Listener, MerchantMenu {
     	return;
     }
     
-    void setSellPrice(int slot_num, Double price){
+    @SuppressWarnings("static-access")
+	void setSellPrice(int slot_num, Double price){
     	TradeObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
     	ho.setShopObjectBuyPrice(price);
 		this.editcooldown.cancel();
-		player.sendMessage(ChatColor.YELLOW+"The sell price for "+ho.getDisplayName());
-		player.sendMessage(ChatColor.YELLOW+"is now: "+price.toString());
+		
+		HashMap<String, String> keywords = new HashMap<String, String>();
+		keywords.put("<cost>", String.format("%.2f", price));
+		keywords.put("<item>", ho.getDisplayName());
+		player.sendMessage(Utils.formatText(L.MM_SELL_PRICE, keywords));
+		
 		this.inventory_view=this.player.openInventory(this.inventory);
 		this.itemRefresh(slot_num, ho);
 		this.edit_in_progress=false;
     	return;
     }
     
-    void askSellPrice(int slot_num) {
+    @SuppressWarnings("static-access")
+	void askSellPrice(int slot_num) {
     	this.player.setItemOnCursor(new ItemStack(Material.AIR));
 		this.edit_in_progress=true;
 		this.edit_slot = slot_num;
 		this.inventory_view.close();
 		TradeObject ho = hyperAPI.getHyperObject(this.optionNames[slot_num].replaceAll(" ", "_"), hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
-		player.sendMessage(ChatColor.YELLOW+"Currently other players pay you "+ho.getBuyPriceWithTax(1.0)+" for "+ho.getDisplayName());
-		player.sendMessage(ChatColor.YELLOW+"You have 8 seconds to say a new price.");
-		player.sendMessage(ChatColor.YELLOW+"Say 'c' to cancel.");
+
+		HashMap<String, String> keywords = new HashMap<String, String>();
+		keywords.put("<cost>", String.format("%.2f", ho.getBuyPriceWithTax(1.0)));
+		keywords.put("<item>", ho.getDisplayName());
+		player.sendMessage(Utils.formatText(L.MM_THEYPAY_1, keywords));
+		
 		return;
     }
     
@@ -756,7 +805,8 @@ public class ManageMenu implements Listener, MerchantMenu {
     }
     
     
-    @EventHandler(priority=EventPriority.HIGHEST)
+    @SuppressWarnings("static-access")
+	@EventHandler(priority=EventPriority.HIGHEST)
 	void onPlayerChat(AsyncPlayerChatEvent event) {
 		if (event.getPlayer().getName().equals(this.player.getName())){
 			this.edit_value = event.getMessage();
@@ -783,7 +833,7 @@ public class ManageMenu implements Listener, MerchantMenu {
 					} 
 				} catch (Exception e) {
 					e.printStackTrace();
-					player.sendMessage(ChatColor.YELLOW+"Couldn't change price..");
+					player.sendMessage(Utils.formatText(L.MM_CHANGE_PRICE_FAIL, null));
 					this.edit_slot = -1;
 					this.edit_mode = null;
 					this.edit_value = null;

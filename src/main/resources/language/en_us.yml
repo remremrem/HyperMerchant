@@ -92,8 +92,8 @@ ManageMenu:
   MM_SELL_PRICE_2: §f Sell Price
   MM_STOCK_AMOUNT: §f Stock Amount
   MM_SHOW_ZERO_STOCK: §7 show zero stock
-  MM_BUY_PRICE: §e The buy price for §c <item> is now\; §c <cost>
-  MM_SELL_PRICE: §e The sell price for §c <item> is now\; §c <cost>
+  MM_BUY_PRICE: §e The buy price for §c <item> §e is now\; §c <cost>
+  MM_SELL_PRICE: §e The sell price for §c <item> §e is now\; §c <cost>
   MM_YOUPAY_1: §e You currently pay other players §c <cost> §e for §c <item> §e . \nYou have 8 seconds to say a new price. Say 'c' to cancel.
   MM_YOUPAY_3: §e Say 'c' to cancel.
   MM_CHANGE_PRICE_FAIL: §e Couldn't change price.

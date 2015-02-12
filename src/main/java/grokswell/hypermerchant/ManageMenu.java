@@ -246,11 +246,11 @@ public class ManageMenu implements Listener, MerchantMenu {
 	        String buy_dynamic = Utils.formatText(L.II_DYNAMIC, null);
 	        String sell_dynamic = Utils.formatText(L.II_DYNAMIC, null);
 	        if (ho != null){
-		        if (ho.getBuyPrice(1) > 0.0) {
-		        	buy_dynamic = Utils.formatText(L.II_STATIC, null);
-		        }
-		        if (ho.getSellPrice(1) > 0.0) {
+		        if (ho.getShopObjectBuyPrice() > 0.0) {
 		        	sell_dynamic = Utils.formatText(L.II_STATIC, null);
+		        }
+		        if (ho.getShopObjectSellPrice() > 0.0) {
+		        	buy_dynamic = Utils.formatText(L.II_STATIC, null);
 		        }
 		        
 		        HashMap<String, String> keywords = new HashMap<String, String>();
@@ -415,13 +415,14 @@ public class ManageMenu implements Listener, MerchantMenu {
 	public void itemRefresh(int slot, TradeObject ho) {
     	hyplay.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
 
-        String buy_dynamic = Utils.formatText(L.II_DYNAMIC, null);
-        if (ho.getBuyPrice(1) > 0.0) {
-        	buy_dynamic = Utils.formatText(L.II_STATIC, null);
-        }
         String sell_dynamic = Utils.formatText(L.II_DYNAMIC, null);
-        if (ho.getSellPrice(1) > 0.0) {
+        String buy_dynamic = Utils.formatText(L.II_DYNAMIC, null);
+        if (ho.getShopObjectBuyPrice() > 0.0) {
         	sell_dynamic = Utils.formatText(L.II_STATIC, null);
+        }
+        //if (ho.getSellPrice(1) > 0.0) {
+        if (ho.getShopObjectSellPrice() > 0.0) {
+        	buy_dynamic = Utils.formatText(L.II_STATIC, null);
         }
         
         
@@ -434,9 +435,9 @@ public class ManageMenu implements Listener, MerchantMenu {
         }
 
 		HashMap<String, String> keywords = new HashMap<String, String>();
-		keywords.put("<buyprice>",  String.format("%.2f", ho.getBuyPriceWithTax(1.0)));
+		keywords.put("<buyprice>",  String.format("%.2f", ho.getSellPriceWithTax(1.0, hyplay)));
 		keywords.put("<buytype>",  buy_dynamic);
-		keywords.put("<sellprice>",  String.format("%.2f", ho.getSellPriceWithTax(1.0, hyplay)));
+		keywords.put("<sellprice>",  String.format("%.2f", ho.getBuyPriceWithTax(1.0)));
 		keywords.put("<selltype>",  sell_dynamic);
 		keywords.put("<stock>",  String.valueOf((int) ho.getStock()));
 		keywords.put("<status>",  ho.getShopObjectStatus().name().toLowerCase());

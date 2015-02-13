@@ -76,7 +76,11 @@ public class ShopTransactions {
 		}
 		
 		ItemStack item = SellItem(item_stack, menu_item_name);
-
+		
+		if (item==null) {
+			return item_stack;
+		}
+		
 		if (item.getType() == Material.AIR) {
 			return item;
 		}

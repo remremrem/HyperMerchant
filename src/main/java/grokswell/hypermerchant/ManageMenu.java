@@ -809,7 +809,8 @@ public class ManageMenu implements Listener, MerchantMenu {
     @SuppressWarnings("static-access")
 	@EventHandler(priority=EventPriority.HIGHEST)
 	void onPlayerChat(AsyncPlayerChatEvent event) {
-		if (event.getPlayer().getName().equals(this.player.getName())){
+
+		if (event.getPlayer().equals(player)){
 			this.edit_value = event.getMessage();
 			if (this.edit_in_progress) {
 				event.setCancelled(true);

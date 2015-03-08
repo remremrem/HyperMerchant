@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.grokswell.hypermerchant</groupId>
+	<groupId>grokswell.hypermerchant</groupId>
 	<artifactId>hypermerchant</artifactId>
 	<version>1.58-dev</version>
 	<name>HyperMerchant</name>
@@ -21,7 +21,7 @@
 		</repository>
 		<repository>
 			<id>citizens-repo</id>
-			<url>http://ci.citizensnpcs.co/job/Citizens2/1194/maven-repository/repository/</url>
+			<url>http://ci.citizensnpcs.co/job/Citizens2/lastSuccessfulBuild/maven-repository/repository/</url>
 		</repository>
 	</repositories>
 	<scm>

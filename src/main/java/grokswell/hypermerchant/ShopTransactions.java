@@ -77,19 +77,19 @@ public class ShopTransactions {
 		
 		ItemStack item = SellItem(item_stack, menu_item_name);
 		
-		if (item==null) {
+		if (item!=null) {
+			if (item.getType() == Material.AIR) {
+				return item;
+			}
+			TradeObject ho2 = hyperAPI.getHyperObject(item.getType().name(), hyplay.getHyperEconomy().getName());
+			if (ho2 != null){
+				return item;
+			}
+			else {
+				return item_stack;
+			}
+		} else {
 			return item_stack;
-		}
-		
-		if (item.getType() == Material.AIR) {
-			return item;
-		}
-		TradeObject ho2 = hyperAPI.getHyperObject(item.getType().name(), hyplay.getHyperEconomy().getName());
-		if (ho2 == null){
-			return item_stack;
-		}
-		else {
-			return item;
 		}
 	}	
 	

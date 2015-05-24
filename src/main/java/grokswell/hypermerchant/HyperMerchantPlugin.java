@@ -369,8 +369,12 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		this.type_blacklist = blacklist.getTypesBlacklist();
 		
 		Plugin p = Bukkit.getPluginManager().getPlugin("Citizens");
-		
-		CitizensPlugin cp = (CitizensPlugin) p;
+		CitizensPlugin cp = null;
+		try {
+			cp = (CitizensPlugin) p;
+		} catch (NoClassDefFoundError e) {
+			cp = null;
+		}
 		//CitizensAPI.setImplementation(cp);
 		if (cp != null) {
 			try {

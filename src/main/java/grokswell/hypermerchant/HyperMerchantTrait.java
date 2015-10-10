@@ -408,8 +408,13 @@ public class HyperMerchantTrait extends Trait {
 	
 	public void onFarewell(Player player) {
 		if (!this.farewellMsg.isEmpty()) {
-			SpeechContext message = new SpeechContext(this.npc, this.farewellMsg, player);
-			new SimpleSpeechController(this.npc).speak(message);
+			if (this.npc.isSpawned()){
+				SpeechContext message = new SpeechContext(this.npc, this.farewellMsg, player);
+				new SimpleSpeechController(this.npc).speak(message);
+			} else {
+				player.sendMessage(ChatColor.YELLOW+"The shopkeeper is away.");
+			}
+
 		}
 	}
 

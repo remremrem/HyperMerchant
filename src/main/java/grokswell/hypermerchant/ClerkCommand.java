@@ -16,7 +16,6 @@ import net.citizensnpcs.api.npc.NPCSelector;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.trait.LookClose;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

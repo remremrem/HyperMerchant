@@ -35,6 +35,7 @@ import regalowl.hyperconomy.account.HyperPlayer;
 
 import grokswell.hypermerchant.ShopTransactions;
 import grokswell.util.EnchantIcons;
+//import grokswell.util.EggIcons;
 import grokswell.util.HyperToBukkit;
 import grokswell.util.Language;
 import grokswell.util.Utils;
@@ -190,6 +191,10 @@ public class ShopMenu implements Listener, MerchantMenu {
 	        } else if (ho.getType()==TradeObjectType.ITEM) {
 	        	stock = ho.getStock();
 				stack = hypBuk.getItemStack(ho.getItemStack(1));
+//				if (stack.getType() == Material.MONSTER_EGG) {
+//					out.println(ho.getDisplayName());
+//					stack = (new EggIcons()).getIcon(ho.getDisplayName());
+//				}
 				
 				hp.setEconomy(hyperAPI.getShop(this.shopname).getEconomy());
 				value = ho.getSellPriceWithTax(1.0, hp);
@@ -397,6 +402,10 @@ public class ShopMenu implements Listener, MerchantMenu {
         }
         else {
         	stack = hypBuk.getItemStack(ho.getItemStack(1));
+//			if (stack.getType() == Material.MONSTER_EGG) {
+//				out.println(ho.getDisplayName());
+//				stack = (new EggIcons()).getIcon(ho.getDisplayName());
+//			}
         }
         
         HashMap<String, String> keywords = new HashMap<String, String>();

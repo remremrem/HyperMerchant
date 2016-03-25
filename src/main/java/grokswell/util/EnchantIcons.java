@@ -39,7 +39,7 @@ public class EnchantIcons {
 		}
 		
 		else if (ename.contains("silktouch") ) {
-			stack = new ItemStack(Material.SHEARS);
+			stack = new ItemStack(Material.IRON_SPADE);
 			stack.addEnchantment(Enchantment.SILK_TOUCH, elevel);
 		}
 		
@@ -133,9 +133,14 @@ public class EnchantIcons {
 			stack.addEnchantment(Enchantment.DEPTH_STRIDER, elevel);
 		}
 		
+		else if (ename.contains("frost_walker")) {
+			stack = new ItemStack(Material.LEATHER_BOOTS);
+			stack.addEnchantment(Enchantment.FROST_WALKER, elevel);
+		}
+		
 		else {
-			stack = new ItemStack(Material.PAPER);
-			stack.addEnchantment(Enchantment.DURABILITY, elevel);
+			stack = new ItemStack(Material.CARROT_STICK);
+			stack.addEnchantment(Enchantment.MENDING, 1);
 		}
 		
 		return stack;

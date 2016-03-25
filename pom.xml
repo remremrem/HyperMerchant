@@ -3,17 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>grokswell.hypermerchant</groupId>
 	<artifactId>hypermerchant</artifactId>
-	<version>1.59-dev</version>
+	<version>1.6-dev</version>
 	<name>HyperMerchant</name>
 	<description>HyperMerchant is an Inventory based GUI and Citizen NPC trait for use with HyperConomy</description>
 	<repositories>
 		<repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-		</repository>
-    	<repository>
-			<id>regalowl-repo</id>
-			<url>http://www.regalowl.net:8080/repository/snapshots/</url>
 		</repository>
 		<repository>
 			<id>grokswell-repo</id>
@@ -33,7 +29,7 @@
 		<dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <version>1.9-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
  		</dependency>
 		<dependency>

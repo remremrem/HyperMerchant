@@ -367,7 +367,7 @@ public class HyperMerchantTrait extends Trait {
 			this.customer_menus.put(player.getName(), new ShopMenu(this.shop_name, 54, plugin, player, player, this.npc));
 			return;
 		
-		//if this npc isnt asigned to a shop that exists, tell player closed message and return.
+		//if this npc isnt assigned to a shop that exists, tell player closed message and return.
 		} else {
 			if  (!this.closedMsg.isEmpty()) {
 				SpeechContext message = new SpeechContext(this.npc, this.closedMsg, player);

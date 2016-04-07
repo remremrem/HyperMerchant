@@ -513,9 +513,15 @@ public class ShopMenu implements Listener, MerchantMenu {
         else if (item_on_cursor.getType() != Material.AIR) {
         	//TradeObject ho = hyperAPI.getHyperObject(item_on_cursor.getType().name(), hp.getHyperEconomy().getName());
         	ItemStack stack;
+        	String option_name = this.optionNames[slot_num];
     		if (event.isLeftClick() && event.isShiftClick()) {
-    			stack = this.shop_trans.SellEnchantedItem(item_on_cursor);
+    			if (item_on_cursor.getType()==Material.ENCHANTED_BOOK) {
+    				stack = this.shop_trans.Sell(item_on_cursor, option_name);
+    			} else {
+	    			stack = this.shop_trans.SellEnchantedItem(item_on_cursor);
+    			}
     			player.setItemOnCursor(new ItemStack(Material.AIR));
+    			
     			if (stack == null) {
     				player.getInventory().addItem(item_on_cursor);
     			} else {
@@ -523,8 +529,6 @@ public class ShopMenu implements Listener, MerchantMenu {
     			}
     			
     		} else {
-
-				String option_name = this.optionNames[slot_num];
 				option_name=option_name.replace(" ", "_");
 	    		stack = this.shop_trans.Sell(item_on_cursor, option_name);
 				player.setItemOnCursor(new ItemStack(Material.AIR));

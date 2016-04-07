@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 
 import grokswell.util.HyperToBukkit;
 import grokswell.util.Language;
@@ -200,6 +200,7 @@ public class ShopTransactions {
 		for (TradeObject hob : hyperAPI.getEnchantmentHyperObjects(hi, player.getName())) {
 			enchants.add(hob);
 		}
+		out.println("enchants: "+enchants);
 		if (enchants.size() < 1) {
 			return null;
 		}
@@ -209,8 +210,9 @@ public class ShopTransactions {
 		ItemStack held_item = player.getItemInHand();
 		player.setItemInHand(item_stack.clone());
 		for (TradeObject e : enchants) {
-        	String ename = this.SellEnchant(e.getDisplayName());
-            if (ename.equals(e)) {
+        	String enchant_display_name = this.SellEnchant(e.getDisplayName());
+        	out.println("ename: "+enchant_display_name+ "e: "+e);
+            if (enchant_display_name.equals(e)) {
         		keep_enchants.add(e);
     		} else {
     			remove_enchants.add(e);
@@ -243,27 +245,30 @@ public class ShopTransactions {
 			enchants.add(hob);
 		}
 		
-		ArrayList<TradeObject> keep_enchant = new ArrayList<TradeObject>();
+		ArrayList<TradeObject> keep_enchants = new ArrayList<TradeObject>();
 		player.setItemInHand(ebook.clone());
 		for (TradeObject e : enchants) {
         	String ename = this.SellEnchant(e.getDisplayName());
             if (ename.equals(e)) {
-        		keep_enchant.add(e);
+        		keep_enchants.add(e);
     		}
         }
+		
+		out.println("keep enchants: " + keep_enchants.toString());
+		
 		player.setItemInHand(new ItemStack(Material.AIR));
 		
 		ItemStack stack = new ItemStack(Material.BOOK);
-		if (keep_enchant.size()>0) {
+		if (keep_enchants.size()>0) {
 			stack = new ItemStack(Material.ENCHANTED_BOOK);
 			EnchantmentStorageMeta im = (EnchantmentStorageMeta) stack.getItemMeta();
-			for (TradeObject e : keep_enchant){
+			for (TradeObject e : keep_enchants){
 				im.addStoredEnchant(Enchantment.getByName(e.getEnchantmentName()), e.getEnchantmentLevel(), true);
 			}
 			stack.setItemMeta(im);
 			
             HashMap<String, String> keywords = new HashMap<String, String>();
-    		keywords.put("<enchants>",  keep_enchant.toString());
+    		keywords.put("<enchants>",  keep_enchants.toString());
 			player.sendMessage(Utils.formatText(L.ST_NO_WANT_ENCHANTS, keywords));
 		}
 		
@@ -447,7 +452,7 @@ public class ShopTransactions {
 		HItemStack hi = bukCon.getBukkitCommon().getSerializableItemStack(item_stack);
 		ArrayList<TradeObject> enchants = new ArrayList<TradeObject>();
 		for (TradeObject hob : hyperAPI.getEnchantmentHyperObjects(hi, player.getName())) {
-			if (!hyperAPI.getShop(shopname).isBanned(hob)){
+			if (!hyperAPI.getShop(shopname).isBanned(hob.getName())){
 				enchants.add(hob);
 			}
 		}
@@ -485,7 +490,7 @@ public class ShopTransactions {
 		HItemStack hi = bukCon.getBukkitCommon().getSerializableItemStack(ebook);
 		ArrayList<TradeObject> enchants = new ArrayList<TradeObject>();
 		for (TradeObject hob : hyperAPI.getEnchantmentHyperObjects(hi, player.getName())) {
-			if (!hyperAPI.getShop(shopname).isBanned(hob)){
+			if (!hyperAPI.getShop(shopname).isBanned(hob.getName())){
 				enchants.add(hob);
 				//out.println("enchant: "+hob.getDisplayName());
 			}

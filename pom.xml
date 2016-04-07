@@ -29,13 +29,13 @@
 		<dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.9-R0.1-SNAPSHOT</version>
+            <version>1.9.2-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
  		</dependency>
 		<dependency>
 			<groupId>regalowl.hyperconomy</groupId>
 			<artifactId>hyperconomy</artifactId>
-			<version>0.975.6-SNAPSHOT</version>
+			<version>0.975.7-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>                
 		<dependency>

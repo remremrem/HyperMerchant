@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-import static java.lang.System.out;
+//import static java.lang.System.out;
 
 import grokswell.util.HyperToBukkit;
 import grokswell.util.Language;
@@ -200,7 +200,6 @@ public class ShopTransactions {
 		for (TradeObject hob : hyperAPI.getEnchantmentHyperObjects(hi, player.getName())) {
 			enchants.add(hob);
 		}
-		out.println("enchants: "+enchants);
 		if (enchants.size() < 1) {
 			return null;
 		}
@@ -211,7 +210,6 @@ public class ShopTransactions {
 		player.setItemInHand(item_stack.clone());
 		for (TradeObject e : enchants) {
         	String enchant_display_name = this.SellEnchant(e.getDisplayName());
-        	out.println("ename: "+enchant_display_name+ "e: "+e);
             if (enchant_display_name.equals(e)) {
         		keep_enchants.add(e);
     		} else {
@@ -254,7 +252,6 @@ public class ShopTransactions {
     		}
         }
 		
-		out.println("keep enchants: " + keep_enchants.toString());
 		
 		player.setItemInHand(new ItemStack(Material.AIR));
 		

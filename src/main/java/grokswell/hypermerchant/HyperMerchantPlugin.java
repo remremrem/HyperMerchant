@@ -430,7 +430,10 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	public void onRightClick(PlayerInteractEntityEvent event) {
 		//out.println("onRightClick playerinteractentityevent");
 		
-		if(!event.getRightClicked().getType().equals(EntityType.PLAYER)) return;
+		if (!event.getRightClicked().getType().equals(EntityType.PLAYER) ||
+				(hyperAPI.getPlayerShopList() == null) ||
+				hyperAPI.getPlayerShopList().isEmpty()) return;
+		
 		Player owner = (Player) event.getRightClicked();
 		Player player = event.getPlayer();
 		String shopname = "";

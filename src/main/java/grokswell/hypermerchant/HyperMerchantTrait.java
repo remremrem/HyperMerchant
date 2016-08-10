@@ -79,12 +79,12 @@ public class HyperMerchantTrait extends Trait {
 		comission = plugin.settings.getNPC_COMMISSION();
 		rental_price = plugin.settings.getNPC_RENTAL_PRICE();
 		offduty = plugin.settings.getOFFDUTY();
+		shop_name = hyperAPI.getDefaultServerShopAccountName();
 		location = null;
 		forhire = false;
 		rental = false;
 		hired = false;
 		rented = false;
-		shop_name = hyperAPI.getDefaultServerShopAccountName();
 	}
 
 	@Override
@@ -177,10 +177,10 @@ public class HyperMerchantTrait extends Trait {
 		    	this.forhire = false;
 		    	this.rental = false;
 		    	this.offduty = false;
-		    	this.location = utils.LocToString(this.npc.getEntity().getLocation());
+		    	this.location = Utils.LocToString(this.npc.getEntity().getLocation());
 		        hire_cooldown.remove(player.getName());
 		        plugin.hire_cooldowns.remove(player.getName());
-		        player.sendMessage(ChatColor.YELLOW+this.npc.getName()+" "+L.TC_HIRED+" "+shopname);
+		        player.sendMessage(ChatColor.YELLOW+this.npc.getName()+" "+Language.TC_HIRED+" "+shopname);
 				merchmeth.Teleport(this.npc.getId(), hypBuk.getLocation(hyperAPI.getPlayerShop(shopname).getLocation1()));
 		    }
 		}
@@ -200,7 +200,7 @@ public class HyperMerchantTrait extends Trait {
 			event.setCancelled(true);
 			return;
 		}
-		//add player to 3 second cooldown list to prevent spam clicking merchants.
+		//add player to 3 second cooldown list to prevent them from spam clicking the merchants.
 		if (!this.rental){
 			plugin.customer_cooldowns.add(player.getName());
 			new RemoveCustomerCooldown(player.getName()).runTaskLater(this.plugin, 60);
@@ -210,7 +210,6 @@ public class HyperMerchantTrait extends Trait {
 		// return if player is in creative mode without permission to use merchants in creative.
 		if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 
 		   (!player.hasPermission("creative.hypermerchant"))) {
-			
 			event.setCancelled(true);
 			player.sendMessage(ChatColor.YELLOW+L.G_NO_CREATIVE);
 			return;
@@ -233,7 +232,7 @@ public class HyperMerchantTrait extends Trait {
 		//Check if this merchant is "for hire"
 		if (this.forhire) {
 			
-			//add player to 10 second cooldown list for hire confirmation.
+			//add player to 10 second cooldown list while player confirms hiring the NPC.
 			hire_cooldown.add(player.getName());
 			plugin.hire_cooldowns.put(player.getName(), this);
 			if (this.comission > 0.0) {

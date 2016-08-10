@@ -370,12 +370,12 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		
 		Plugin p = Bukkit.getPluginManager().getPlugin("Citizens");
 		CitizensPlugin cp = null;
+		//Check to see if Citizens is installed and working
 		try {
 			cp = (CitizensPlugin) p;
 		} catch (NoClassDefFoundError e) {
 			cp = null;
 		}
-		//CitizensAPI.setImplementation(cp);
 		if (cp != null) {
 			try {
 				CitizensAPI.getTraitFactory().registerTrait(net.citizensnpcs.api.trait.TraitInfo.create(HyperMerchantTrait.class).withName("hypermerchant"));
@@ -383,7 +383,6 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 				merchmeth = new MerchantMethods();
 			} catch (IllegalArgumentException e) {
 				this.citizens_is_loaded = true;
-				//out.println("EXCEPTION: "+e);
 			}
 		} else {
 			this.getLogger().info(language.G_CITIZENS_NOT_FOUND);
@@ -402,7 +401,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
     		}
     		
     		try {
-	    		active_enchant = new ActiveEnchant(111); //< this is your custom wrapper (a class that extends an EnchantmentWrapper with the needed stuff and returns, 69 is the id I choosed (lawl)
+	    		active_enchant = new ActiveEnchant(111); //< this is your custom wrapper (a class that extends an EnchantmentWrapper with the needed stuff and returns
 	    		EnchantmentWrapper.registerEnchantment(active_enchant); //<this is used to register the enchantment.
 	    	} catch (IllegalArgumentException e){
     		 
@@ -430,6 +429,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 	public void onRightClick(PlayerInteractEntityEvent event) {
 		//out.println("onRightClick playerinteractentityevent");
 		
+		//check if a player has been clicked and is the owner of a playershop
 		if (!event.getRightClicked().getType().equals(EntityType.PLAYER) ||
 				(hyperAPI.getPlayerShopList() == null) ||
 				hyperAPI.getPlayerShopList().isEmpty()) return;
@@ -459,7 +459,7 @@ public class HyperMerchantPlugin extends JavaPlugin implements Listener {
 		if ((player.getGameMode().compareTo(GameMode.CREATIVE) == 0) && 
 		   (!player.hasPermission("creative.hypermerchant"))) {
 			
-			player.sendMessage(ChatColor.YELLOW+language.G_NO_CREATIVE);
+			player.sendMessage(ChatColor.YELLOW+Language.G_NO_CREATIVE);
 			return;
     	} 
 

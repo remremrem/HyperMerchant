@@ -426,12 +426,15 @@ public class ManageMenu implements Listener, MerchantMenu {
         }
         
         
-        ItemStack stack = hypBuk.getItemStack(ho.getItemStack(1));
+        ItemStack stack;
         if (ho.getType()==TradeObjectType.ENCHANTMENT) {
         	stack = (new EnchantIcons()).getIcon(ho.getDisplayName(), ho.getEnchantmentLevel());
         }
         else if (ho.getType()==TradeObjectType.EXPERIENCE) {
 			stack = new ItemStack(Material.POTION, 1, (short) 0);
+        }
+        else {
+        	stack = hypBuk.getItemStack(ho.getItemStack(1));
         }
 
 		HashMap<String, String> keywords = new HashMap<String, String>();

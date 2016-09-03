@@ -814,7 +814,7 @@ public class ManageMenu implements Listener, MerchantMenu {
 	void onPlayerChat(AsyncPlayerChatEvent event) {
 
 		if (event.getPlayer().equals(player)){
-			this.edit_value = event.getMessage();
+			this.edit_value = ChatColor.stripColor(event.getMessage());
 			if (this.edit_in_progress) {
 				event.setCancelled(true);
 				try {

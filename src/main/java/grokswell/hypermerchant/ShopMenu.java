@@ -247,7 +247,7 @@ public class ShopMenu implements Listener, MerchantMenu {
 		
 		ItemStack stack;
 	    while (count < size-9) {
-			stack = new ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.SILVER.getData());
+			stack = new ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.SILVER.getWoolData());
 	    	this.setOption(count, stack, " ", " ");
 	    	count++;
 	    }

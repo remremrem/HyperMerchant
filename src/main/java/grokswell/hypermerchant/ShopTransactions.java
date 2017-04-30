@@ -58,7 +58,7 @@ public class ShopTransactions {
 
 	}
 	
-	
+	//PLAYER SELLS ITEM TO SHOP
 	@SuppressWarnings("static-access")
 	public ItemStack Sell(ItemStack item_stack, String menu_item_name){	
 		//out.println("Sell");
@@ -94,7 +94,7 @@ public class ShopTransactions {
 		}
 	}	
 	
-	
+	// PLAYER SELLS ITEM TO SHOP
 	public ItemStack SellItem(ItemStack item_stack, String menu_item_name){
 		HItemStack hi = bukCon.getBukkitCommon().getSerializableItemStack(item_stack);
 		TradeObject ho = hyperAPI.getHyperObject(hi, hyperAPI.getShop(shopname).getEconomy(), hyperAPI.getShop(shopname));
@@ -121,7 +121,7 @@ public class ShopTransactions {
 		return new ItemStack(item_stack);
 	}
 	
-	
+	// PLAYER SELLS ENCHANT TO SHOP
 	public ItemStack SellSingleEnchant(ItemStack item_stack, String enchant) {
 		//out.println("SellSingleEnchant");
 		HItemStack hi = bukCon.getBukkitCommon().getSerializableItemStack(item_stack);
@@ -161,7 +161,7 @@ public class ShopTransactions {
 		return stack;
 	}
 	
-	
+	// PLAYER SELLS ENCHANT TO SHOP
 	@SuppressWarnings("static-access")
 	public String SellEnchant(String enchant) {
 		//out.println("SellEnchant");
@@ -191,7 +191,7 @@ public class ShopTransactions {
 		}
 	}
 	
-	
+	// PLAYER SELLS ENCHANTED ITEM TO SHOP
 	@SuppressWarnings("static-access")
 	public ItemStack SellEnchantedItem(ItemStack item_stack){
 		//out.println("SellEnchantedItem");
@@ -234,7 +234,7 @@ public class ShopTransactions {
 		return stack;
 	}
 	
-	
+	// PLAYER SELLS ENCHANTED BOOK TO SHOP
 	@SuppressWarnings("static-access")
 	public ItemStack SellEnchantedBook(ItemStack ebook){
 		//out.println("SellEnchantedBook");
@@ -272,7 +272,16 @@ public class ShopTransactions {
 		
 		return stack;
 		
+	}	
+	
+	// PLAYER SELLS XP TO SHOP
+	public void SellXP(int qty){
+		hyperAPI.sell(hyplay, 
+				hyperAPI.getHyperObject("experience", hyperAPI.getShop(shopname).getEconomy()), 
+				qty, 
+				hyperAPI.getShop(shopname));
 	}
+	
 	
 	//PLAYER BUYS ITEM FROM SHOP
 	@SuppressWarnings("static-access")
@@ -546,6 +555,7 @@ public class ShopTransactions {
 			ho2.setStock(ho2.getStock() + 1);
 			return "";
 		}
-	}	
+	}
+	//END PLAYER-MANAGER ADDS TO SHOP
 
 }

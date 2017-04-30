@@ -1,6 +1,6 @@
 package grokswell.hypermerchant;
 
-//import static java.lang.System.out;
+import static java.lang.System.out;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -487,25 +487,34 @@ public class ShopMenu implements Listener, MerchantMenu {
         if (item_on_cursor.getType() == Material.AIR) {
     		int qty = 1;
     		if (this.optionNames[slot_num] != null && this.optionNames[slot_num] != " ") {
-                if (event.isLeftClick()){
-                	if (event.isShiftClick()){
-                		qty=8;
-                	}
-                	else {
-                		qty=1;
+                if (event.isLeftClick()) {
+                	if (event.isShiftClick()) {
+                		qty=8; // player pruchases stack of 8 on left+shift click
+                	} else {
+                		qty=1; // player purchases stack of 1 on left click
                 	}
                 }
-                else if (event.isRightClick() && event.isShiftClick()) {
-            		qty=this.optionIcons[slot_num].getMaxStackSize();
+                else if (event.isRightClick()) {
+                	if (event.isShiftClick()) {
+                		qty=this.optionIcons[slot_num].getMaxStackSize(); //player purchases max stack size on right+shift click
+                    } else {
+                    	qty=0;
                     }
-                TradeObject ho2 = this.shop_trans.Buy(this.optionNames[slot_num], qty, commission);
-	            if (ho2 != null) {
-	            	if (ho2.getStock()<1){
-	            		this.refreshPage();
-	            	} else {
-	            		this.itemRefresh(slot_num, ho2);
-	            	}
-	            }
+                }
+                if (qty > 0) {
+	                TradeObject ho2 = this.shop_trans.Buy(this.optionNames[slot_num], qty, commission);
+		            if (ho2 != null) {
+		            	if (ho2.getStock()<1){
+		            		this.refreshPage();
+		            	} else {
+		            		this.itemRefresh(slot_num, ho2);
+		            	}
+		            }
+                } else { // player sells their own XP on right click
+                	if (this.optionIcons[slot_num].getItemMeta().getDisplayName().equals(ChatColor.GOLD+"experience")) {
+                		this.shop_trans.SellXP(10);
+                	}
+                }
 			}
         }
         

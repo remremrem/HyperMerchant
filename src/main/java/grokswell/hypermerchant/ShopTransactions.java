@@ -135,8 +135,8 @@ public class ShopTransactions {
 		
 		ArrayList<TradeObject> keep_enchants = new ArrayList<TradeObject>();
 		ArrayList<TradeObject> remove_enchants = new ArrayList<TradeObject>();
-		ItemStack held_item = ((PlayerInventory) player).getItemInMainHand();
-		((PlayerInventory) player).setItemInMainHand(item_stack.clone());
+		ItemStack held_item = player.getInventory().getItemInMainHand();
+		player.getInventory().setItemInMainHand(item_stack.clone());
 		for (TradeObject e : enchants) {
         	if (e.getDisplayName().equals(enchant)) {
         		this.SellEnchant(e.getDisplayName());
@@ -145,7 +145,7 @@ public class ShopTransactions {
         		keep_enchants.add(e);
     		}
         }
-		((PlayerInventory) player).setItemInMainHand(held_item);
+		player.getInventory().setItemInMainHand(held_item);
 		
 		ItemStack stack = new ItemStack(item_stack.clone());
 		if (keep_enchants.size()>0) {
@@ -207,8 +207,8 @@ public class ShopTransactions {
 		
 		ArrayList<TradeObject> keep_enchants = new ArrayList<TradeObject>();
 		ArrayList<TradeObject> remove_enchants = new ArrayList<TradeObject>();
-		ItemStack held_item = ((PlayerInventory) player).getItemInMainHand();
-		((PlayerInventory) player).setItemInMainHand(item_stack.clone());
+		ItemStack held_item = player.getInventory().getItemInMainHand();
+		player.getInventory().setItemInMainHand(item_stack.clone());
 		for (TradeObject e : enchants) {
         	String enchant_display_name = this.SellEnchant(e.getDisplayName());
             if (enchant_display_name.equals(e)) {
@@ -217,7 +217,7 @@ public class ShopTransactions {
     			remove_enchants.add(e);
     		}
         }
-		((PlayerInventory) player).setItemInMainHand(held_item);
+		player.getInventory().setItemInMainHand(held_item);
 		
 		ItemStack stack = new ItemStack(item_stack.clone());
 		if (keep_enchants.size()>0) {
@@ -245,7 +245,7 @@ public class ShopTransactions {
 		}
 		
 		ArrayList<TradeObject> keep_enchants = new ArrayList<TradeObject>();
-		((PlayerInventory) player).setItemInMainHand(ebook.clone());
+		player.getInventory().setItemInMainHand(ebook.clone());
 		for (TradeObject e : enchants) {
         	String ename = this.SellEnchant(e.getDisplayName());
             if (ename.equals(e)) {
@@ -254,7 +254,7 @@ public class ShopTransactions {
         }
 		
 		
-		((PlayerInventory) player).setItemInMainHand(new ItemStack(Material.AIR));
+		player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
 		
 		ItemStack stack = new ItemStack(Material.BOOK);
 		if (keep_enchants.size()>0) {

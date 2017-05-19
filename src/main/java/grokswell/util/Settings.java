@@ -5,7 +5,9 @@ import grokswell.hypermerchant.HyperMerchantPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
+
+
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -70,11 +72,13 @@ public class Settings {
     	  
     private static void loadConfig() {
 		File configFile = null;
-		InputStream defConfigStream = null;
+		//InputStream defConfigStream = null;
 		YamlConfiguration defConfig = null;
 		YamlConfiguration config = null;
-		
-		defConfigStream = plugin.getResource("config.yml");
+		InputStreamReader defConfigStream = null;
+		//defConfigStream = new InputStreamReader(this.getResource("customConfig.yml"), "UTF8");
+	
+		defConfigStream = new InputStreamReader(plugin.getResource("config.yml"));
     	configFile = new File(dataFolder, "config.yml");
 	    config = YamlConfiguration.loadConfiguration(configFile);
 	 

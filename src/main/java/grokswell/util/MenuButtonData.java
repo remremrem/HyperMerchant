@@ -6,6 +6,7 @@ import grokswell.hypermerchant.HyperMerchantPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 
 import org.bukkit.ChatColor;
@@ -74,7 +75,7 @@ public class MenuButtonData {
     private void loadMenuButtonData() {
 		File menuButtonFile = null;
 		menuButtonFile = new File(dataFolder, "menubuttons.yml");
-		InputStream defConfigStream = plugin.getResource("menubuttons.yml");
+		InputStreamReader defConfigStream = new InputStreamReader(plugin.getResource("menubuttons.yml"));
 		YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
 	
 		try {

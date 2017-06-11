@@ -6,6 +6,7 @@ import grokswell.hypermerchant.HyperMerchantPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -38,7 +39,7 @@ public class Blacklist {
 
 			if (!blacklistFile.exists()) {
 				blacklistFile.setWritable(true);
-				InputStream defConfigStream = plugin.getResource("npcblacklist.yml");
+				InputStreamReader defConfigStream = new InputStreamReader(plugin.getResource("npcblacklist.yml"));
 				YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
 				defConfig.save(blacklistFile);
 			}
